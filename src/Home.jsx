@@ -249,7 +249,7 @@ const Home = () => {
             controls={false}
             className="fixed top-0 left-0 w-full h-full object-cover z-0"
         >
-          <source src="/home_video.mp4" type="video/mp4"/>
+          <source src="./home_video.mp4" type="video/mp4"/>
         </video>
 
         {/* 控件层（中间层） */}
@@ -336,7 +336,7 @@ const Home = () => {
                      objectFit: 'cover',
                      objectPosition: 'center',
                    }}
-                   src={`images/${drawResultsRef.current[currentCardIndex]?.card?.character}-${drawResultsRef.current[currentCardIndex]?.card?.name}.png`}
+                   src={`./images/${drawResultsRef.current[currentCardIndex]?.card?.character}-${drawResultsRef.current[currentCardIndex]?.card?.name}.png`}
                    alt="抽到的卡片"
                    crossOrigin="anonymous"/>
 
