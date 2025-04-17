@@ -28,4 +28,4 @@ jobs:
       uses: JamesIves/github-pages-deploy-action@4.1.1  # 使用 GitHub Pages Action 部署
       with:
         branch: gh-pages  # 部署到 gh-pages 分支
-        folder: build  # 构建文件夹（如果是 Vue 或 Angular，改为 dist）
+        folder: dist  # 构建文件夹（如果是 Vue 或 Angular，改为 dist）
