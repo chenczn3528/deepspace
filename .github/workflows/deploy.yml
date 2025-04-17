@@ -45,39 +45,24 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
-        node-version: '18'  # 建议使用 Node 16/18（Vue/React 新版兼容性更好）
+        node-version: '18'
 
     - name: Install dependencies
       run: npm install
 
     - name: Build the project
       run: |
-        npm run build || echo "Build failed!"  # 如果构建失败，继续执行（但后续步骤会因缺少 dist 而报错）
-        echo "Listing project root:"
-        ls -al
-        echo "If dist/ doesn't exist, check if build/ exists:"
-        ls -al build/ || echo "No build/ directory"
-
-    - name: Verify output directory
-      run: |
-        # 检查 dist/ 或 build/ 是否存在
-        if [ -d "dist" ]; then
-          echo "Found dist/, deploying it..."
-        elif [ -d "build" ]; then
-          echo "Found build/, renaming it to dist/ for deployment..."
-          mv build dist
-        else
-          echo "ERROR: Neither dist/ nor build/ found!"
-          exit 1
-        fi
+        npm run build || (echo "❌ Build failed!" && exit 1)
+        echo "Build output:"
+        ls -al dist
 
     - name: Deploy to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@4.1.1
+      uses: JamesIves/github-pages-deploy-action@v4
       with:
         branch: gh-pages
         folder: dist
