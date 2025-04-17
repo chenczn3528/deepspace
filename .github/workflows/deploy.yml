@@ -18,7 +18,6 @@ jobs:
       with:
         node-version: '18'
 
-    # 修改后的依赖安装步骤
     - name: Clean install dependencies
       run: |
         rm -rf node_modules
@@ -31,10 +30,9 @@ jobs:
         echo "Build output:"
         ls -al dist
 
-    # 这个部署步骤保持不变
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4
       with:
         branch: gh-pages
         folder: "dist"
-        target-folder: "."
+        token: ${{ secrets.GITHUB_TOKEN }}  # 关键修改
