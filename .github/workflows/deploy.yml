@@ -24,8 +24,11 @@ jobs:
     - name: Build the project
       run: npm run build  # 构建项目
 
+    - name: List files in build directory  # 调试步骤，确保构建文件存在
+      run: ls -al build  # 如果是 Vue 或 Angular 项目，改为 dist
+
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@4.1.1  # 使用 GitHub Pages Action 部署
       with:
         branch: gh-pages  # 部署到 gh-pages 分支
-        folder: dist  # 构建文件夹（如果是 Vue 或 Angular，改为 dist）
+        folder: dist     # 确保这里的 folder 参数与实际的构建目录一致
