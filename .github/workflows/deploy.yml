@@ -1,9 +1,43 @@
+#name: Deploy to GitHub Pages
+#
+#on:
+#  push:
+#    branches:
+#      - main  # 当 main 分支发生变化时触发
+#
+#jobs:
+#  build:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#    - name: Checkout code
+#      uses: actions/checkout@v2  # 检出代码
+#
+#    - name: Set up Node.js
+#      uses: actions/setup-node@v2
+#      with:
+#        node-version: '14'  # 设置 Node.js 版本
+#
+#    - name: Install dependencies
+#      run: npm install  # 安装依赖
+#
+#    - name: Build the project
+#      run: npm run build  # 构建项目
+#
+#    - name: List files in dist directory  # 调试：查看 dist 目录
+#      run: ls -al dist  # 确保 dist 目录存在
+#
+#    - name: Deploy to GitHub Pages
+#      uses: JamesIves/github-pages-deploy-action@4.1.1
+#      with:
+#        branch: gh-pages  # 部署到 gh-pages 分支
+#        folder: dist       # 部署 dist 目录
 name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
-      - main  # 当 main 分支发生变化时触发
+      - main
 
 jobs:
   build:
@@ -11,24 +45,39 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2  # 检出代码
+      uses: actions/checkout@v2
 
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '14'  # 设置 Node.js 版本
+        node-version: '18'  # 建议使用 Node 16/18（Vue/React 新版兼容性更好）
 
     - name: Install dependencies
-      run: npm install  # 安装依赖
+      run: npm install
 
     - name: Build the project
-      run: npm run build  # 构建项目
+      run: |
+        npm run build || echo "Build failed!"  # 如果构建失败，继续执行（但后续步骤会因缺少 dist 而报错）
+        echo "Listing project root:"
+        ls -al
+        echo "If dist/ doesn't exist, check if build/ exists:"
+        ls -al build/ || echo "No build/ directory"
 
-    - name: List files in dist directory  # 调试：查看 dist 目录
-      run: ls -al dist  # 确保 dist 目录存在
+    - name: Verify output directory
+      run: |
+        # 检查 dist/ 或 build/ 是否存在
+        if [ -d "dist" ]; then
+          echo "Found dist/, deploying it..."
+        elif [ -d "build" ]; then
+          echo "Found build/, renaming it to dist/ for deployment..."
+          mv build dist
+        else
+          echo "ERROR: Neither dist/ nor build/ found!"
+          exit 1
+        fi
 
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@4.1.1
       with:
-        branch: gh-pages  # 部署到 gh-pages 分支
-        folder: dist       # 部署 dist 目录
+        branch: gh-pages
+        folder: dist
