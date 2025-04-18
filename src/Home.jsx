@@ -346,11 +346,11 @@ const Home = () => {
                   <img
                       src={drawResultsRef.current[currentCardIndex]?.card?.card_star_icon}
                       alt="星级"
-                      className="absolute bottom-[12%] left-[10%] h-[4%] object-contain"
+                      className="absolute bottom-[20%] left-[10%] h-[4%] object-contain"
                   />
 
                   {/* 文字区域 */}
-                  <div className="absolute bottom-[2%] left-[10%] w-full h-[12%] flex text-shadow-white">
+                  <div className="absolute bottom-[10%] left-[10%] w-full h-[12%] flex text-shadow-white">
                     <h2 className="absolute object-contain">
                       {drawResultsRef.current[currentCardIndex]?.card?.character}
                     </h2>
@@ -359,40 +359,6 @@ const Home = () => {
                       {drawResultsRef.current[currentCardIndex]?.card?.name}
                     </h1>
                   </div>
-
-
-                  {/*<div className="h-1/2 flex items-center justify-between space-x-4">*/}
-                  {/*  /!* 文字部分 角色 *!/*/}
-                  {/*  <div className="text-white text-left flex-shrink-0 pr-4">*/}
-                  {/*    <h3>{drawResultsRef.current[currentCardIndex]?.card?.character}</h3>*/}
-                  {/*  </div>*/}
-
-                  {/*  /!* 文字部分 卡名 *!/*/}
-                  {/*  <div className="text-white text-left flex-shrink-0 pr-4">*/}
-                  {/*    <h2>{drawResultsRef.current[currentCardIndex]?.card?.name}</h2>*/}
-                  {/*  </div>*/}
-
-                  {/*  /!* 图片部分 星谱 *!/*/}
-                  {/*  <div className="flex-shrink-0">*/}
-                  {/*    <img*/}
-                  {/*        src={drawResultsRef.current[currentCardIndex]?.card?.card_color} // 在这里放置第二个图片的路径*/}
-                  {/*        alt="星谱"*/}
-                  {/*        className="h-1/4 object-cover"*/}
-                  {/*    />*/}
-                  {/*  </div>*/}
-
-                  {/*  /!* 图片部分 日卡/月卡 *!/*/}
-                  {/*  <div className="flex-shrink-0">*/}
-                  {/*    <img*/}
-                  {/*        src={drawResultsRef.current[currentCardIndex]?.card?.card_type} // 在这里放置第三个图片的路径*/}
-                  {/*        alt="日卡/月卡"*/}
-                  {/*        className="h-1/4 object-cover"*/}
-                  {/*    />*/}
-                  {/*  </div>*/}
-
-
-                  {/*</div>*/}
-
 
                 </div>
               </div>
@@ -403,60 +369,3 @@ const Home = () => {
 };
 
 export default Home;
-
-
-// <div className="h-screen pl-8">
-//   <div className="h-full w-full flex flex-col pl-8">
-//     {/* 上部分：图片区域 + 底部星星 */}
-//     <div className="h-full flex flex-col">
-//       <div className="h-[85%] w-full border-2 border-red-500 relative">上部分</div>
-//       <div className="h-[15%] w-full border-2 border-red-500 relative">
-//         <img
-//             src={drawResultsRef.current[currentCardIndex]?.card?.card_star_icon}
-//             alt="星级图片"
-//             className="absolute left-5 bottom-0 object-cover"
-//         />
-//       </div>
-//     </div>
-//   </div>
-//
-//
-//   <div className="h-[85%] w-full border-2 border-red-500"/>
-//   <div className="h-[15%] w-full border-2 border-red-500">
-//     <img
-//         src={drawResultsRef.current[currentCardIndex]?.card?.card_star_icon}
-//         alt="星级图片"
-//         className="absolute left-5 bottom-0 object-cover"
-//     />
-//   </div>
-//
-//   {/* 下部分：横向排列文本和图片 */}
-//   <div className="h-1/2 flex items-center justify-between space-x-4">
-//     {/* 文字部分 角色 */}
-//     <div className="text-white text-left flex-shrink-0 pr-4">
-//       <h3>{drawResultsRef.current[currentCardIndex]?.card?.character}</h3>
-//     </div>
-//
-//     {/* 文字部分 卡名 */}
-//     <div className="text-white text-left flex-shrink-0 pr-4">
-//       <h2>{drawResultsRef.current[currentCardIndex]?.card?.name}</h2>
-//     </div>
-//
-//     {/* 图片部分 星谱 */}
-//     <div className="flex-shrink-0">
-//       <img
-//           src={drawResultsRef.current[currentCardIndex]?.card?.card_color} // 在这里放置第二个图片的路径
-//           alt="星谱"
-//           className="h-1/4 object-cover"
-//       />
-//     </div>
-//
-//     {/* 图片部分 日卡/月卡 */}
-//     <div className="flex-shrink-0">
-//       <img
-//           src={drawResultsRef.current[currentCardIndex]?.card?.card_type} // 在这里放置第三个图片的路径
-//           alt="日卡/月卡"
-//           className="h-1/4 object-cover"
-//       />
-//     </div>
-//   </div>
