@@ -184,7 +184,6 @@ const Home = () => {
           onClick={handleNextCard}>
         {/* 视频层（最底层） */}
         <video
-            // ref={videoRef}
             autoPlay
             loop
             playsInline
@@ -275,8 +274,8 @@ const Home = () => {
                 className="fixed inset-0 w-full h-full object-cover"
                 autoPlay
                 muted
-                onEnded={handleVideoEnded}
-              >
+                controls={false}
+                onEnded={handleVideoEnded}>
                 <source src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.MOV`} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
