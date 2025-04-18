@@ -1,30 +1,35 @@
 import React, {useEffect, useState, useRef} from 'react';
 import cardData from './assets/cards.json';
-import DrawAnimation from './components/DrawAnimation';
+import DrawAnimationCards from './components/DrawAnimationCards.jsx';
 
 const Home = () => {
-  const [selectedRole, setSelectedRole] = useState('随机');
-  const [pityCount, setPityCount] = useState(0);
-  const [cards, setCards] = useState([]);
-  const [history, setHistory] = useState([]);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [showHistory, setShowHistory] = useState(false);
-  const [showAnimation, setShowAnimation] = useState(false);
-  const [isFiveStarAnimation, setIsFiveStarAnimation] = useState(false);
 
-  const videoRef = useRef();
-  const drawResultsRef = useRef([]);
-  const currentPityRef = useRef(0);
+  const [selectedRole, setSelectedRole] = useState('随机'); // 当前选择的角色
+  const roles = ['随机', ...new Set(cardData.map(card => card.character))]; // 存储可选择的角色列表
 
-  const [drawnCards, setDrawnCards] = useState([]);
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const [showCardOverlay, setShowCardOverlay] = useState(false);
-  const [fadeClass, setFadeClass] = useState("opacity-100");
+  const [pityCount, setPityCount] = useState(0); // 保底计数器
+  const currentPityRef = useRef(0); // 引用存储当前保底计数器的值，在每次抽卡时更新，用于确定保底是否触发
+
+  const [currentCardIndex, setCurrentCardIndex] = useState(0); // 当前的卡片索引
+  const [cards, setCards] = useState([]); // 存储抽卡后的卡片信息
+  const [history, setHistory] = useState([]); // 存储抽卡历史记录
+  const [drawnCards, setDrawnCards] = useState([]); // 存储已抽到的卡片的数组
+  const drawResultsRef = useRef([]); // 引用存储抽卡结果的数组，避免重新渲染时丢失数据，保存每次抽卡的结果，以便后续处理和展示
+
+  const [showHistory, setShowHistory] = useState(false); // 是否显示抽卡历史
+  const [showAnimationDrawCards, setShowAnimationDrawCards] = useState(false); // 是否显示抽卡动画
+  const [isAnimatingDrawCards, setisAnimatingDrawCards] = useState(false); // 是否正在进行抽卡动画
+
+  const [isFiveStar, setIsFiveStar] = useState(false); // 判断当前卡片是否五星卡片
+  const [hasFiveStarAnimation, setHasFiveStarAnimation] = useState(false); // 一抽或十抽里是否包含五星卡
+
+  const [videoPlayed, setVideoPlayed] = useState(false); // 判断五星卡视频是否播放完成
+
+  const [showCardOverlay, setShowCardOverlay] = useState(false); // 控制是否显示卡片结果的覆盖层，为true时展示抽到的卡片
+  const [fadeClass, setFadeClass] = useState("opacity-100"); // 控制卡片淡入淡出
 
 
-  const roles = ['随机', ...new Set(cardData.map(card => card.character))];
-
-
+  // 输出当前卡片信息
   useEffect(() => {
     const card = drawResultsRef.current[currentCardIndex]?.card;
     if (card) {
@@ -36,94 +41,44 @@ const Home = () => {
     }
   }, [currentCardIndex]);
 
-
   // ========================================================
-  // 判断背景色来决定字体颜色
-  const [isDarkText, setIsDarkText] = useState(false);
-  const imgRef = useRef(null);
-
+  // 判断当前卡片是不是五星
   useEffect(() => {
-    const imgElement = imgRef.current;
-
-    if (imgElement) {
-      imgElement.onload = () => {
-        // 创建canvas元素并设置大小与图片一样
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          canvas.width = imgElement.naturalWidth;
-          canvas.height = imgElement.naturalHeight;
-
-          // 将图片绘制到canvas中
-          ctx.drawImage(imgElement, 0, 0);
-
-          // 确认图像是否正确绘制
-          console.log('Image drawn on canvas');
-
-          // 获取底部 8% 区域的像素数据
-          const height = canvas.height;
-          const bottom8PercentHeight = Math.floor(height * 0.08); // 底部8%的高度
-          const imageData = ctx.getImageData(0, height - bottom8PercentHeight, canvas.width, bottom8PercentHeight);
-          const data = imageData.data;
-
-          // 确认是否获取到像素数据
-          console.log('Image data retrieved:', data);
-
-          // 计算底部区域的平均亮度
-          let r = 0, g = 0, b = 0;
-          for (let i = 0; i < data.length; i += 4) {
-            r += data[i]; // 红色通道
-            g += data[i + 1]; // 绿色通道
-            b += data[i + 2]; // 蓝色通道
-          }
-
-          // 计算平均亮度（使用加权平均公式）
-          const brightness = 0.2126 * (r / (data.length / 4)) + 0.7152 * (g / (data.length / 4)) + 0.0722 * (b / (data.length / 4));
-
-          // 在控制台输出亮度值
-          console.log('底部8%区域的平均亮度：', brightness);
-
-          // 根据亮度判断字体颜色
-          setIsDarkText(brightness < 128); // 亮度小于128则使用白色文字
-        }
-      };
-
-      // 如果图片已经加载（缓存），则立即执行onload
-      if (imgElement.complete) {
-        imgElement.onload();
-      }
+    const card = drawResultsRef.current[currentCardIndex]?.card;
+    if (card?.star === '5星') {
+      setIsFiveStar(true); // 是五星卡片
+    } else {
+      setIsFiveStar(false); // 不是五星卡片，直接展示卡片
     }
-  }, []);
+  }, [currentCardIndex]);
+
+  // ========================================================
+  // 视频播放完毕，更新状态
+  const handleVideoEnded = () => {
+    setVideoPlayed(true);
+  };
+
+  // ========================================================
+  // 播放完视频后展示卡片
+  const handleAnimationEnd = () => {
+    setShowCardOverlay(true);
+  };
+
 
 
   // ========================================================
-  //动画结束后开始展示卡片
+  //抽卡动画结束后开始展示卡片
   useEffect(() => {
-    if (!showAnimation && drawResultsRef.current.length > 0) {
+    if (!showAnimationDrawCards && drawResultsRef.current.length > 0) {
       setCurrentCardIndex(0);
       setShowCardOverlay(true);
       setFadeClass("opacity-100");
     }
-  }, [showAnimation]);
+  }, [showAnimationDrawCards]);
+
 
   // ========================================================
-  //播放音频的设置
-  useEffect(() => {
-    const playOnInteraction = () => {
-      if (videoRef.current) {
-        videoRef.current.muted = false;
-        videoRef.current.play().catch(() => {
-        });
-      }
-    };
-    document.addEventListener('click', playOnInteraction, {once: true});
-    return () => {
-      document.removeEventListener('click', playOnInteraction);
-    };
-  }, []);
-
-  // ========================================================
-  //随机生成卡
+  // 随机生成一张卡片，并根据保底计数器 (pity) 计算是否触发保底效果
   const getRandomCard = (pity) => {
     const fiveStarBase = 0.01;
     const fourStarBase = 0.07;
@@ -155,8 +110,7 @@ const Home = () => {
   };
 
   // ========================================================
-  // 点击下一张卡片（带淡出/淡入）
-  // const [canClick, setCanClick] = useState(true);
+  // 处理卡片的切换，支持淡出淡入效果
   const handleNextCard = () => {
     setFadeClass("opacity-40"); // 先淡出
 
@@ -166,24 +120,15 @@ const Home = () => {
       } else {
         setShowCardOverlay(false); // 展示完毕
       }
-
-    // setTimeout(() => {
-    //   if (currentCardIndex < drawResultsRef.current.length - 1) {
-    //     setCurrentCardIndex(prev => prev + 1);
-    //     setFadeClass("opacity-100"); // 淡入新卡
-    //   } else {
-    //     setShowCardOverlay(false); // 展示完毕
-    //   }
-    // }, 100); // 动画持续 300ms
   };
 
   // ========================================================
-  // 设置动画效果展示卡
+  // 处理抽卡逻辑，调用 getRandomCard 函数并更新抽卡结果
   const handleDraw = async (count) => {
-    if (isAnimating) return;
+    if (isAnimatingDrawCards) return;
 
-    setIsAnimating(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
+    setisAnimatingDrawCards(true);
+    // await new Promise(resolve => setTimeout(resolve, 800));
 
     let drawResults = [];
     let currentPity = pityCount;
@@ -210,46 +155,43 @@ const Home = () => {
 
     drawResultsRef.current = drawResults;
     currentPityRef.current = currentPity;
-    setIsFiveStarAnimation(drawResults.some(r => r.rarity === '5'));
-    setShowAnimation(true);
+    setHasFiveStarAnimation(drawResults.some(r => r.rarity === '5'));
+    setShowAnimationDrawCards(true);
 
     // ✅ 添加这一句以显示卡片
     setDrawnCards(drawResults.map(r => r.card).filter(Boolean));
   };
 
   // ========================================================
-  //动画效果结束
-  const handleAnimationEnd = () => {
+  // 动画结束后处理卡片的展示和历史记录的更新
+  const handleDrawCardsAnimationEnd = () => {
     const finalResults = drawResultsRef.current;
     const finalPity = currentPityRef.current;
     setPityCount(finalPity);
     setCards(finalResults.map(r => r.card));
     setHistory(prev => [...finalResults.map(r => r.card), ...prev].slice(0, 50));
-    setShowAnimation(false);
-    setIsAnimating(false);
+    setShowAnimationDrawCards(false);
+    setisAnimatingDrawCards(false);
   };
+
 
 
   // ========================================================
   // 返回数据时显示的页面
-
-
   return (
       <div
           className="relative w-screen h-screen cursor-pointer"
-          onClick={handleNextCard}
-      >
+          onClick={handleNextCard}>
         {/* 视频层（最底层） */}
         <video
-            ref={videoRef}
+            // ref={videoRef}
             autoPlay
             loop
             playsInline
             muted={false}
             controls={false}
-            className="fixed top-0 left-0 w-full h-full object-cover z-0"
-        >
-          <source src="home_video.mp4" type="video/mp4"/>
+            className="fixed top-0 left-0 w-full h-full object-cover z-0">
+          <source src="videos/开屏动画.mov" type="video/mp4"/>
         </video>
 
         {/* 控件层（中间层） */}
@@ -263,8 +205,7 @@ const Home = () => {
               <select
                   className="w-40 bg-gray-800 text-white p-2 rounded"
                   value={selectedRole}
-                  onChange={(e) => setSelectedRole(e.target.value)}
-              >
+                  onChange={(e) => setSelectedRole(e.target.value)}>
                 {roles.map((role) => (
                     <option key={role} value={role}>
                       {role}
@@ -316,10 +257,10 @@ const Home = () => {
         </div>
 
         {/* 抽卡动画层 */}
-        {showAnimation && (
-            <DrawAnimation
-                isFiveStar={isFiveStarAnimation}
-                onAnimationEnd={handleAnimationEnd}
+        {showAnimationDrawCards && (
+            <DrawAnimationCards
+                isFiveStar={hasFiveStarAnimation}
+                onAnimationEnd={handleDrawCardsAnimationEnd}
                 cards={drawResultsRef.current.map((r) => r.card)}
                 className="fixed inset-0 z-20"
             />
@@ -327,42 +268,62 @@ const Home = () => {
 
         {/* 卡片结果层（最顶层） */}
         {showCardOverlay && (
-            <div className="fixed inset-0 z-30 bg-black bg-opacity-70">
-              <img className="fixed top-0 left-0 min-w-full min-h-full w-auto h-auto object-cover"
-                   style={{
-                     // 终极保险：确保图片无论如何都撑满屏幕
-                     width: '100vw',
-                     height: '100vh',
-                     objectFit: 'cover',
-                     objectPosition: 'center',
-                   }}
-                   src={`images/${drawResultsRef.current[currentCardIndex]?.card?.character}-${drawResultsRef.current[currentCardIndex]?.card?.name}.png`}
-                   alt="抽到的卡片"
-                   crossOrigin="anonymous"/>
+          <div className="fixed inset-0 z-30 bg-black bg-opacity-70">
+            {isFiveStar && !videoPlayed && (
+              // 只有五星卡片并且视频没有播放完时，先播放视频
+              <video
+                className="fixed inset-0 w-full h-full object-cover"
+                autoPlay
+                muted
+                onEnded={handleVideoEnded}
+              >
+                <source src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.MOV`} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            )}
 
-              {/* 文字层 - 底部20%高度全屏宽度 */}
-              <div className="h-screen w-screen pl-8">
-                <div className="relative w-full h-full">
-                  <img
+            {/* 展示卡片内容 */}
+            {(isFiveStar && videoPlayed) || !isFiveStar ? (
+              <>
+                <img
+                  className="fixed top-0 left-0 min-w-full min-h-full w-auto h-auto object-cover"
+                  style={{
+                    width: '100vw',
+                    height: '100vh',
+                    objectFit: 'cover',
+                    objectPosition: 'center',
+                  }}
+                  src={`images/${drawResultsRef.current[currentCardIndex]?.card?.character}-${drawResultsRef.current[currentCardIndex]?.card?.name}.png`}
+                  alt="抽到的卡片"
+                  crossOrigin="anonymous"
+                />
+
+                {/* 文字层 - 底部20%高度全屏宽度 */}
+                <div className="h-screen w-screen pl-8">
+                  <div className="relative w-full h-full">
+                    <img
                       src={drawResultsRef.current[currentCardIndex]?.card?.card_star_icon}
                       alt="星级"
                       className="absolute bottom-[20%] left-[10%] h-[4%] object-contain"
-                  />
+                    />
 
-                  {/* 文字区域 */}
-                  <div className="absolute bottom-[10%] left-[10%] w-full h-[12%] flex text-shadow-white">
-                    <h2 className="absolute object-contain">
-                      {drawResultsRef.current[currentCardIndex]?.card?.character}
-                    </h2>
+                    {/* 文字区域 */}
+                    <div className="absolute bottom-[10%] left-[10%] w-full h-[12%] flex text-shadow-white">
+                      <img
+                        className="absolute object-contain h-[45%] bottom-[35%]"
+                        src={`signs/${drawResultsRef.current[currentCardIndex]?.card?.character}.png`}
+                        alt={drawResultsRef.current[currentCardIndex]?.card?.character}
+                      />
 
-                    <h1 className="absolute bottom-[0%] left-[20%] object-contain text-shadow-white">
-                      {drawResultsRef.current[currentCardIndex]?.card?.name}
-                    </h1>
+                      <h1 className="absolute bottom-[0%] left-[25%] object-contain text-shadow-white">
+                        {drawResultsRef.current[currentCardIndex]?.card?.name}
+                      </h1>
+                    </div>
                   </div>
-
                 </div>
-              </div>
-            </div>
+              </>
+            ) : null}
+          </div>
         )}
       </div>
   );
