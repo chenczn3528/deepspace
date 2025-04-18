@@ -296,6 +296,7 @@ const Home = () => {
                   src={`images/${drawResultsRef.current[currentCardIndex]?.card?.character}-${drawResultsRef.current[currentCardIndex]?.card?.name}.png`}
                   alt="抽到的卡片"
                   crossOrigin="anonymous"
+                  loading="lazy"
                 />
 
                 {/* 文字层 - 底部20%高度全屏宽度 */}
