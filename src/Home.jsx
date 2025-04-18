@@ -273,7 +273,8 @@ const Home = () => {
               <video
                 className="fixed inset-0 w-full h-full object-cover"
                 autoPlay
-                muted
+                playsInline
+                muted={false}
                 controls={false}
                 onEnded={handleVideoEnded}>
                 <source src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.MOV`} type="video/mp4" />
@@ -295,7 +296,6 @@ const Home = () => {
                   src={`images/${drawResultsRef.current[currentCardIndex]?.card?.character}-${drawResultsRef.current[currentCardIndex]?.card?.name}.png`}
                   alt="抽到的卡片"
                   crossOrigin="anonymous"
-                  loading="lazy"
                 />
 
                 {/* 文字层 - 底部20%高度全屏宽度 */}

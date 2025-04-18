@@ -30,24 +30,24 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards }) => {
       {isFiveStar ? (
           <video
           className="rounded-xl shadow-lg h-full w-full fixed top-0 left-0 object-cover"
-          width="300"
-          height="auto"
           onLoadedData={handleVideoLoaded} // 获取视频时长
           onEnded={onAnimationEnd} // 视频播放结束时触发
           autoPlay
-          muted>
+          playsInline
+          muted={false}
+          controls={false}>
           <source src="videos/gold_card.MP4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       ) : (
         <video
           className="rounded-xl shadow-lg h-full w-full fixed top-0 left-0 object-cover"
-          width="300"
-          height="auto"
           onLoadedData={handleVideoLoaded} // 获取视频时长
           onEnded={onAnimationEnd} // 视频播放结束时触发
           autoPlay
-          muted>
+          playsInline
+          muted={false}
+          controls={false}>
           <source src="videos/gold_card.MP4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
