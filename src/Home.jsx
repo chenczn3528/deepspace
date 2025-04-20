@@ -275,8 +275,14 @@ const handleNextCard = () => {
             autoPlay
             loop
             playsInline
+            webkit-playsinline="true"
             muted={false}
             controls={false}
+            // autoPlay
+            // loop
+            // playsInline
+            // muted={false}
+            // controls={false}
             className="fixed top-0 left-0 w-full h-full object-cover z-0">
           <source src="videos/开屏动画.mp4" type="video/mp4"/>
         </video>
