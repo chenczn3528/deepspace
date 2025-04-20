@@ -192,14 +192,14 @@ const handleNextCard = () => {
     setisAnimatingDrawCards(false);
   };
 
-  // ========================================================
-  // 动态获取图片
-const images = import.meta.glob('./assets/images/*.png', { eager: true });
-
-const getImage = (character, cardName) => {
-  const fileName = `${character}-${cardName}.png`;
-  return images[`/src/assets/images/${fileName}`]?.default; // 获取图片路径
-};
+//   // ========================================================
+//   // 动态获取图片
+// const images = import.meta.glob('./assets/images/*.png', { eager: true });
+//
+// const getImage = (character, cardName) => {
+//   const fileName = `${character}-${cardName}.png`;
+//   return images[`src/assets/images/${fileName}`]?.default; // 获取图片路径
+// };
 
 
 
@@ -321,7 +321,8 @@ const getImage = (character, cardName) => {
                         objectFit: 'cover',
                         objectPosition: 'center',
                       }}
-                      src={getImage(drawResultsRef.current[currentCardIndex]?.card?.character, drawResultsRef.current[currentCardIndex]?.card?.name)}
+                      src={drawResultsRef.current[currentCardIndex]?.card?.image}
+                      // src={getImage(drawResultsRef.current[currentCardIndex]?.card?.character, drawResultsRef.current[currentCardIndex]?.card?.name)}
                       alt="抽到的卡片"
                       crossOrigin="anonymous"
                   />
