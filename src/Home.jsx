@@ -306,10 +306,9 @@ const handleNextCard = () => {
         </video>
 
         {/* 控件层（中间层） */}
-        <div className="fixed inset-0 z-10 flex flex-col items-center justify-center">
+        <div className="fixed inset-0 z-10 flex flex-col w-full bottom-[20px] items-center justify-center border">
           <div
-              className="w-full bg-gray-900 bg-opacity-80 p-4 flex flex-col gap-4 max-w-[600px] mx-auto rounded-xl shadow-lg">
-            {/* 控件内容保持不变... */}
+              className="relative bg-gray-900 bg-opacity-80 p-4 flex flex-col gap-4  ml-[10px] mr-[10px] rounded-xl shadow-lg">
             {/* 角色选择 */}
             <div className="flex items-center gap-2" id="role-selector">
               <label className="text-sm">选择角色：</label>
@@ -506,7 +505,7 @@ const handleNextCard = () => {
                         placeholderSrc={item.card.image_small}
                         effect="blur"
                         alt={`Card ${index}`}
-                        className="w-[80px] h-[240px] object-cover rounded-lg shadow-lg hover:scale-105 transition-transform duration-300"
+                        className="w-[90%] h-[90%] object-cover rounded-lg shadow-lg hover:scale-105 transition-transform duration-300"
                     />
                 ))}
               </div>
