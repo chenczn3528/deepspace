@@ -9,6 +9,8 @@ const Home = () => {
 
   const [pityCount, setPityCount] = useState(0); // 保底计数器
   const currentPityRef = useRef(0); // 引用存储当前保底计数器的值，在每次抽卡时更新，用于确定保底是否触发
+  const currentFourStarRef = useRef(0); // 四星保底计数器的值
+
 
   const [currentCardIndex, setCurrentCardIndex] = useState(0); // 当前的卡片索引
   const [cards, setCards] = useState([]); // 存储抽卡后的卡片信息
@@ -79,88 +81,104 @@ const Home = () => {
 
   // ========================================================
   // 随机生成一张卡片，并根据保底计数器 (pity) 计算是否触发保底效果
-  const getRandomCard = (pity) => {
-    const fiveStarBase = 0.01;
-    const fourStarBase = 0.07;
-    const fiveStarPityStart = 60;
-    const fiveStarGuaranteed = 70;
+  const getRandomCard = (pity, fourStarCounter) => {
+  const fiveStarBase = 0.01;
+  const fourStarBase = 0.07;
+  const fiveStarPityStart = 60;
+  const fiveStarGuaranteed = 70;
 
-    let fiveStarChance = fiveStarBase;
-    if (pity >= fiveStarPityStart) {
-      fiveStarChance = Math.min(1, fiveStarBase + 0.1 * (pity - fiveStarPityStart + 1));
-    }
+  let fiveStarChance = fiveStarBase;
 
-    const roll = Math.random();
-    let rarity = '3';
+  if (pity >= fiveStarPityStart) {
+    fiveStarChance = Math.min(1, fiveStarBase + 0.1 * (pity - fiveStarPityStart + 1));
+  }
 
-    if (roll < fiveStarChance) rarity = '5';
-    else if (roll < 0.12) rarity = '4';
+  const roll = Math.random();
+  let rarity = '3';
 
-    const targetStar = parseInt(rarity, 10);
-    const pool = cardData.filter(card => {
-      const matchCharacter = selectedRole === '随机' || card.character === selectedRole;
-      return matchCharacter && parseInt(card.star) === targetStar;
-    });
-    if (pool.length === 0) {
-      console.warn("没有找到匹配的卡片！", {rarity, selectedRole});
-      return {card: null, rarity};
-    }
-    const chosen = pool[Math.floor(Math.random() * pool.length)];
-    return {card: chosen, rarity};
-  };
+  if (pity + 1 >= fiveStarGuaranteed || roll < fiveStarChance) {
+    rarity = '5';
+  } else if ((fourStarCounter + 1) % 10 === 0) {
+    rarity = '4';
+  } else if (roll < fiveStarChance + fourStarBase) {
+    rarity = '4';
+  }
+
+  const targetStar = parseInt(rarity, 10);
+  const pool = cardData.filter(card => {
+    const matchCharacter = selectedRole === '随机' || card.character === selectedRole;
+    return matchCharacter && parseInt(card.star) === targetStar;
+  });
+
+  if (pool.length === 0) {
+    console.warn("没有找到匹配的卡片！", {rarity, selectedRole});
+    return {card: null, rarity};
+  }
+
+  const chosen = pool[Math.floor(Math.random() * pool.length)];
+  return {card: chosen, rarity};
+};
+
+
 
   // ========================================================
-  // 处理卡片的切换，支持淡出淡入效果
-  const handleNextCard = () => {
-    setFadeClass("opacity-40"); // 先淡出
+  // 处理卡片的切换
+const [scaleClass, setScaleClass] = useState("scale-in");
 
+const handleNextCard = () => {
+  setScaleClass("scale-out"); // 先缩小（或做一个淡出缩放动画）
+
+  setTimeout(() => {
     if (currentCardIndex < drawResultsRef.current.length - 1) {
-        setCurrentCardIndex(prev => prev + 1);
-        setFadeClass("opacity-100"); // 淡入新卡
-      } else {
-        setShowCardOverlay(false); // 展示完毕
-      }
-  };
+      setCurrentCardIndex(prev => prev + 1);
+      setVideoPlayed(false);
+      setScaleClass("scale-in"); // 缩放进入
+    } else {
+      setShowCardOverlay(false); // 展示完毕
+    }
+  }, 300);
+};
 
   // ========================================================
   // 处理抽卡逻辑，调用 getRandomCard 函数并更新抽卡结果
+
   const handleDraw = async (count) => {
-    if (isAnimatingDrawCards) return;
+  if (isAnimatingDrawCards) return;
 
-    setisAnimatingDrawCards(true);
-    // await new Promise(resolve => setTimeout(resolve, 800));
+  setisAnimatingDrawCards(true);
 
-    let drawResults = [];
-    let currentPity = pityCount;
-    let guaranteedFourStarGiven = false;
+  let drawResults = [];
+  let currentPity = pityCount;
+  let currentFourStarCounter = currentFourStarRef.current; // 使用 useRef 存储四星保底计数器
+  let gotFourStarOrAbove = false;
 
-    for (let i = 0; i < count; i++) {
-      let result = getRandomCard(currentPity);
+  for (let i = 0; i < count; i++) {
+    let result = getRandomCard(currentPity, currentFourStarCounter);
 
-      if (result.rarity === '5') currentPity = 0;
-      else currentPity++;
-
-      if (i === count - 1 && !guaranteedFourStarGiven && !['4', '5'].includes(result.rarity)) {
-        const fallback = getRandomCard(currentPity);
-        if (['4', '5'].includes(fallback.rarity)) {
-          result = fallback;
-          if (result.rarity === '5') currentPity = 0;
-          else currentPity++;
-        }
+    if (result.rarity === '5') {
+      currentPity = 0;
+      currentFourStarCounter++; // 如果抽到五星，四星保底计数器增加
+    } else {
+      currentPity++;
+      if (result.rarity === '4') {
+        currentFourStarCounter = 0; // 如果抽到4星，重置四星保底计数器
+        gotFourStarOrAbove = true;
+      } else {
+        currentFourStarCounter++; // 否则继续累加四星保底计数器
       }
-
-      if (['4', '5'].includes(result.rarity)) guaranteedFourStarGiven = true;
-      drawResults.push(result);
     }
 
-    drawResultsRef.current = drawResults;
-    currentPityRef.current = currentPity;
-    setHasFiveStarAnimation(drawResults.some(r => r.rarity === '5'));
-    setShowAnimationDrawCards(true);
+    drawResults.push(result);
+  }
 
-    // ✅ 添加这一句以显示卡片
-    setDrawnCards(drawResults.map(r => r.card).filter(Boolean));
-  };
+  // 更新全局状态
+  drawResultsRef.current = drawResults;
+  currentPityRef.current = currentPity;
+  currentFourStarRef.current = currentFourStarCounter; // 使用 useRef 更新四星保底计数器
+  setHasFiveStarAnimation(drawResults.some(r => r.rarity === '5'));
+  setShowAnimationDrawCards(true);
+  setDrawnCards(drawResults.map(r => r.card).filter(Boolean));
+};
 
   // ========================================================
   // 动画结束后处理卡片的展示和历史记录的更新
@@ -173,6 +191,15 @@ const Home = () => {
     setShowAnimationDrawCards(false);
     setisAnimatingDrawCards(false);
   };
+
+  // ========================================================
+  // 动态获取图片
+const images = import.meta.glob('./assets/images/*.png', { eager: true });
+
+const getImage = (character, cardName) => {
+  const fileName = `${character}-${cardName}.png`;
+  return images[`/src/assets/images/${fileName}`]?.default; // 获取图片路径
+};
 
 
 
@@ -267,7 +294,7 @@ const Home = () => {
 
         {/* 卡片结果层（最顶层） */}
         {showCardOverlay && (
-          <div className="fixed inset-0 z-30 bg-black bg-opacity-70">
+            <div className="fixed inset-0 z-30 bg-black bg-opacity-70">
             {isFiveStar && !videoPlayed && (
               // 只有五星卡片并且视频没有播放完时，先播放视频
               <video
@@ -285,45 +312,45 @@ const Home = () => {
             {/* 展示卡片内容 */}
             {(isFiveStar && videoPlayed) || !isFiveStar ? (
               <>
-                <img
-                  className="fixed top-0 left-0 min-w-full min-h-full w-auto h-auto object-cover"
-                  style={{
-                    width: '100vw',
-                    height: '100vh',
-                    objectFit: 'cover',
-                    objectPosition: 'center',
-                  }}
-                  src={`images/${drawResultsRef.current[currentCardIndex]?.card?.character}-${drawResultsRef.current[currentCardIndex]?.card?.name}.png`}
-                  alt="抽到的卡片"
-                  crossOrigin="anonymous"
-                />
-
-                {/* 文字层 - 底部20%高度全屏宽度 */}
-                <div className="h-screen w-screen pl-8">
-                  <div className="relative w-full h-full">
-                    <img
-                      src={drawResultsRef.current[currentCardIndex]?.card?.card_star_icon}
-                      alt="星级"
-                      className="absolute bottom-[20%] left-[10%] h-[4%] object-contain"
-                    />
-
-                    {/* 文字区域 */}
-                    <div className="absolute bottom-[10%] left-[10%] w-full h-[12%] flex text-shadow-white">
+                <div className={`fixed top-0 left-0 transition-all duration-500 ease-out transform ${scaleClass}`}>
+                  <img
+                      className=" min-w-full min-h-full w-auto h-auto object-cover"
+                      style={{
+                        width: '100vw',
+                        height: '100vh',
+                        objectFit: 'cover',
+                        objectPosition: 'center',
+                      }}
+                      src={getImage(drawResultsRef.current[currentCardIndex]?.card?.character, drawResultsRef.current[currentCardIndex]?.card?.name)}
+                      alt="抽到的卡片"
+                      crossOrigin="anonymous"
+                  />
+                  {/* 文字层 - 底部20%高度全屏宽度 */}
+                  <div className="h-screen w-screen pl-8">
+                    <div className="relative w-full h-full">
                       <img
-                        className="absolute object-contain h-[45%] bottom-[35%]"
-                        src={`signs/${drawResultsRef.current[currentCardIndex]?.card?.character}.png`}
-                        alt={drawResultsRef.current[currentCardIndex]?.card?.character}
+                          src={drawResultsRef.current[currentCardIndex]?.card?.card_star_icon}
+                          alt="星级"
+                          className="absolute bottom-[20%] left-[10%] h-[4%] object-contain"
                       />
 
-                      <h1 className="absolute bottom-[0%] left-[25%] object-contain text-shadow-white">
-                        {drawResultsRef.current[currentCardIndex]?.card?.name}
-                      </h1>
+                      {/* 文字区域 */}
+                      <div className="absolute bottom-[10%] left-[10%] w-full h-[12%] flex text-shadow-white">
+                        <img
+                          className="absolute object-contain h-[45%] bottom-[35%]"
+                          src={`signs/${drawResultsRef.current[currentCardIndex]?.card?.character}.png`}
+                          alt={drawResultsRef.current[currentCardIndex]?.card?.character}/>
+
+                        <h1 className="absolute bottom-[0%] left-[25%] object-contain text-shadow-white">
+                          {drawResultsRef.current[currentCardIndex]?.card?.name}
+                        </h1>
+                      </div>
                     </div>
                   </div>
                 </div>
               </>
             ) : null}
-          </div>
+            </div>
         )}
       </div>
   );
