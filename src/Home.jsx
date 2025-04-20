@@ -473,7 +473,7 @@ const handleNextCard = () => {
                               color: 'white',
                               fontSize: '40px',
                               textShadow: shadowColor,
-                              fontFamily: 'SourceHanSerifSC, serif',
+                              fontFamily: '"SimSun", "宋体", serif',
                               fontWeight: '800',
                               marginLeft: '2px',
                               alignSelf: 'center'
