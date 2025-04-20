@@ -390,7 +390,7 @@ const handleNextCard = () => {
                         placeholderSrc={item.card.image_small}
                         effect="blur"
                         alt={`Card ${index}`}
-                        className="w-[80px] h-[140px] object-cover rounded-lg shadow-lg hover:scale-105 transition-transform duration-300"
+                        className="w-[80px] h-[240px] object-cover rounded-lg shadow-lg hover:scale-105 transition-transform duration-300"
                     />
                 ))}
               </div>
@@ -399,7 +399,7 @@ const handleNextCard = () => {
               <img
                   src="结算背景.jpg"
                   alt="底部装饰"
-                  className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-full h-full opacity-100"
+                  className="absolute w-full h-full opacity-100"
               />
             </div>
         )}
