@@ -154,45 +154,6 @@ const Home = () => {
   return { card: chosen, rarity };
 };
 
-//   const getRandomCard = (pity, fourStarCounter) => {
-//   const fiveStarBase = 0.01;
-//   const fourStarBase = 0.07;
-//   const fiveStarPityStart = 60;
-//   const fiveStarGuaranteed = 70;
-//
-//   let fiveStarChance = fiveStarBase;
-//
-//   if (pity >= fiveStarPityStart) {
-//     fiveStarChance = Math.min(1, fiveStarBase + 0.1 * (pity - fiveStarPityStart + 1));
-//   }
-//
-//   const roll = Math.random();
-//   let rarity = '3';
-//
-//   if (pity + 1 >= fiveStarGuaranteed || roll < fiveStarChance) {
-//     rarity = '5';
-//   } else if ((fourStarCounter + 1) % 10 === 0) {
-//     rarity = '4';
-//   } else if (roll < fiveStarChance + fourStarBase) {
-//     rarity = '4';
-//   }
-//
-//   const targetStar = parseInt(rarity, 10);
-//   const pool = cardData.filter(card => {
-//     const matchCharacter = selectedRole === '随机' || card.character === selectedRole;
-//     return matchCharacter && parseInt(card.star) === targetStar;
-//   });
-//
-//   if (pool.length === 0) {
-//     console.warn("没有找到匹配的卡片！", {rarity, selectedRole});
-//     return {card: null, rarity};
-//   }
-//
-//   const chosen = pool[Math.floor(Math.random() * pool.length)];
-//   return {card: chosen, rarity};
-// };
-
-
 
   // ========================================================
   // 处理卡片的切换
@@ -261,7 +222,9 @@ const handleNextCard = () => {
     const finalPity = currentPityRef.current;
     setPityCount(finalPity);
     setCards(finalResults.map(r => r.card));
-    setHistory(prev => [...finalResults.map(r => r.card), ...prev].slice(0, 50));
+    // setHistory(prev => [...finalResults.map(r => r.card), ...prev].slice(0, 50));
+    setHistory(prev => [...finalResults.map(r => ({...r.card, timestamp: new Date().toISOString(),})), ...prev,].slice(0, 50));
+
     setShowAnimationDrawCards(false);
     setisAnimatingDrawCards(false);
   };
@@ -287,6 +250,19 @@ const handleNextCard = () => {
   }, [currentCardIndex, drawResultsRef.current]);
 
 
+  // 记录时间的格式化
+  const formatDate = (timestamp) => {
+  const date = new Date(timestamp);
+  const year = String(date.getFullYear()).slice(-2); // 取后两位
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hour = String(date.getHours()).padStart(2, '0');
+  const minute = String(date.getMinutes()).padStart(2, '0');
+
+  return `${year}/${month}/${day} ${hour}:${minute}`;
+};
+
+
 
   // ========================================================
   // 返回数据时显示的页面
@@ -306,14 +282,22 @@ const handleNextCard = () => {
         </video>
 
         {/* 控件层（中间层） */}
-        <div className="fixed inset-0 z-10 flex flex-col w-full bottom-[20px] items-center justify-center border">
+        <div className="fixed inset-0 z-10 flex flex-col w-full bottom-[10%] items-center justify-center">
           <div
               className="relative bg-gray-900 bg-opacity-80 p-4 flex flex-col gap-4  ml-[10px] mr-[10px] rounded-xl shadow-lg">
             {/* 角色选择 */}
-            <div className="flex items-center gap-2" id="role-selector">
-              <label className="text-sm">选择角色：</label>
+            <div className="flex items-center gap-2 ml-[20px]" id="role-selector">
+              <label style={{
+                color: 'white',
+                fontSize: '20px',
+                textShadow: shadowColor,
+                fontFamily: '"SimSun", "宋体", serif',
+                fontWeight: '800',
+                marginLeft: '2px',
+                alignSelf: 'center'
+              }}>选择角色：</label>
               <select
-                  className="w-40 bg-gray-800 text-white p-2 rounded"
+                  className="bg-gray-800 text-white p-2 rounded"
                   value={selectedRole}
                   onChange={(e) => setSelectedRole(e.target.value)}>
                 {roles.map((role) => (
@@ -325,52 +309,50 @@ const handleNextCard = () => {
             </div>
 
             {/* 一抽/十抽按钮 */}
-            <div className="flex justify-between mt-2 px-[10%]" id="draw-buttons">
+            <div className="flex w-screen h-[40px] justify-between px-4"> {/* 新增这层容器 */}
               <button
                   onClick={() => {
                     setHasShownSummary(false);
-                    setShowSummary(false);  // ⭐ 重置结算展示状态
+                    setShowSummary(false);
                     handleDraw(1);
                   }}
-                  className="bg-blue-500 px-4 py-2 rounded w-[35%]">许愿一次
+                  className="bg-blue-500 px-8 py-2 rounded flex-1 ml-[20px] h-auto">
+                许愿一次
               </button>
+              <div className="flex-1 max-w-[20px]"></div>
+              {/* 中间间距 */}
               <button
                   onClick={() => {
                     setHasShownSummary(false);
-                    setShowSummary(false);  // ⭐ 重置结算展示状态
+                    setShowSummary(false);
                     handleDraw(10);
                   }}
-                  className="bg-purple-600 px-4 py-2 rounded w-[35%]">许愿十次
+                  className="bg-purple-600 px-8 py-2 rounded flex-1 mr-[20px] h-auto">
+                许愿十次
               </button>
             </div>
 
-            {/* 保底显示 */}
-            <div className="text-sm mt-2" id="pity-counter">
-              {70 - pityCount} 抽内必得5星
+            <div className="flex w-screen h-[40px] mt-[16px]">
+              {/* 保底显示 */}
+              <div className="text-sm mt-2" id="pity-counter" style={{
+                color: 'white',
+                fontSize: '20px',
+                textShadow: shadowColor,
+                fontFamily: '"SimSun", "宋体", serif',
+                fontWeight: '800',
+                marginLeft: '20px',
+                alignSelf: 'center'
+              }}>{70 - pityCount} 抽内必得5星
+              </div>
+
+              {/* 抽卡记录按钮 */}
+              <button
+                  className="bg-gray-700 text-white ml-[20px] rounded"
+                  onClick={() => setShowHistory(!showHistory)}
+                  id="history-toggle-button">
+                {showHistory ? "关闭抽卡记录" : "查看抽卡记录"}
+              </button>
             </div>
-
-            {/* 抽卡记录按钮 */}
-            <button
-                className="bg-gray-700 text-white px-3 py-2 mt-4 rounded"
-                onClick={() => setShowHistory(!showHistory)}
-                id="history-toggle-button">
-              {showHistory ? "关闭抽卡记录" : "查看抽卡记录"}
-            </button>
-
-            {/* 抽卡记录内容 */}
-            {showHistory && (
-                <div
-                    className="h-48 overflow-y-hidden border border-gray-700 p-2 bg-gray-800 rounded mt-2"
-                    id="history-container"
-                >
-                  {history.map((card, idx) => (
-                      <div key={idx} className="text-xs text-gray-200">
-                        [{card.star}★] {card.name} - {card.character} -{" "}
-                        {card.card_color} - {card.card_type}
-                      </div>
-                  ))}
-                </div>
-            )}
           </div>
         </div>
 
@@ -518,6 +500,46 @@ const handleNextCard = () => {
               />
             </div>
         )}
+
+
+
+        {/* 抽卡记录内容 */}
+        {showHistory && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center w-screen top-[0%] bottom-[30%]"
+          onClick={() => setShowHistory(false)}
+        >
+          <div
+            className="relative flex flex-col w-[80vw] h-[80%] p-4 rounded-lg overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src="结算背景.jpg"
+              alt="背景"
+              className="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-90"
+            />
+
+            <div className="relative z-10 flex flex-col text-white h-full">
+              <h2 className="text-xl font-bold mb-4 text-center">历史记录</h2>
+
+              <div className="flex-1 overflow-y-auto pr-2">
+                {history.map((card, idx) => (
+                  <div key={idx} className="text-xs text-gray-200 mb-2 flex justify-between">
+                    <div className="ml-[20px]">{card.star}</div>
+                    <div>{card.character}·{card.name}</div>
+                    <div className="text-gray-400 mr-[20px]">{formatDate(card.timestamp)}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="pb-[10px]">  </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+
+
 
       </div>
   );
