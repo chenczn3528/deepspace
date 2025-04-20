@@ -38,6 +38,22 @@ const Home = () => {
 
 
 
+  const characterShadowColors = {
+    "沈星回": '4px 4px 8px rgba(179, 153, 129, 1)', // 蓝色阴影
+    "黎深": '4px 4px 8px rgba(194, 194, 204, 1)', // 粉红阴影
+    "祁煜": '4px 4px 8px rgba(119, 122, 149, 1)', // 紫色阴影
+    "秦彻": '4px 4px 8px rgba(189, 114, 112, 1)', // 金色阴影
+    "夏以昼": '4px 4px 8px rgba(227, 203, 190, 1)', // 金色阴影
+    // 默认值也可以设一个
+    default: '2px 2px 4px rgba(0, 0, 0, 0.8)'
+  };
+
+  const currentCharacter = drawResultsRef.current[currentCardIndex]?.card?.character;
+  const shadowColor = characterShadowColors[currentCharacter] || characterShadowColors.default;
+
+
+
+
   // 输出当前卡片信息
   useEffect(() => {
     const card = drawResultsRef.current[currentCardIndex]?.card;
@@ -201,12 +217,31 @@ const handleNextCard = () => {
   };
 
 
+  const [cardTypeHeight, setCardTypeHeight] = useState(36); // 默认值为 36px
+
+  useEffect(() => {
+    const imageUrl = drawResultsRef.current[currentCardIndex]?.card?.card_type;
+
+    if (imageUrl) {
+      // 解码 URL
+      const decodedUrl = decodeURIComponent(imageUrl);
+
+      // 检查 URL 中是否包含特定的字符串并设置高度
+      if (decodedUrl.includes("日冕")) {
+        setCardTypeHeight(36); // 包含"日冕"时设置为36px
+      } else if (decodedUrl.includes("月晖")) {
+        setCardTypeHeight(28); // 包含"月晖"时设置为24px
+      }
+    }
+  }, [currentCardIndex, drawResultsRef.current]);
+
+
 
   // ========================================================
   // 返回数据时显示的页面
   return (
       <div
-          className="relative w-screen h-screen cursor-pointer"
+          className="relative w-screen h-screen cursor-pointer overflow-hidden"
           onClick={handleNextCard}>
         {/* 视频层（最底层） */}
         <video
@@ -349,22 +384,52 @@ const handleNextCard = () => {
 
                   <div className="h-screen w-screen pl-8">
                     <div className="relative w-full h-full">
-                      <img
-                          src={drawResultsRef.current[currentCardIndex]?.card?.card_star_icon}
-                          alt="星级"
-                          className="absolute bottom-[20%] left-[10%] h-[4%] object-contain"
-                      />
+                      <div className="absolute bottom-[22%] left-[10%] w-full h-[6%] flex items-center">
+                        <img
+                            src={drawResultsRef.current[currentCardIndex]?.card?.card_star_icon}
+                            alt="星级"
+                            className="h-[36px] object-contain"
+                        />
+                        <img
+                            src={drawResultsRef.current[currentCardIndex]?.card?.card_color}
+                            alt="星谱"
+                            className="h-[24px] object-contain ml-[12px]"
+                        />
+                        <img
+                            src={drawResultsRef.current[currentCardIndex]?.card?.card_type}
+                            alt="类型（日卡月卡）"
+                            style={{height: `${cardTypeHeight}px`, maxHeight: `${cardTypeHeight}px`, objectFit: 'contain' }}
+                            className="object-contain ml-[8px]"
+                        />
+
+                      </div>
 
                       {/* 文字区域 */}
-                      <div className="absolute bottom-[10%] left-[10%] w-full h-[12%] flex text-shadow-white">
+                      <div className="absolute bottom-[13%] left-[10%] w-full h-[12%] flex items-center">
                         <img
-                            className="absolute object-contain h-[45%] bottom-[35%]"
+                            className="h-[48px] object-contain"
                             src={`signs/${drawResultsRef.current[currentCardIndex]?.card?.character}.png`}
                             alt="角色"/>
-
-                        <h1 className="absolute bottom-[0%] left-[25%] object-contain text-shadow-white">
+                        <h1 style={{
+                              color: 'white',
+                              fontSize: '30px',
+                              textShadow: shadowColor,
+                              fontFamily: '"SimSun", "宋体", serif',
+                              fontWeight: '1000',
+                            }}>·</h1>
+                        <h1
+                            style={{
+                              color: 'white',
+                              fontSize: '40px',
+                              textShadow: shadowColor,
+                              fontFamily: '"SimSun", "宋体", serif',
+                              fontWeight: '800',
+                              marginLeft: '2px',
+                              alignSelf: 'center'
+                            }}>
                           {drawResultsRef.current[currentCardIndex]?.card?.name}
                         </h1>
+
                       </div>
                     </div>
                   </div>
