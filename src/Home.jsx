@@ -31,7 +31,11 @@ const Home = () => {
   const [videoPlayed, setVideoPlayed] = useState(false); // 判断五星卡视频是否播放完成
 
   const [showCardOverlay, setShowCardOverlay] = useState(false); // 控制是否显示卡片结果的覆盖层，为true时展示抽到的卡片
-  const [fadeClass, setFadeClass] = useState("opacity-100"); // 控制卡片淡入淡出
+
+  const [showSummary, setShowSummary] = useState(false); // 是否显示结算十抽的卡片
+  const [summaryCards, setSummaryCards] = useState([]); // 存储结算十抽的卡片
+  const [hasShownSummary, setHasShownSummary] = useState(false); // 是否已经展示过结算页面
+
 
 
   // 输出当前卡片信息
@@ -77,7 +81,7 @@ const Home = () => {
     if (!showAnimationDrawCards && drawResultsRef.current.length > 0) {
       setCurrentCardIndex(0);
       setShowCardOverlay(true);
-      setFadeClass("opacity-100");
+      // setFadeClass("opacity-100");
     }
   }, [showAnimationDrawCards]);
 
@@ -126,18 +130,22 @@ const Home = () => {
 
   // ========================================================
   // 处理卡片的切换
-const [scaleClass, setScaleClass] = useState("scale-in");
-
 const handleNextCard = () => {
-  setScaleClass("scale-out"); // 先缩小（或做一个淡出缩放动画）
+
   if (currentCardIndex < drawResultsRef.current.length - 1) {
     setCurrentCardIndex(prev => prev + 1);
     setVideoPlayed(false);
-    setScaleClass("scale-in"); // 缩放进入
   } else {
-    setShowCardOverlay(false); // 展示完毕
+    setShowCardOverlay(false);
+    setSummaryCards(drawnCards);
+
+    if (drawResultsRef.current.length > 1 && !hasShownSummary) {
+      setShowSummary(true);
+      setHasShownSummary(true); // 防止重复展示
+    }
   }
 };
+
 
   // ========================================================
   // 处理抽卡逻辑，调用 getRandomCard 函数并更新抽卡结果
@@ -192,15 +200,6 @@ const handleNextCard = () => {
     setisAnimatingDrawCards(false);
   };
 
-//   // ========================================================
-//   // 动态获取图片
-// const images = import.meta.glob('./assets/images/*.png', { eager: true });
-//
-// const getImage = (character, cardName) => {
-//   const fileName = `${character}-${cardName}.png`;
-//   return images[`src/assets/images/${fileName}`]?.default; // 获取图片路径
-// };
-
 
 
   // ========================================================
@@ -243,11 +242,19 @@ const handleNextCard = () => {
             {/* 一抽/十抽按钮 */}
             <div className="flex justify-between mt-2 px-[10%]" id="draw-buttons">
               <button
-                  onClick={() => handleDraw(1)}
+                  onClick={() => {
+                    setHasShownSummary(false);
+                    setShowSummary(false);  // ⭐ 重置结算展示状态
+                    handleDraw(1);
+                  }}
                   className="bg-blue-500 px-4 py-2 rounded w-[35%]">许愿一次
               </button>
               <button
-                  onClick={() => handleDraw(10)}
+                  onClick={() => {
+                    setHasShownSummary(false);
+                    setShowSummary(false);  // ⭐ 重置结算展示状态
+                    handleDraw(10);
+                  }}
                   className="bg-purple-600 px-4 py-2 rounded w-[35%]">许愿十次
               </button>
             </div>
@@ -282,6 +289,7 @@ const handleNextCard = () => {
           </div>
         </div>
 
+
         {/* 抽卡动画层 */}
         {showAnimationDrawCards && (
             <DrawAnimationCards
@@ -295,6 +303,15 @@ const handleNextCard = () => {
         {/* 卡片结果层（最顶层） */}
         {showCardOverlay && (
             <div className="fixed inset-0 z-30 bg-black bg-opacity-70">
+
+              {/* 底部图片（绝对定位） */}
+              <img
+                  src="结算背景.jpg"
+                  alt="底部装饰"
+                  className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-full h-full opacity-100"
+              />
+
+
             {isFiveStar && !videoPlayed && (
               // 只有五星卡片并且视频没有播放完时，先播放视频
               <video
@@ -311,48 +328,82 @@ const handleNextCard = () => {
 
             {/* 展示卡片内容 */}
             {(isFiveStar && videoPlayed) || !isFiveStar ? (
-              <>
-                <LazyLoadImage
-                    className="fixed top-0 left-0 min-w-full min-h-full w-auto h-auto object-cover block"
-                    style={{
-                      width: '100vw',
-                      height: '100vh',
-                      objectFit: 'cover',
-                      objectPosition: 'center',
-                    }}
-                    src={drawResultsRef.current[currentCardIndex]?.card?.image}
-                    placeholderSrc={drawResultsRef.current[currentCardIndex]?.card?.image_small}
-                    effect="blur"
-                    alt="抽到的卡片"
-                    crossOrigin="anonymous"
-                />
-                {/* 文字层 - 底部20%高度全屏宽度 */}
-                <div className="h-screen w-screen pl-8">
-                  <div className="relative w-full h-full">
-                    <img
-                        src={drawResultsRef.current[currentCardIndex]?.card?.card_star_icon}
-                        alt="星级"
-                        className="absolute bottom-[20%] left-[10%] h-[4%] object-contain"
+                <>
+                  <div className="fixed w-full h-full inset-0 z-0">  {/* 降低图片的 z-index */}
+                    <LazyLoadImage
+                        className="w-screen h-screen object-cover"
+                        style={{
+                          width: '100vw',
+                          height: '100vh',
+                          objectFit: 'cover',
+                          objectPosition: 'center',
+                        }}
+                        src={drawResultsRef.current[currentCardIndex]?.card?.image}
+                        placeholderSrc={drawResultsRef.current[currentCardIndex]?.card?.image_small}
+                        effect="blur"
+                        alt="抽到的卡片"
+                        crossOrigin="anonymous"
+                        key={currentCardIndex}
                     />
+                  </div>
 
-                    {/* 文字区域 */}
-                    <div className="absolute bottom-[10%] left-[10%] w-full h-[12%] flex text-shadow-white">
+                  <div className="h-screen w-screen pl-8">
+                    <div className="relative w-full h-full">
                       <img
-                        className="absolute object-contain h-[45%] bottom-[35%]"
-                        src={`signs/${drawResultsRef.current[currentCardIndex]?.card?.character}.png`}
-                        alt={drawResultsRef.current[currentCardIndex]?.card?.character}/>
+                          src={drawResultsRef.current[currentCardIndex]?.card?.card_star_icon}
+                          alt="星级"
+                          className="absolute bottom-[20%] left-[10%] h-[4%] object-contain"
+                      />
 
-                      <h1 className="absolute bottom-[0%] left-[25%] object-contain text-shadow-white">
-                        {drawResultsRef.current[currentCardIndex]?.card?.name}
-                      </h1>
+                      {/* 文字区域 */}
+                      <div className="absolute bottom-[10%] left-[10%] w-full h-[12%] flex text-shadow-white">
+                        <img
+                            className="absolute object-contain h-[45%] bottom-[35%]"
+                            src={`signs/${drawResultsRef.current[currentCardIndex]?.card?.character}.png`}
+                            alt="角色"/>
+
+                        <h1 className="absolute bottom-[0%] left-[25%] object-contain text-shadow-white">
+                          {drawResultsRef.current[currentCardIndex]?.card?.name}
+                        </h1>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-              </>
+                </>
             ) : null}
             </div>
         )}
+
+        {/*十抽后结算层*/}
+        {showSummary && drawResultsRef.current.length > 1 && (
+
+            <div
+                className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center overflow-hidden w-full h-full"
+                onClick={() => setShowSummary(false)}
+            >
+              {/* 卡片网格 */}
+              <div className="grid grid-cols-5 gap-4 p-8 w-[80%] h-[70%] relative z-10">
+                {drawResultsRef.current.map((item, index) => (
+                    <LazyLoadImage
+                        key={index}
+                        src={item.card.image}
+                        placeholderSrc={item.card.image_small}
+                        effect="blur"
+                        alt={`Card ${index}`}
+                        className="w-[80px] h-[140px] object-cover rounded-lg shadow-lg hover:scale-105 transition-transform duration-300"
+                    />
+                ))}
+              </div>
+
+              {/* 底部图片（绝对定位） */}
+              <img
+                  src="结算背景.jpg"
+                  alt="底部装饰"
+                  className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-full h-full opacity-100"
+              />
+            </div>
+        )}
+
       </div>
   );
 };
