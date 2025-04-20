@@ -127,16 +127,13 @@ const [scaleClass, setScaleClass] = useState("scale-in");
 
 const handleNextCard = () => {
   setScaleClass("scale-out"); // 先缩小（或做一个淡出缩放动画）
-
-  setTimeout(() => {
-    if (currentCardIndex < drawResultsRef.current.length - 1) {
-      setCurrentCardIndex(prev => prev + 1);
-      setVideoPlayed(false);
-      setScaleClass("scale-in"); // 缩放进入
-    } else {
-      setShowCardOverlay(false); // 展示完毕
-    }
-  }, 300);
+  if (currentCardIndex < drawResultsRef.current.length - 1) {
+    setCurrentCardIndex(prev => prev + 1);
+    setVideoPlayed(false);
+    setScaleClass("scale-in"); // 缩放进入
+  } else {
+    setShowCardOverlay(false); // 展示完毕
+  }
 };
 
   // ========================================================
@@ -312,43 +309,42 @@ const handleNextCard = () => {
             {/* 展示卡片内容 */}
             {(isFiveStar && videoPlayed) || !isFiveStar ? (
               <>
-                <div className={`fixed top-0 left-0 transition-all duration-500 ease-out transform ${scaleClass}`}>
-                  <img
-                      className=" min-w-full min-h-full w-auto h-auto object-cover"
-                      style={{
-                        width: '100vw',
-                        height: '100vh',
-                        objectFit: 'cover',
-                        objectPosition: 'center',
-                      }}
-                      src={drawResultsRef.current[currentCardIndex]?.card?.image}
-                      // src={getImage(drawResultsRef.current[currentCardIndex]?.card?.character, drawResultsRef.current[currentCardIndex]?.card?.name)}
-                      alt="抽到的卡片"
-                      crossOrigin="anonymous"
-                  />
-                  {/* 文字层 - 底部20%高度全屏宽度 */}
-                  <div className="h-screen w-screen pl-8">
-                    <div className="relative w-full h-full">
+                <img
+                    className="fixed top-0 left-0 min-w-full min-h-full w-auto h-auto object-cover"
+                    style={{
+                      width: '100vw',
+                      height: '100vh',
+                      objectFit: 'cover',
+                      objectPosition: 'center',
+                    }}
+                    src={drawResultsRef.current[currentCardIndex]?.card?.image_small}
+                    // src={getImage(drawResultsRef.current[currentCardIndex]?.card?.character, drawResultsRef.current[currentCardIndex]?.card?.name)}
+                    alt="抽到的卡片"
+                    crossOrigin="anonymous"
+                />
+                {/* 文字层 - 底部20%高度全屏宽度 */}
+                <div className="h-screen w-screen pl-8">
+                  <div className="relative w-full h-full">
+                    <img
+                        src={drawResultsRef.current[currentCardIndex]?.card?.card_star_icon}
+                        alt="星级"
+                        className="absolute bottom-[20%] left-[10%] h-[4%] object-contain"
+                    />
+
+                    {/* 文字区域 */}
+                    <div className="absolute bottom-[10%] left-[10%] w-full h-[12%] flex text-shadow-white">
                       <img
-                          src={drawResultsRef.current[currentCardIndex]?.card?.card_star_icon}
-                          alt="星级"
-                          className="absolute bottom-[20%] left-[10%] h-[4%] object-contain"
-                      />
+                        className="absolute object-contain h-[45%] bottom-[35%]"
+                        src={`signs/${drawResultsRef.current[currentCardIndex]?.card?.character}.png`}
+                        alt={drawResultsRef.current[currentCardIndex]?.card?.character}/>
 
-                      {/* 文字区域 */}
-                      <div className="absolute bottom-[10%] left-[10%] w-full h-[12%] flex text-shadow-white">
-                        <img
-                          className="absolute object-contain h-[45%] bottom-[35%]"
-                          src={`signs/${drawResultsRef.current[currentCardIndex]?.card?.character}.png`}
-                          alt={drawResultsRef.current[currentCardIndex]?.card?.character}/>
-
-                        <h1 className="absolute bottom-[0%] left-[25%] object-contain text-shadow-white">
-                          {drawResultsRef.current[currentCardIndex]?.card?.name}
-                        </h1>
-                      </div>
+                      <h1 className="absolute bottom-[0%] left-[25%] object-contain text-shadow-white">
+                        {drawResultsRef.current[currentCardIndex]?.card?.name}
+                      </h1>
                     </div>
                   </div>
                 </div>
+
               </>
             ) : null}
             </div>
