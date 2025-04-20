@@ -48,7 +48,7 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards }) => {
           playsInline
           muted={false}
           controls={false}>
-          <source src="videos/no_gold_card.MOV" type="video/mp4" />
+          <source src="videos/no_gold_card.mov" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         )}

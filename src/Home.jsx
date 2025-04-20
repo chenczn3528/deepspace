@@ -1,6 +1,9 @@
 import React, {useEffect, useState, useRef} from 'react';
 import cardData from './assets/cards.json';
 import DrawAnimationCards from './components/DrawAnimationCards.jsx';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
+
 
 const Home = () => {
 
@@ -309,16 +312,17 @@ const handleNextCard = () => {
             {/* 展示卡片内容 */}
             {(isFiveStar && videoPlayed) || !isFiveStar ? (
               <>
-                <img
-                    className="fixed top-0 left-0 min-w-full min-h-full w-auto h-auto object-cover"
+                <LazyLoadImage
+                    className="fixed top-0 left-0 min-w-full min-h-full w-auto h-auto object-cover block"
                     style={{
                       width: '100vw',
                       height: '100vh',
                       objectFit: 'cover',
                       objectPosition: 'center',
                     }}
-                    src={drawResultsRef.current[currentCardIndex]?.card?.image_small}
-                    // src={getImage(drawResultsRef.current[currentCardIndex]?.card?.character, drawResultsRef.current[currentCardIndex]?.card?.name)}
+                    src={drawResultsRef.current[currentCardIndex]?.card?.image}
+                    placeholderSrc={drawResultsRef.current[currentCardIndex]?.card?.image_small}
+                    effect="blur"
                     alt="抽到的卡片"
                     crossOrigin="anonymous"
                 />
