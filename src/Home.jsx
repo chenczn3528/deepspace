@@ -52,8 +52,6 @@ const Home = () => {
   const shadowColor = characterShadowColors[currentCharacter] || characterShadowColors.default;
 
 
-
-
   // 输出当前卡片信息
   useEffect(() => {
     const card = drawResultsRef.current[currentCardIndex]?.card;
@@ -216,7 +214,8 @@ const handleNextCard = () => {
     setisAnimatingDrawCards(false);
   };
 
-
+  // ========================================================
+  // 设置日卡月卡图标的大小
   const [cardTypeHeight, setCardTypeHeight] = useState(36); // 默认值为 36px
 
   useEffect(() => {
@@ -461,11 +460,11 @@ const handleNextCard = () => {
               </div>
 
               {/* 底部图片（绝对定位） */}
-              <img
-                  src="结算背景.jpg"
-                  alt="底部装饰"
-                  className="absolute w-full h-full opacity-100"
-              />
+              {/*<img*/}
+              {/*    src="结算背景.jpg"*/}
+              {/*    alt="底部装饰"*/}
+              {/*    className="absolute w-full h-full opacity-100"*/}
+              {/*/>*/}
             </div>
         )}
 
