@@ -26,6 +26,9 @@ export default {
         gold: '2px 2px 4px rgba(255, 223, 0, 0.8)', // 金色边框
         // 可以添加更多自定义的阴影
       },
+      fontFamily: {
+        sourcehan: ['SourceHanSerifSC', 'serif'],
+      },
     },
   },
   plugins: [
