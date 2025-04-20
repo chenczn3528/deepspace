@@ -117,6 +117,7 @@ const Home = () => {
   const roll = Math.random();
   let rarity = '3';
 
+  // 判断是否需要保底或者五星卡的概率
   if (pity + 1 >= fiveStarGuaranteed || roll < fiveStarChance) {
     rarity = '5';
   } else if ((fourStarCounter + 1) % 10 === 0) {
@@ -126,19 +127,70 @@ const Home = () => {
   }
 
   const targetStar = parseInt(rarity, 10);
-  const pool = cardData.filter(card => {
-    const matchCharacter = selectedRole === '随机' || card.character === selectedRole;
-    return matchCharacter && parseInt(card.star) === targetStar;
-  });
 
-  if (pool.length === 0) {
-    console.warn("没有找到匹配的卡片！", {rarity, selectedRole});
-    return {card: null, rarity};
+  // 如果角色不是"随机"，那么五星卡必须是该角色的五星卡
+  let pool = [];
+
+  if (selectedRole === '随机') {
+    pool = cardData.filter(card => parseInt(card.star) === targetStar);
+  } else {
+    if (targetStar === 5) {
+      // 对于五星卡，筛选出所选角色的五星卡
+      pool = cardData.filter(card => card.character === selectedRole && parseInt(card.star) === targetStar);
+    } else {
+      // 对于四星和三星卡，不做角色限制
+      pool = cardData.filter(card => parseInt(card.star) === targetStar);
+    }
   }
 
+  // 如果没有匹配到卡片，输出警告
+  if (pool.length === 0) {
+    console.warn("没有找到匹配的卡片！", { rarity, selectedRole });
+    return { card: null, rarity };
+  }
+
+  // 从符合条件的卡片池中随机选择一张卡
   const chosen = pool[Math.floor(Math.random() * pool.length)];
-  return {card: chosen, rarity};
+  return { card: chosen, rarity };
 };
+
+//   const getRandomCard = (pity, fourStarCounter) => {
+//   const fiveStarBase = 0.01;
+//   const fourStarBase = 0.07;
+//   const fiveStarPityStart = 60;
+//   const fiveStarGuaranteed = 70;
+//
+//   let fiveStarChance = fiveStarBase;
+//
+//   if (pity >= fiveStarPityStart) {
+//     fiveStarChance = Math.min(1, fiveStarBase + 0.1 * (pity - fiveStarPityStart + 1));
+//   }
+//
+//   const roll = Math.random();
+//   let rarity = '3';
+//
+//   if (pity + 1 >= fiveStarGuaranteed || roll < fiveStarChance) {
+//     rarity = '5';
+//   } else if ((fourStarCounter + 1) % 10 === 0) {
+//     rarity = '4';
+//   } else if (roll < fiveStarChance + fourStarBase) {
+//     rarity = '4';
+//   }
+//
+//   const targetStar = parseInt(rarity, 10);
+//   const pool = cardData.filter(card => {
+//     const matchCharacter = selectedRole === '随机' || card.character === selectedRole;
+//     return matchCharacter && parseInt(card.star) === targetStar;
+//   });
+//
+//   if (pool.length === 0) {
+//     console.warn("没有找到匹配的卡片！", {rarity, selectedRole});
+//     return {card: null, rarity};
+//   }
+//
+//   const chosen = pool[Math.floor(Math.random() * pool.length)];
+//   return {card: chosen, rarity};
+// };
 
 
 
@@ -459,12 +511,12 @@ const handleNextCard = () => {
                 ))}
               </div>
 
-              {/* 底部图片（绝对定位） */}
-              {/*<img*/}
-              {/*    src="结算背景.jpg"*/}
-              {/*    alt="底部装饰"*/}
-              {/*    className="absolute w-full h-full opacity-100"*/}
-              {/*/>*/}
+               {/*底部图片（绝对定位）*/}
+              <img
+                  src="结算背景.jpg"
+                  alt="底部装饰"
+                  className="absolute w-screen h-screen opacity-100"
+              />
             </div>
         )}
 
