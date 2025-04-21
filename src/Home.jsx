@@ -7,6 +7,11 @@ import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const Home = () => {
 
+  useEffect(() => {
+    const audio = document.getElementById('background-music');
+    audio.play();  // 手动触发播放
+  }, []);
+
   const [selectedRole, setSelectedRole] = useState('随机'); // 当前选择的角色
   const roles = ['随机', ...new Set(cardData.map(card => card.character))]; // 存储可选择的角色列表
 
@@ -53,6 +58,7 @@ const Home = () => {
     // 默认值也可以设一个
     default: '2px 2px 4px rgba(0, 0, 0, 0.8)'
   };
+
 
   const currentCharacter = drawResultsRef.current[currentCardIndex]?.card?.character;
   const shadowColor = characterShadowColors[currentCharacter] || characterShadowColors.default;
@@ -300,6 +306,13 @@ const handleNextCard = () => {
               handleNextCard();
             }
           }}>
+        {/*音频*/}
+        <audio id="background-music" autoPlay loop muted volume="1">
+          <source src="audios/时空引力.mp3" type="audio/mp3"/>
+          Your browser does not support the audio element.
+        </audio>
+
+
         {/* 视频层（最底层） */}
         <video
             autoPlay
@@ -350,7 +363,7 @@ const handleNextCard = () => {
 
             {/*是否排除三星*/}
             <div className="flex items-center gap-2 mb-2 ml-[20px] text-white">
-              <label  style={{
+              <label style={{
                 color: 'white',
                 fontSize: '20px',
                 textShadow: shadowColor,
@@ -442,95 +455,100 @@ const handleNextCard = () => {
               />
 
 
-            {isFiveStar && !videoPlayed && (
-              // 只有五星卡片并且视频没有播放完时，先播放视频
-              <video
-                className="fixed inset-0 w-full h-full object-cover"
-                autoPlay
-                playsInline
-                muted
-                controls={false}
-                onEnded={handleVideoEnded}>
-                <source src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.MOV`} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            )}
+              {isFiveStar && !videoPlayed && (
+                  // 只有五星卡片并且视频没有播放完时，先播放视频
+                  <video
+                      className="fixed inset-0 w-full h-full object-cover"
+                      autoPlay
+                      playsInline
+                      muted
+                      controls={false}
+                      onEnded={handleVideoEnded}>
+                    <source src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.MOV`}
+                            type="video/mp4"/>
+                    Your browser does not support the video tag.
+                  </video>
+              )}
 
-            {/* 展示卡片内容 */}
-            {(isFiveStar && videoPlayed) || !isFiveStar ? (
-                <>
-                  <div className="fixed w-full h-full inset-0 z-0">  {/* 降低图片的 z-index */}
-                    <LazyLoadImage
-                        className="w-screen h-screen object-cover"
-                        style={{
-                          width: '100vw',
-                          height: '100vh',
-                          objectFit: 'cover',
-                          objectPosition: 'center',
-                        }}
-                        src={drawResultsRef.current[currentCardIndex]?.card?.image}
-                        placeholderSrc={drawResultsRef.current[currentCardIndex]?.card?.image_small}
-                        effect="blur"
-                        alt="抽到的卡片"
-                        crossOrigin="anonymous"
-                        key={currentCardIndex}
-                    />
-                  </div>
+              {/* 展示卡片内容 */}
+              {(isFiveStar && videoPlayed) || !isFiveStar ? (
+                  <>
+                    <div className="fixed w-full h-full inset-0 z-0">  {/* 降低图片的 z-index */}
+                      <LazyLoadImage
+                          className="w-screen h-screen object-cover"
+                          style={{
+                            width: '100vw',
+                            height: '100vh',
+                            objectFit: 'cover',
+                            objectPosition: 'center',
+                          }}
+                          src={drawResultsRef.current[currentCardIndex]?.card?.image}
+                          placeholderSrc={drawResultsRef.current[currentCardIndex]?.card?.image_small}
+                          effect="blur"
+                          alt="抽到的卡片"
+                          crossOrigin="anonymous"
+                          key={currentCardIndex}
+                      />
+                    </div>
 
-                  <div className="h-screen w-screen pl-8">
-                    <div className="relative w-full h-full">
-                      <div className="absolute bottom-[22%] left-[10%] w-full h-[6%] flex items-center">
-                        <img
-                            src={drawResultsRef.current[currentCardIndex]?.card?.card_star_icon}
-                            alt="星级"
-                            className="h-[36px] object-contain"
-                        />
-                        <img
-                            src={drawResultsRef.current[currentCardIndex]?.card?.card_color}
-                            alt="星谱"
-                            className="h-[24px] object-contain ml-[12px]"
-                        />
-                        <img
-                            src={drawResultsRef.current[currentCardIndex]?.card?.card_type}
-                            alt="类型（日卡月卡）"
-                            style={{height: `${cardTypeHeight}px`, maxHeight: `${cardTypeHeight}px`, objectFit: 'contain' }}
-                            className="object-contain ml-[8px]"
-                        />
+                    <div className="h-screen w-screen pl-8">
+                      <div className="relative w-full h-full">
+                        <div className="absolute bottom-[22%] left-[10%] w-full h-[6%] flex items-center">
+                          <img
+                              src={drawResultsRef.current[currentCardIndex]?.card?.card_star_icon}
+                              alt="星级"
+                              className="h-[36px] object-contain"
+                          />
+                          <img
+                              src={drawResultsRef.current[currentCardIndex]?.card?.card_color}
+                              alt="星谱"
+                              className="h-[24px] object-contain ml-[12px]"
+                          />
+                          <img
+                              src={drawResultsRef.current[currentCardIndex]?.card?.card_type}
+                              alt="类型（日卡月卡）"
+                              style={{
+                                height: `${cardTypeHeight}px`,
+                                maxHeight: `${cardTypeHeight}px`,
+                                objectFit: 'contain'
+                              }}
+                              className="object-contain ml-[8px]"
+                          />
 
-                      </div>
+                        </div>
 
-                      {/* 文字区域 */}
-                      <div className="absolute bottom-[13%] left-[10%] w-full h-[12%] flex items-center">
-                        <img
-                            className="h-[48px] object-contain"
-                            src={`signs/${drawResultsRef.current[currentCardIndex]?.card?.character}.png`}
-                            alt="角色"/>
-                        <h1 style={{
-                              color: 'white',
-                              fontSize: '30px',
-                              textShadow: shadowColor,
-                              fontFamily: '"SimSun", "宋体", serif',
-                              fontWeight: '1000',
-                            }}>·</h1>
-                        <h1
-                            style={{
-                              color: 'white',
-                              fontSize: '40px',
-                              textShadow: shadowColor,
-                              fontFamily: '"SimSun", "宋体", serif',
-                              fontWeight: '800',
-                              marginLeft: '2px',
-                              alignSelf: 'center'
-                            }}>
-                          {drawResultsRef.current[currentCardIndex]?.card?.name}
-                        </h1>
+                        {/* 文字区域 */}
+                        <div className="absolute bottom-[13%] left-[10%] w-full h-[12%] flex items-center">
+                          <img
+                              className="h-[48px] object-contain"
+                              src={`signs/${drawResultsRef.current[currentCardIndex]?.card?.character}.png`}
+                              alt="角色"/>
+                          <h1 style={{
+                            color: 'white',
+                            fontSize: '30px',
+                            textShadow: shadowColor,
+                            fontFamily: '"SimSun", "宋体", serif',
+                            fontWeight: '1000',
+                          }}>·</h1>
+                          <h1
+                              style={{
+                                color: 'white',
+                                fontSize: '40px',
+                                textShadow: shadowColor,
+                                fontFamily: '"SimSun", "宋体", serif',
+                                fontWeight: '800',
+                                marginLeft: '2px',
+                                alignSelf: 'center'
+                              }}>
+                            {drawResultsRef.current[currentCardIndex]?.card?.name}
+                          </h1>
 
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                </>
-            ) : null}
+                  </>
+              ) : null}
             </div>
         )}
 
@@ -543,19 +561,34 @@ const handleNextCard = () => {
             >
               {/* 卡片网格 */}
               <div className="grid grid-cols-5 gap-4 p-8 w-[80%] h-[70%] relative z-10">
-                {drawResultsRef.current.map((item, index) => (
-                    <LazyLoadImage
-                        key={index}
-                        src={item.card.image}
-                        placeholderSrc={item.card.image_small}
-                        effect="blur"
-                        alt={`Card ${index}`}
-                        className="w-[90%] h-[90%] object-cover rounded-lg shadow-lg hover:scale-105 transition-transform duration-300"
-                    />
-                ))}
+                {drawResultsRef.current.map((item, index) => {
+                  let glowStyle = {};
+
+                  if (item.card.star === '5星') {
+                  glowStyle = {
+                    boxShadow: '0 -10px 20px rgba(255, 215, 0, 0.6), 0 10px 20px rgba(255, 215, 0, 0.6)', // 上下金光
+                  };
+                } else if (item.card.star === '4星') {
+                  glowStyle = {
+                    boxShadow: '0 -10px 20px rgba(168, 85, 247, 0.6), 0 10px 20px rgba(168, 85, 247, 0.6)', // 上下紫光
+                  };
+                }
+
+                return (
+                  <LazyLoadImage
+                    key={index}
+                    src={item.card.image}
+                    placeholderSrc={item.card.image_small}
+                    effect="blur"
+                    alt={`Card ${index}`}
+                    className="w-[90%] h-[90%] object-cover rounded-lg shadow-lg hover:scale-105 transition-transform duration-300"
+                    style={glowStyle}
+                  />
+                );
+              })}
               </div>
 
-               {/*底部图片（绝对定位）*/}
+              {/*底部图片（绝对定位）*/}
               <img
                   src="结算背景.jpg"
                   alt="底部装饰"
@@ -565,52 +598,56 @@ const handleNextCard = () => {
         )}
 
 
-
         {/* 页面 抽卡历史记录内容 */}
         {showHistory && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center w-screen top-[0%] bottom-[30%]"
-          onClick={() => setShowHistory(false)}
-        >
-          <div
-              className="relative flex flex-col w-[80vw] h-[80%] p-4 rounded-lg overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-          >
-            <img
-                src="结算背景.jpg"
-                alt="背景"
-                className="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-90"
-            />
+            <div
+                className="fixed inset-0 z-50 flex items-center justify-center w-screen top-[0%] bottom-[30%]"
+                onClick={() => setShowHistory(false)}
+            >
+              <div
+                  className="relative flex flex-col w-[80vw] h-[80%] p-4 rounded-lg overflow-hidden"
+                  onClick={(e) => e.stopPropagation()}
+              >
+                <img
+                    src="结算背景.jpg"
+                    alt="背景"
+                    className="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-90"
+                />
 
 
-            <div className="relative z-10 flex flex-col h-full" style={{color: 'black'}}>
-              <h2 className="text-xl font-bold mb-4 text-center" style={{color: 'black'}}>
-                历史记录
-              </h2>
+                <div className="relative z-10 flex flex-col h-full" style={{color: 'black'}}>
+                  <h2 className="text-xl font-bold mb-4 text-center" style={{color: 'black'}}>
+                    历史记录
+                  </h2>
 
-              <div className="flex-1 overflow-y-auto pr-2">
-                {history.map((card, idx) => (
-                    <div
-                        key={idx}
-                        className="text-xs mb-2 flex justify-between"
-                        style={{color: 'black'}}
-                    >
-                      <div className="ml-[20px]">{card.star}</div>
-                      <div>{card.character}·{card.name}</div>
-                      <div className="mr-[20px]" style={{color: 'black'}}>
-                        {formatDate(card.timestamp)}
-                      </div>
-                    </div>
-                ))}
+                  <div className="flex-1 overflow-y-auto pr-2">
+                    {history.map((card, idx) => {
+                      const cardHistoryColors = {
+                        "3星": {color: "black"},
+                        "4星": {color: "#a855f7"},
+                        "5星": {color: "#dda516", fontWeight: "bold"}
+                      };
+                      const historyColor = cardHistoryColors[card.star] || "black";
+
+
+                      return (
+                          <div
+                              key={idx}
+                              className="text-xs mb-2 flex justify-between"
+                          >
+                            <div style={ historyColor } className="ml-[20px]">{card.star}</div>
+                            <div style={ historyColor }>{card.character}·{card.name}</div>
+                            <div style={ historyColor } className="mr-[20px]">{formatDate(card.timestamp)}</div>
+                          </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="pb-[10px]"></div>
+                </div>
               </div>
-              <div className="pb-[10px]"></div>
             </div>
-          </div>
-        </div>
-      )}
-
-
-
+        )}
 
 
       </div>
