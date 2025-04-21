@@ -263,23 +263,6 @@ const handleNextCard = () => {
 };
 
 
-  // ========================================================
-  // 阻止视频播放模式
-useEffect(() => {
-  const video = document.querySelector('video');
-  if (video) {
-    // 强制设置X5属性
-    video.setAttribute('x5-video-player-type', 'h5');
-    video.setAttribute('x5-video-orientation', 'portrait');
-    video.setAttribute('x5-video-player-fullscreen', 'false');
-
-    // 阻止默认全屏行为
-    video.addEventListener('x5videoenterfullscreen', () => {
-      video.exitFullscreen();
-    });
-  }
-}, []);
-
 
   // ========================================================
   // 返回数据时显示的页面
@@ -292,17 +275,8 @@ useEffect(() => {
             autoPlay
             loop
             playsInline
-            x-webkit-airplay="allow"
-            x5-video-player-type="h5"  // 针对腾讯X5内核（微信浏览器等）
-            x5-video-orientation="portrait"
-            x5-video-player-fullscreen="false"
-            muted={false}
+            muted
             controls={false}
-            // autoPlay
-            // loop
-            // playsInline
-            // muted={false}
-            // controls={false}
             className="fixed top-0 left-0 w-full h-full object-cover z-0">
           <source src="videos/开屏动画.mp4" type="video/mp4"/>
         </video>
