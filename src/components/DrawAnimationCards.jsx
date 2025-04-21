@@ -26,7 +26,9 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards }) => {
 
 
   return (
-    <div className="fixed inset-0 z-50 w-screen h-screen items-center justify-center animate-fade-in">
+    <div className="fixed inset-0 z-50 w-screen h-screen flex items-center justify-center animate-fade-in"
+        // className="fixed inset-0 z-50 w-screen h-screen items-center justify-center animate-fade-in"
+        >
       {isFiveStar ? (
           <video
               className="absolute top-0 left-0 w-full h-full object-cover"
