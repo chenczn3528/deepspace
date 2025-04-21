@@ -10,7 +10,10 @@ const Home = () => {
   const [selectedRole, setSelectedRole] = useState('随机'); // 当前选择的角色
   const roles = ['随机', ...new Set(cardData.map(card => card.character))]; // 存储可选择的角色列表
 
-  const [includeThreeStar, setIncludeThreeStar] = useState(true);
+  const [includeThreeStar, setIncludeThreeStar] = useState(true); // 设置是否包括三星
+
+  const drawSessionIdRef = useRef(0); // 全局流程控制 ID，抽卡直接出现结果的bug
+  const [isDrawing, setIsDrawing] = useState(false);
 
 
   const [pityCount, setPityCount] = useState(0); // 保底计数器
@@ -181,87 +184,60 @@ const handleNextCard = () => {
   // 处理抽卡逻辑，调用 getRandomCard 函数并更新抽卡结果
 
   const handleDraw = async (count) => {
-  if (isAnimatingDrawCards) return;
 
-  setisAnimatingDrawCards(true);
+    if (isDrawing || isAnimatingDrawCards) return;
+    // 加锁
+    setIsDrawing(true);
 
-  let drawResults = [];
-  let currentPity = pityCount;
-  let currentFourStarCounter = currentFourStarRef.current;
-  let gotFourStarOrAbove = false;
+    // if (isAnimatingDrawCards || videoPlayed) return;
+    // if (isAnimatingDrawCards) return;
 
-  for (let i = 0; i < count; i++) {
-    let result;
+    setisAnimatingDrawCards(true);
+    setVideoPlayed(true); // 控制不能重复点击
 
-    // 保证不包括三星时不会抽到三星
-    do {
-      result = getRandomCard(currentPity, currentFourStarCounter);
-    } while (!includeThreeStar && result.rarity === '3');
+    const currentDrawId = Date.now();
+    drawSessionIdRef.current = currentDrawId;
 
-    // 处理保底逻辑
-    if (result.rarity === '5') {
-      currentPity = 0;
-      currentFourStarCounter++;
-    } else {
-      currentPity++;
-      if (result.rarity === '4') {
-        currentFourStarCounter = 0;
-        gotFourStarOrAbove = true;
-      } else {
+    let drawResults = [];
+    let currentPity = pityCount;
+    let currentFourStarCounter = currentFourStarRef.current;
+    let gotFourStarOrAbove = false;
+
+    for (let i = 0; i < count; i++) {
+      let result;
+
+      // 保证不包括三星时不会抽到三星
+      do {
+        result = getRandomCard(currentPity, currentFourStarCounter);
+      } while (!includeThreeStar && result.rarity === '3');
+
+      // 处理保底逻辑
+      if (result.rarity === '5') {
+        currentPity = 0;
         currentFourStarCounter++;
+      } else {
+        currentPity++;
+        if (result.rarity === '4') {
+          currentFourStarCounter = 0;
+          gotFourStarOrAbove = true;
+        } else {
+          currentFourStarCounter++;
+        }
       }
+
+      drawResults.push(result);
     }
+    setIsDrawing(false);
 
-    drawResults.push(result);
-  }
+    // 更新状态
+    drawResultsRef.current = drawResults;
+    currentPityRef.current = currentPity;
+    currentFourStarRef.current = currentFourStarCounter;
+    setHasFiveStarAnimation(drawResults.some(r => r.rarity === '5'));
+    setShowAnimationDrawCards(true);
+    setDrawnCards(drawResults.map(r => r.card).filter(Boolean));
+  };
 
-  // 更新状态
-  drawResultsRef.current = drawResults;
-  currentPityRef.current = currentPity;
-  currentFourStarRef.current = currentFourStarCounter;
-  setHasFiveStarAnimation(drawResults.some(r => r.rarity === '5'));
-  setShowAnimationDrawCards(true);
-  setDrawnCards(drawResults.map(r => r.card).filter(Boolean));
-};
-
-
-//   const handleDraw = async (count) => {
-//   if (isAnimatingDrawCards) return;
-//
-//   setisAnimatingDrawCards(true);
-//
-//   let drawResults = [];
-//   let currentPity = pityCount;
-//   let currentFourStarCounter = currentFourStarRef.current; // 使用 useRef 存储四星保底计数器
-//   let gotFourStarOrAbove = false;
-//
-//   for (let i = 0; i < count; i++) {
-//     let result = getRandomCard(currentPity, currentFourStarCounter);
-//
-//     if (result.rarity === '5') {
-//       currentPity = 0;
-//       currentFourStarCounter++; // 如果抽到五星，四星保底计数器增加
-//     } else {
-//       currentPity++;
-//       if (result.rarity === '4') {
-//         currentFourStarCounter = 0; // 如果抽到4星，重置四星保底计数器
-//         gotFourStarOrAbove = true;
-//       } else {
-//         currentFourStarCounter++; // 否则继续累加四星保底计数器
-//       }
-//     }
-//
-//     drawResults.push(result);
-//   }
-//
-//   // 更新全局状态
-//   drawResultsRef.current = drawResults;
-//   currentPityRef.current = currentPity;
-//   currentFourStarRef.current = currentFourStarCounter; // 使用 useRef 更新四星保底计数器
-//   setHasFiveStarAnimation(drawResults.some(r => r.rarity === '5'));
-//   setShowAnimationDrawCards(true);
-//   setDrawnCards(drawResults.map(r => r.card).filter(Boolean));
-// };
 
   // ========================================================
   // 动画结束后处理卡片的展示和历史记录的更新
@@ -312,12 +288,18 @@ const handleNextCard = () => {
 
 
 
+
+
   // ========================================================
   // 返回数据时显示的页面
   return (
       <div
           className="relative w-screen h-screen cursor-pointer overflow-hidden"
-          onClick={handleNextCard}>
+          onClick={() => {
+            if (!isDrawing && !isAnimatingDrawCards) {
+              handleNextCard();
+            }
+          }}>
         {/* 视频层（最底层） */}
         <video
             autoPlay
@@ -325,6 +307,16 @@ const handleNextCard = () => {
             playsInline
             muted
             controls={false}
+            onEnded={() => {
+              const validDrawId = drawSessionIdRef.current;
+              if (!validDrawId) return;
+
+              setVideoPlayed(false);     // 播放结束后解锁
+              setisAnimatingDrawCards(false);
+
+              drawSessionIdRef.current = 0; // 重置流程 ID，防止后续重复触发
+
+            }}
             className="fixed top-0 left-0 w-full h-full object-cover z-0">
           <source src="videos/开屏动画.mp4" type="video/mp4"/>
         </video>
@@ -391,13 +383,15 @@ const handleNextCard = () => {
               <div className="flex-1 max-w-[20px]"></div>
               {/* 中间间距 */}
               <button
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation(); // 阻止冒泡
                     setHasShownSummary(false);
                     setShowSummary(false);
                     handleDraw(10);
                   }}
+                  disabled={isDrawing || isAnimatingDrawCards}
                   className="bg-purple-600 px-8 py-2 rounded flex-1 mr-[20px] h-auto">
-                许愿十次
+                {isDrawing ? "抽卡中..." : "许愿十次"}
               </button>
             </div>
 
@@ -611,21 +605,6 @@ const handleNextCard = () => {
               </div>
               <div className="pb-[10px]"></div>
             </div>
-
-            {/*<div className="relative z-10 flex flex-col text-black h-full">*/}
-            {/*  <h2 className="text-xl font-bold mb-4 text-center">历史记录</h2>*/}
-
-            {/*  <div className="flex-1 overflow-y-auto pr-2">*/}
-            {/*    {history.map((card, idx) => (*/}
-            {/*      <div key={idx} className="text-xs text-gray-200 mb-2 flex justify-between">*/}
-            {/*        <div className="ml-[20px]">{card.star}</div>*/}
-            {/*        <div>{card.character}·{card.name}</div>*/}
-            {/*        <div className="text-gray-400 mr-[20px]">{formatDate(card.timestamp)}</div>*/}
-            {/*      </div>*/}
-            {/*    ))}*/}
-            {/*  </div>*/}
-            {/*  <div className="pb-[10px]">  </div>*/}
-            {/*</div>*/}
           </div>
         </div>
       )}
