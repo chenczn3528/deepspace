@@ -8,43 +8,35 @@ import 'react-lazy-load-image-component/src/effects/blur.css';
 const Home = () => {
 
   const audioRef = useRef(null);
-  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+const [isMusicPlaying, setIsMusicPlaying] = useState(false);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (audio) {
-      // 初始设置为静音
-      audio.muted = true;
-      audio.play()
-        .then(() => {
-          // 播放成功后取消静音
-          audio.muted = false;
-          setIsMusicPlaying(true);
-        })
-        .catch(error => {
-          // 如果静音播放也失败，等待用户交互
-          document.addEventListener('click', handleFirstInteraction);
-        });
-    }
+useEffect(() => {
+  const audio = audioRef.current;
+  if (audio) {
+    audio.muted = true;
+    audio.play()
+      .then(() => {
+        audio.muted = false;
+        setIsMusicPlaying(true);
+      })
+      .catch(() => {
+        document.addEventListener('pointerdown', handleFirstInteraction);
+      });
+  }
 
-    return () => {
-      if (audio) {
-        audio.pause();
-        document.removeEventListener('click', handleFirstInteraction);
-      }
-    };
-  }, []);
-
-  // 处理首次用户交互
-  const handleFirstInteraction = () => {
-    if (audioRef.current && !isMusicPlaying) {
-      audioRef.current.play()
-        .then(() => {
-          setIsMusicPlaying(true);
-          document.removeEventListener('click', handleFirstInteraction);
-        });
-    }
+  return () => {
+    document.removeEventListener('pointerdown', handleFirstInteraction);
   };
+}, []);
+
+const handleFirstInteraction = () => {
+  if (audioRef.current && !isMusicPlaying) {
+    audioRef.current.play().then(() => {
+      setIsMusicPlaying(true);
+      document.removeEventListener('pointerdown', handleFirstInteraction);
+    });
+  }
+};
 
   const [selectedRole, setSelectedRole] = useState('随机'); // 当前选择的角色
   const roles = ['随机', ...new Set(cardData.map(card => card.character))]; // 存储可选择的角色列表
@@ -340,7 +332,7 @@ const handleNextCard = () => {
         <audio
             ref={audioRef}
             loop
-            src="audios/时空引力.mp3" type="audio/mp3"
+            src="audios/时空引力.mp3"
         />
 
         {/* 视频层（最底层） */}
