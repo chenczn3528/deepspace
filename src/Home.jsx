@@ -11,19 +11,7 @@ const Home = () => {
 const [isMusicPlaying, setIsMusicPlaying] = useState(false);
 
 useEffect(() => {
-  const audio = audioRef.current;
-  if (audio) {
-    audio.muted = true;
-    audio.play()
-      .then(() => {
-        audio.muted = false;
-        setIsMusicPlaying(true);
-      })
-      .catch(() => {
-        document.addEventListener('pointerdown', handleFirstInteraction);
-      });
-  }
-
+  document.addEventListener('pointerdown', handleFirstInteraction);
   return () => {
     document.removeEventListener('pointerdown', handleFirstInteraction);
   };
@@ -33,10 +21,12 @@ const handleFirstInteraction = () => {
   if (audioRef.current && !isMusicPlaying) {
     audioRef.current.play().then(() => {
       setIsMusicPlaying(true);
-      document.removeEventListener('pointerdown', handleFirstInteraction);
+    }).catch((err) => {
+      console.warn('播放失败：', err);
     });
   }
 };
+
 
   const [selectedRole, setSelectedRole] = useState('随机'); // 当前选择的角色
   const roles = ['随机', ...new Set(cardData.map(card => card.character))]; // 存储可选择的角色列表
