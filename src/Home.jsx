@@ -589,15 +589,23 @@ const handleNextCard = () => {
             />
 
 
-            <div className="relative z-10 flex flex-col !text-black h-full">
-              <h2 className="text-xl font-bold mb-4 text-center !text-black">历史记录</h2>
+            <div className="relative z-10 flex flex-col h-full" style={{color: 'black'}}>
+              <h2 className="text-xl font-bold mb-4 text-center" style={{color: 'black'}}>
+                历史记录
+              </h2>
 
               <div className="flex-1 overflow-y-auto pr-2">
                 {history.map((card, idx) => (
-                    <div key={idx} className="text-xs !text-black mb-2 flex justify-between">
+                    <div
+                        key={idx}
+                        className="text-xs mb-2 flex justify-between"
+                        style={{color: 'black'}}
+                    >
                       <div className="ml-[20px]">{card.star}</div>
                       <div>{card.character}·{card.name}</div>
-                      <div className="!text-black mr-[20px]">{formatDate(card.timestamp)}</div>
+                      <div className="mr-[20px]" style={{color: 'black'}}>
+                        {formatDate(card.timestamp)}
+                      </div>
                     </div>
                 ))}
               </div>
