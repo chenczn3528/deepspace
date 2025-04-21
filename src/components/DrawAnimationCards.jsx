@@ -34,7 +34,7 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards }) => {
           onEnded={onAnimationEnd} // 视频播放结束时触发
           autoPlay
           playsInline
-          muted={false}
+          muted
           controls={false}>
           <source src="videos/gold_card.MP4" type="video/mp4" />
           Your browser does not support the video tag.
@@ -46,7 +46,7 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards }) => {
           onEnded={onAnimationEnd} // 视频播放结束时触发
           autoPlay
           playsInline
-          muted={false}
+          muted
           controls={false}>
           <source src="videos/no_gold_card.mov" type="video/mp4" />
           Your browser does not support the video tag.

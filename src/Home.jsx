@@ -385,7 +385,7 @@ const handleNextCard = () => {
                 className="fixed inset-0 w-full h-full object-cover"
                 autoPlay
                 playsInline
-                muted={false}
+                muted
                 controls={false}
                 onEnded={handleVideoEnded}>
                 <source src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.MOV`} type="video/mp4" />
