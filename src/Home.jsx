@@ -263,6 +263,23 @@ const handleNextCard = () => {
 };
 
 
+  // ========================================================
+  // 阻止视频播放模式
+useEffect(() => {
+  const video = document.querySelector('video');
+  if (video) {
+    // 强制设置X5属性
+    video.setAttribute('x5-video-player-type', 'h5');
+    video.setAttribute('x5-video-orientation', 'portrait');
+    video.setAttribute('x5-video-player-fullscreen', 'false');
+
+    // 阻止默认全屏行为
+    video.addEventListener('x5videoenterfullscreen', () => {
+      video.exitFullscreen();
+    });
+  }
+}, []);
+
 
   // ========================================================
   // 返回数据时显示的页面
