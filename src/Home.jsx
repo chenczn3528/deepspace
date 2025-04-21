@@ -27,6 +27,28 @@ const handleFirstInteraction = () => {
   }
 };
 
+useEffect(() => {
+  const audio = audioRef.current;
+  if (!audio) return;
+
+  const forcePlay = () => {
+  setTimeout(() => {
+    if (audio.paused) {
+      audio.play().catch((err) => {
+        console.warn("尝试恢复音频失败", err);
+      });
+    }
+  }, 100); // 等 100ms 后再恢复，规避系统切换时冲突
+};
+
+  // 当 audio 被浏览器暂停时，立刻尝试重新播放
+  audio.addEventListener('pause', forcePlay);
+
+  return () => {
+    audio.removeEventListener('pause', forcePlay);
+  };
+}, []);
+
 
   const [selectedRole, setSelectedRole] = useState('随机'); // 当前选择的角色
   const roles = ['随机', ...new Set(cardData.map(card => card.character))]; // 存储可选择的角色列表
