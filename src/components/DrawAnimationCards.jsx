@@ -27,14 +27,12 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards }) => {
 
   return (
     <div
-        className="relative w-screen h-screen overflow-hidden"
-        // className="fixed inset-0 z-50 w-screen h-screen flex items-center justify-center animate-fade-in"
+        className="fixed inset-0 z-50 w-screen h-screen flex items-center justify-center animate-fade-in"
         // className="fixed inset-0 z-50 w-screen h-screen items-center justify-center animate-fade-in"
         >
       {isFiveStar ? (
           <video
-              className="absolute top-1/2 left-1/2 min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 object-cover"
-              // className="absolute top-0 left-0 w-full h-full object-cover"
+              className="absolute top-0 left-0 w-full h-full object-cover"
           // className="rounded-xl shadow-lg h-full w-full fixed top-0 left-0 object-cover"
           onLoadedData={handleVideoLoaded} // 获取视频时长
           onEnded={onAnimationEnd} // 视频播放结束时触发
@@ -47,8 +45,7 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards }) => {
         </video>
       ) : (
         <video
-            className="absolute top-1/2 left-1/2 min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 object-cover"
-            // className="absolute top-0 left-0 w-full h-full object-cover"
+            className="absolute top-0 left-0 w-full h-full object-cover"
           // className="rounded-xl shadow-lg h-full w-full fixed top-0 left-0 object-cover"
           onLoadedData={handleVideoLoaded} // 获取视频时长
           onEnded={onAnimationEnd} // 视频播放结束时触发
