@@ -275,7 +275,10 @@ const handleNextCard = () => {
             autoPlay
             loop
             playsInline
-            webkit-playsinline="true"
+            x-webkit-airplay="allow"
+            x5-video-player-type="h5"  // 针对腾讯X5内核（微信浏览器等）
+            x5-video-orientation="portrait"
+            x5-video-player-fullscreen="false"
             muted={false}
             controls={false}
             // autoPlay
