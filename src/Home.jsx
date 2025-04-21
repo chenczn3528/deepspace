@@ -7,10 +7,44 @@ import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const Home = () => {
 
+  const audioRef = useRef(null);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+
   useEffect(() => {
-    const audio = document.getElementById('background-music');
-    audio.play();  // 手动触发播放
+    const audio = audioRef.current;
+    if (audio) {
+      // 初始设置为静音
+      audio.muted = true;
+      audio.play()
+        .then(() => {
+          // 播放成功后取消静音
+          audio.muted = false;
+          setIsMusicPlaying(true);
+        })
+        .catch(error => {
+          // 如果静音播放也失败，等待用户交互
+          document.addEventListener('click', handleFirstInteraction);
+        });
+    }
+
+    return () => {
+      if (audio) {
+        audio.pause();
+        document.removeEventListener('click', handleFirstInteraction);
+      }
+    };
   }, []);
+
+  // 处理首次用户交互
+  const handleFirstInteraction = () => {
+    if (audioRef.current && !isMusicPlaying) {
+      audioRef.current.play()
+        .then(() => {
+          setIsMusicPlaying(true);
+          document.removeEventListener('click', handleFirstInteraction);
+        });
+    }
+  };
 
   const [selectedRole, setSelectedRole] = useState('随机'); // 当前选择的角色
   const roles = ['随机', ...new Set(cardData.map(card => card.character))]; // 存储可选择的角色列表
@@ -195,9 +229,6 @@ const handleNextCard = () => {
     // 加锁
     setIsDrawing(true);
 
-    // if (isAnimatingDrawCards || videoPlayed) return;
-    // if (isAnimatingDrawCards) return;
-
     setisAnimatingDrawCards(true);
     setVideoPlayed(true); // 控制不能重复点击
 
@@ -293,25 +324,24 @@ const handleNextCard = () => {
 };
 
 
-
-
-
   // ========================================================
   // 返回数据时显示的页面
   return (
       <div
           className="relative w-screen h-screen cursor-pointer overflow-hidden"
           onClick={() => {
+            handleFirstInteraction();
             if (!isDrawing && !isAnimatingDrawCards) {
               handleNextCard();
             }
           }}>
-        {/*音频*/}
-        <audio id="background-music" autoPlay loop muted volume="1">
-          <source src="audios/时空引力.mp3" type="audio/mp3"/>
-          Your browser does not support the audio element.
-        </audio>
 
+        {/*/!*音频*!/*/}
+        <audio
+            ref={audioRef}
+            loop
+            src="audios/时空引力.mp3" type="audio/mp3"
+        />
 
         {/* 视频层（最底层） */}
         <video
@@ -565,27 +595,27 @@ const handleNextCard = () => {
                   let glowStyle = {};
 
                   if (item.card.star === '5星') {
-                  glowStyle = {
-                    boxShadow: '0 -10px 20px rgba(255, 215, 0, 0.6), 0 10px 20px rgba(255, 215, 0, 0.6)', // 上下金光
-                  };
-                } else if (item.card.star === '4星') {
-                  glowStyle = {
-                    boxShadow: '0 -10px 20px rgba(168, 85, 247, 0.6), 0 10px 20px rgba(168, 85, 247, 0.6)', // 上下紫光
-                  };
-                }
+                    glowStyle = {
+                      boxShadow: '0 -10px 20px rgba(255, 215, 0, 0.6), 0 10px 20px rgba(255, 215, 0, 0.6)', // 上下金光
+                    };
+                  } else if (item.card.star === '4星') {
+                    glowStyle = {
+                      boxShadow: '0 -10px 20px rgba(168, 85, 247, 0.6), 0 10px 20px rgba(168, 85, 247, 0.6)', // 上下紫光
+                    };
+                  }
 
-                return (
-                  <LazyLoadImage
-                    key={index}
-                    src={item.card.image}
-                    placeholderSrc={item.card.image_small}
-                    effect="blur"
-                    alt={`Card ${index}`}
-                    className="w-[90%] h-[90%] object-cover rounded-lg shadow-lg hover:scale-105 transition-transform duration-300"
-                    style={glowStyle}
-                  />
-                );
-              })}
+                  return (
+                      <LazyLoadImage
+                          key={index}
+                          src={item.card.image}
+                          placeholderSrc={item.card.image_small}
+                          effect="blur"
+                          alt={`Card ${index}`}
+                          className="w-[90%] h-[90%] object-cover rounded-lg shadow-lg hover:scale-105 transition-transform duration-300"
+                          style={glowStyle}
+                      />
+                  );
+                })}
               </div>
 
               {/*底部图片（绝对定位）*/}
@@ -635,9 +665,9 @@ const handleNextCard = () => {
                               key={idx}
                               className="text-xs mb-2 flex justify-between"
                           >
-                            <div style={ historyColor } className="ml-[20px]">{card.star}</div>
-                            <div style={ historyColor }>{card.character}·{card.name}</div>
-                            <div style={ historyColor } className="mr-[20px]">{formatDate(card.timestamp)}</div>
+                            <div style={historyColor} className="ml-[20px]">{card.star}</div>
+                            <div style={historyColor}>{card.character}·{card.name}</div>
+                            <div style={historyColor} className="mr-[20px]">{formatDate(card.timestamp)}</div>
                           </div>
                       );
                     })}
@@ -648,8 +678,6 @@ const handleNextCard = () => {
               </div>
             </div>
         )}
-
-
       </div>
   );
 };
