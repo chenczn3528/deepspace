@@ -10,6 +10,9 @@ const Home = () => {
   const [selectedRole, setSelectedRole] = useState('随机'); // 当前选择的角色
   const roles = ['随机', ...new Set(cardData.map(card => card.character))]; // 存储可选择的角色列表
 
+  const [includeThreeStar, setIncludeThreeStar] = useState(true);
+
+
   const [pityCount, setPityCount] = useState(0); // 保底计数器
   const currentPityRef = useRef(0); // 引用存储当前保底计数器的值，在每次抽卡时更新，用于确定保底是否触发
   const currentFourStarRef = useRef(0); // 四星保底计数器的值
@@ -40,7 +43,7 @@ const Home = () => {
 
   const characterShadowColors = {
     "沈星回": '4px 4px 8px rgba(179, 153, 129, 1)', // 蓝色阴影
-    "黎深": '4px 4px 8px rgba(194, 194, 204, 1)', // 粉红阴影
+    "黎深": '4px 4px 8px rgba(173, 173, 186, 1)', // 粉红阴影
     "祁煜": '4px 4px 8px rgba(119, 122, 149, 1)', // 紫色阴影
     "秦彻": '4px 4px 8px rgba(189, 114, 112, 1)', // 金色阴影
     "夏以昼": '4px 4px 8px rgba(227, 203, 190, 1)', // 金色阴影
@@ -184,36 +187,81 @@ const handleNextCard = () => {
 
   let drawResults = [];
   let currentPity = pityCount;
-  let currentFourStarCounter = currentFourStarRef.current; // 使用 useRef 存储四星保底计数器
+  let currentFourStarCounter = currentFourStarRef.current;
   let gotFourStarOrAbove = false;
 
   for (let i = 0; i < count; i++) {
-    let result = getRandomCard(currentPity, currentFourStarCounter);
+    let result;
 
+    // 保证不包括三星时不会抽到三星
+    do {
+      result = getRandomCard(currentPity, currentFourStarCounter);
+    } while (!includeThreeStar && result.rarity === '3');
+
+    // 处理保底逻辑
     if (result.rarity === '5') {
       currentPity = 0;
-      currentFourStarCounter++; // 如果抽到五星，四星保底计数器增加
+      currentFourStarCounter++;
     } else {
       currentPity++;
       if (result.rarity === '4') {
-        currentFourStarCounter = 0; // 如果抽到4星，重置四星保底计数器
+        currentFourStarCounter = 0;
         gotFourStarOrAbove = true;
       } else {
-        currentFourStarCounter++; // 否则继续累加四星保底计数器
+        currentFourStarCounter++;
       }
     }
 
     drawResults.push(result);
   }
 
-  // 更新全局状态
+  // 更新状态
   drawResultsRef.current = drawResults;
   currentPityRef.current = currentPity;
-  currentFourStarRef.current = currentFourStarCounter; // 使用 useRef 更新四星保底计数器
+  currentFourStarRef.current = currentFourStarCounter;
   setHasFiveStarAnimation(drawResults.some(r => r.rarity === '5'));
   setShowAnimationDrawCards(true);
   setDrawnCards(drawResults.map(r => r.card).filter(Boolean));
 };
+
+
+//   const handleDraw = async (count) => {
+//   if (isAnimatingDrawCards) return;
+//
+//   setisAnimatingDrawCards(true);
+//
+//   let drawResults = [];
+//   let currentPity = pityCount;
+//   let currentFourStarCounter = currentFourStarRef.current; // 使用 useRef 存储四星保底计数器
+//   let gotFourStarOrAbove = false;
+//
+//   for (let i = 0; i < count; i++) {
+//     let result = getRandomCard(currentPity, currentFourStarCounter);
+//
+//     if (result.rarity === '5') {
+//       currentPity = 0;
+//       currentFourStarCounter++; // 如果抽到五星，四星保底计数器增加
+//     } else {
+//       currentPity++;
+//       if (result.rarity === '4') {
+//         currentFourStarCounter = 0; // 如果抽到4星，重置四星保底计数器
+//         gotFourStarOrAbove = true;
+//       } else {
+//         currentFourStarCounter++; // 否则继续累加四星保底计数器
+//       }
+//     }
+//
+//     drawResults.push(result);
+//   }
+//
+//   // 更新全局状态
+//   drawResultsRef.current = drawResults;
+//   currentPityRef.current = currentPity;
+//   currentFourStarRef.current = currentFourStarCounter; // 使用 useRef 更新四星保底计数器
+//   setHasFiveStarAnimation(drawResults.some(r => r.rarity === '5'));
+//   setShowAnimationDrawCards(true);
+//   setDrawnCards(drawResults.map(r => r.card).filter(Boolean));
+// };
 
   // ========================================================
   // 动画结束后处理卡片的展示和历史记录的更新
@@ -308,6 +356,27 @@ const handleNextCard = () => {
               </select>
             </div>
 
+            {/*是否排除三星*/}
+            <div className="flex items-center gap-2 mb-2 ml-[20px] text-white">
+              <label  style={{
+                color: 'white',
+                fontSize: '20px',
+                textShadow: shadowColor,
+                fontFamily: '"SimSun", "宋体", serif',
+                fontWeight: '800',
+                marginLeft: '2px',
+                alignSelf: 'center'
+              }} htmlFor="includeThree" className="text-sm">包括三星卡片</label>
+              <input
+                  id="includeThree"
+                  type="checkbox"
+                  checked={includeThreeStar}
+                  onChange={(e) => setIncludeThreeStar(e.target.checked)}
+                  className="w-[20px] h-[20px]"
+              />
+            </div>
+
+
             {/* 一抽/十抽按钮 */}
             <div className="flex w-screen h-[40px] justify-between px-4"> {/* 新增这层容器 */}
               <button
@@ -345,7 +414,7 @@ const handleNextCard = () => {
               }}>{70 - pityCount} 抽内必得5星
               </div>
 
-              {/* 抽卡记录按钮 */}
+              {/* 抽卡历史记录按钮 */}
               <button
                   className="bg-gray-700 text-white ml-[20px] rounded"
                   onClick={() => setShowHistory(!showHistory)}
@@ -503,36 +572,52 @@ const handleNextCard = () => {
 
 
 
-        {/* 抽卡记录内容 */}
+        {/* 页面 抽卡历史记录内容 */}
         {showHistory && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center w-screen top-[0%] bottom-[30%]"
           onClick={() => setShowHistory(false)}
         >
           <div
-            className="relative flex flex-col w-[80vw] h-[80%] p-4 rounded-lg overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
+              className="relative flex flex-col w-[80vw] h-[80%] p-4 rounded-lg overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
           >
             <img
-              src="结算背景.jpg"
-              alt="背景"
-              className="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-90"
+                src="结算背景.jpg"
+                alt="背景"
+                className="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-90"
             />
 
-            <div className="relative z-10 flex flex-col text-white h-full">
-              <h2 className="text-xl font-bold mb-4 text-center">历史记录</h2>
+
+            <div className="relative z-10 flex flex-col !text-black h-full">
+              <h2 className="text-xl font-bold mb-4 text-center !text-black">历史记录</h2>
 
               <div className="flex-1 overflow-y-auto pr-2">
                 {history.map((card, idx) => (
-                  <div key={idx} className="text-xs text-gray-200 mb-2 flex justify-between">
-                    <div className="ml-[20px]">{card.star}</div>
-                    <div>{card.character}·{card.name}</div>
-                    <div className="text-gray-400 mr-[20px]">{formatDate(card.timestamp)}</div>
-                  </div>
+                    <div key={idx} className="text-xs !text-black mb-2 flex justify-between">
+                      <div className="ml-[20px]">{card.star}</div>
+                      <div>{card.character}·{card.name}</div>
+                      <div className="!text-black mr-[20px]">{formatDate(card.timestamp)}</div>
+                    </div>
                 ))}
               </div>
-              <div className="pb-[10px]">  </div>
+              <div className="pb-[10px]"></div>
             </div>
+
+            {/*<div className="relative z-10 flex flex-col text-black h-full">*/}
+            {/*  <h2 className="text-xl font-bold mb-4 text-center">历史记录</h2>*/}
+
+            {/*  <div className="flex-1 overflow-y-auto pr-2">*/}
+            {/*    {history.map((card, idx) => (*/}
+            {/*      <div key={idx} className="text-xs text-gray-200 mb-2 flex justify-between">*/}
+            {/*        <div className="ml-[20px]">{card.star}</div>*/}
+            {/*        <div>{card.character}·{card.name}</div>*/}
+            {/*        <div className="text-gray-400 mr-[20px]">{formatDate(card.timestamp)}</div>*/}
+            {/*      </div>*/}
+            {/*    ))}*/}
+            {/*  </div>*/}
+            {/*  <div className="pb-[10px]">  </div>*/}
+            {/*</div>*/}
           </div>
         </div>
       )}
