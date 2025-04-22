@@ -51,19 +51,22 @@ const CardOverlay = ({
   // 设置音效
   const cardSoundRef = useRef(null);
 
-  // 每次切换卡片时播放音效
   useEffect(() => {
     if (!showCardOverlay) return;
 
     const card = drawResultsRef.current[currentCardIndex]?.card;
     if (!card) return;
 
+    // 只有当背景音乐已经播放并且卡片音效存在时，才播放卡片音效
     cardSoundRef.current = new Audio('audios/切换音效.mp3');
     cardSoundRef.current.volume = 1;
     cardSoundRef.current.currentTime = 0;
+
     cardSoundRef.current
       .play()
       .catch((err) => console.warn('卡片展示音效播放失败:', err));
+
+    // 这里的音效播放不会影响背景音乐
   }, [currentCardIndex, showCardOverlay]);
 
   return (
