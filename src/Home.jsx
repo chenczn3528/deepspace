@@ -398,7 +398,7 @@ const getRandomCard = (pity, fourStarCounter) => {
             }
           }}>
 
-        <VideoPreloader />
+        {/*<VideoPreloader />*/}
 
         {/*/!*音频*!/*/}
         <audio
