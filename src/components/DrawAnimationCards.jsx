@@ -87,7 +87,7 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards, onSkip, isSingl
             muted={false}
         >
           <source
-              src="audios/出金音频.mp3"
+              src={isFiveStar ? 'audios/出金.mp3' : 'audios/不出金.mp3'}
               type="audio/mp3"
           />
           Your browser does not support the audio element.
@@ -98,5 +98,3 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards, onSkip, isSingl
 };
 
 export default DrawAnimationCards;
-
-

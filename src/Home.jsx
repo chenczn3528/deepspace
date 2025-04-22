@@ -10,46 +10,6 @@ import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const Home = () => {
 
-
-  // 背景音乐设置
-  const audioRef = useRef(null);
-const [isMusicPlaying, setIsMusicPlaying] = useState(false);
-
-useEffect(() => {
-  document.addEventListener('pointerdown', handleFirstInteraction);
-  return () => {
-    document.removeEventListener('pointerdown', handleFirstInteraction);
-  };
-}, []);
-
-const handleFirstInteraction = () => {
-  if (audioRef.current && !isMusicPlaying) {
-    audioRef.current.play().then(() => {
-      setIsMusicPlaying(true);
-    }).catch((err) => {
-      console.warn('播放失败：', err);
-    });
-  }
-};
-
-useEffect(() => {
-  const audio = audioRef.current;
-  if (!audio) return;
-
-  const forcePlay = () => {
-  setTimeout(() => {
-    if (audio.paused) {
-      audio.play().catch((err) => {
-        console.warn("尝试恢复音频失败", err);
-      });
-    }
-  }, 100); // 等 100ms 后再恢复，规避系统切换时冲突
-};
-  // 当 audio 被浏览器暂停时，立刻尝试重新播放
-  audio.addEventListener('pause', forcePlay);
-  return () => {audio.removeEventListener('pause', forcePlay);};
-}, []);
-
   const [currentCardIndex, setCurrentCardIndex] = useState(0); // 当前的卡片索引
   const [cards, setCards] = useState([]); // 存储抽卡后的卡片信息
   const [history, setHistory] = useState([]); // 存储抽卡历史记录
@@ -95,21 +55,50 @@ useEffect(() => {
 
 
 
+  // ========================================================
+  // 背景音乐设置
+  const audioRef = useRef(null);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
 
-// 设置对应卡片的字体阴影颜色
-  const characterShadowColors = {
-    "沈星回": '4px 4px 8px rgba(133,82,161,1)',
-    "黎深": '4px 4px 8px rgba(16,43,106,1)',
-    "祁煜": '4px 4px 8px rgba(239,91,156,1)',
-    "秦彻": '4px 4px 8px rgba(170,33,22,1)',
-    "夏以昼": '4px 4px 8px rgba(244,121,32,1)',
-    // 默认值也可以设一个
-    default: '2px 2px 4px rgba(0, 0, 0, 0.8)'
+  useEffect(() => {
+    document.addEventListener('pointerdown', handleFirstInteraction);
+    return () => {
+      document.removeEventListener('pointerdown', handleFirstInteraction);
+    };
+  }, []);
+
+  const handleFirstInteraction = () => {
+    if (audioRef.current && !isMusicPlaying) {
+      audioRef.current.play().then(() => {
+        setIsMusicPlaying(true);
+      }).catch((err) => {
+        console.warn('播放失败：', err);
+      });
+    }
   };
-  const currentCharacter = drawResultsRef.current[currentCardIndex]?.card?.character;
-  const shadowColor = characterShadowColors[currentCharacter] || characterShadowColors.default;
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const forcePlay = () => {
+    setTimeout(() => {
+      if (audio.paused) {
+        audio.play().catch((err) => {
+          console.warn("尝试恢复音频失败", err);
+        });
+      }
+    }, 100); // 等 100ms 后再恢复，规避系统切换时冲突
+  };
+    // 当 audio 被浏览器暂停时，立刻尝试重新播放
+    audio.addEventListener('pause', forcePlay);
+    return () => {audio.removeEventListener('pause', forcePlay);};
+  }, []);
 
 
+
+
+  // ========================================================
   // 输出当前卡片信息
   useEffect(() => {
     const card = drawResultsRef.current[currentCardIndex]?.card;
@@ -122,55 +111,58 @@ useEffect(() => {
     }
   }, [currentCardIndex]);
 
+
+
   // ========================================================
   // 判断当前卡片是不是五星
   useEffect(() => {
-  const card = drawResultsRef.current[currentCardIndex]?.card;
-  if (card?.star === '5星') {
-    setIsFiveStar(true); // 是五星卡片
-  } else {
-    setIsFiveStar(false); // 不是五星卡片，直接展示卡片
-  }
-}, [currentCardIndex]);
+    const card = drawResultsRef.current[currentCardIndex]?.card;
+    if (card?.star === '5星') {
+      setIsFiveStar(true); // 是五星卡片
+    } else {
+      setIsFiveStar(false); // 不是五星卡片，直接展示卡片
+    }
+  }, [currentCardIndex]);
 
 
 
+
+  // ========================================================
+  // 数据存储
+  useEffect(() => {
+    // 保存到 localStorage
+    localStorage.setItem('totalDrawCount', totalDrawCount);
+    localStorage.setItem('totalFiveStarCount', totalFiveStarCount);
+    localStorage.setItem('pityCount', pityCount);
+    localStorage.setItem('useSoftGuarantee', useSoftGuarantee ? 'true' : 'false'); // boolean 转字符串
+    localStorage.setItem('history', JSON.stringify(history)); // 保存历史记录
+  }, [totalDrawCount, totalFiveStarCount, pityCount, useSoftGuarantee, history]);
 
   useEffect(() => {
-  // 保存到 localStorage
-  localStorage.setItem('totalDrawCount', totalDrawCount);
-  localStorage.setItem('totalFiveStarCount', totalFiveStarCount);
-  localStorage.setItem('pityCount', pityCount);
-  localStorage.setItem('useSoftGuarantee', useSoftGuarantee ? 'true' : 'false'); // boolean 转字符串
-  localStorage.setItem('history', JSON.stringify(history)); // 保存历史记录
-}, [totalDrawCount, totalFiveStarCount, pityCount, useSoftGuarantee, history]);
+    // 从 localStorage 恢复状态
+    const savedDrawCount = localStorage.getItem('totalDrawCount');
+    const savedFiveStarCount = localStorage.getItem('totalFiveStarCount');
+    const savedPityCount = localStorage.getItem('pityCount');
+    const savedUseSoftGuarantee = localStorage.getItem('useSoftGuarantee');
+    const savedHistory = localStorage.getItem('history');
 
-useEffect(() => {
-  // 从 localStorage 恢复状态
-  const savedDrawCount = localStorage.getItem('totalDrawCount');
-  const savedFiveStarCount = localStorage.getItem('totalFiveStarCount');
-  const savedPityCount = localStorage.getItem('pityCount');
-  const savedUseSoftGuarantee = localStorage.getItem('useSoftGuarantee');
-  const savedHistory = localStorage.getItem('history');
-
-  // 恢复数据
-  if (savedDrawCount) {
-    setTotalDrawCount(parseInt(savedDrawCount, 10)); // 恢复抽卡总数
-  }
-  if (savedFiveStarCount) {
-    setTotalFiveStarCount(parseInt(savedFiveStarCount, 10)); // 恢复五星卡片数
-  }
-  if (savedPityCount) {
-    setPityCount(parseInt(savedPityCount, 10)); // 恢复保底计数
-  }
-  if (savedUseSoftGuarantee) {
-    setUseSoftGuarantee(savedUseSoftGuarantee === 'true'); // 恢复是否启用软保底
-  }
-  if (savedHistory) {
-    setHistory(JSON.parse(savedHistory)); // 恢复历史记录
-  }
-}, []); // 只在初次加载时执行一次
-
+    // 恢复数据
+    if (savedDrawCount) {
+      setTotalDrawCount(parseInt(savedDrawCount, 10)); // 恢复抽卡总数
+    }
+    if (savedFiveStarCount) {
+      setTotalFiveStarCount(parseInt(savedFiveStarCount, 10)); // 恢复五星卡片数
+    }
+    if (savedPityCount) {
+      setPityCount(parseInt(savedPityCount, 10)); // 恢复保底计数
+    }
+    if (savedUseSoftGuarantee) {
+      setUseSoftGuarantee(savedUseSoftGuarantee === 'true'); // 恢复是否启用软保底
+    }
+    if (savedHistory) {
+      setHistory(JSON.parse(savedHistory)); // 恢复历史记录
+    }
+  }, []); // 只在初次加载时执行一次
 
 // useEffect(() => {
 //   localStorage.setItem('totalDrawCount', totalDrawCount);
@@ -266,37 +258,31 @@ const getRandomCard = (pity, fourStarCounter) => {
     }
   }
 
-  setTotalDrawCount((prevCount) => prevCount + 1); // 统计总抽卡数
-  if (rarity === '5') {
-    setTotalFiveStarCount((prevCount) => prevCount + 1); // 增加五星卡片数
-  }
-
   return { card: chosen, rarity };
 };
 
 
   // ========================================================
   // 处理卡片的切换
-const handleNextCard = () => {
+  const handleNextCard = () => {
 
-  if (currentCardIndex < drawResultsRef.current.length - 1) {
-    setCurrentCardIndex(prev => prev + 1);
-    setVideoPlayed(false);
-  } else {
-    setShowCardOverlay(false);
-    setSummaryCards(drawnCards);
+    if (currentCardIndex < drawResultsRef.current.length - 1) {
+      setCurrentCardIndex(prev => prev + 1);
+      setVideoPlayed(false);
+    } else {
+      setShowCardOverlay(false);
+      setSummaryCards(drawnCards);
 
-    if (drawResultsRef.current.length > 1 && !hasShownSummary) {
-      setShowSummary(true);
-      setHasShownSummary(true); // 防止重复展示
+      if (drawResultsRef.current.length > 1 && !hasShownSummary) {
+        setShowSummary(true);
+        setHasShownSummary(true); // 防止重复展示
+      }
     }
-  }
-};
+  };
 
 
   // ========================================================
   // 处理抽卡逻辑，调用 getRandomCard 函数并更新抽卡结果
-
   const handleDraw = async (count) => {
 
     if (isDrawing || isAnimatingDrawCards) return;
@@ -321,6 +307,11 @@ const handleNextCard = () => {
       do {
         result = getRandomCard(currentPity, currentFourStarCounter);
       } while (!includeThreeStar && result.rarity === '3');
+
+      setTotalDrawCount((prevCount) => prevCount + 1); // 统计总抽卡数
+      if (result.rarity === '5') {
+        setTotalFiveStarCount((prevCount) => prevCount + 1); // 增加五星卡片数
+      }
 
       // 处理保底逻辑
       if (result.rarity === '5') {
@@ -364,25 +355,7 @@ const handleNextCard = () => {
     setisAnimatingDrawCards(false);
   };
 
-  // ========================================================
-  // 设置日卡月卡图标的大小
-  const [cardTypeHeight, setCardTypeHeight] = useState(36); // 默认值为 36px
 
-  useEffect(() => {
-    const imageUrl = drawResultsRef.current[currentCardIndex]?.card?.card_type;
-
-    if (imageUrl) {
-      // 解码 URL
-      const decodedUrl = decodeURIComponent(imageUrl);
-
-      // 检查 URL 中是否包含特定的字符串并设置高度
-      if (decodedUrl.includes("日冕")) {
-        setCardTypeHeight(36); // 包含"日冕"时设置为36px
-      } else if (decodedUrl.includes("月晖")) {
-        setCardTypeHeight(28); // 包含"月晖"时设置为24px
-      }
-    }
-  }, [currentCardIndex, drawResultsRef.current]);
 
 
 
@@ -390,24 +363,24 @@ const handleNextCard = () => {
   // 判断是否要跳过抽卡动画，若跳过则传入展示的卡片数据不一样
   const displayResultsRef = useRef([]);
 
-useEffect(() => {
-  const allResults = drawResultsRef.current || [];
-  if (videoSkipped) {
-    const onlyFiveStars = allResults.filter(item => item.card?.star === '5星');
-    // console.log(onlyFiveStars)
-    displayResultsRef.current = onlyFiveStars;
-  } else {
-    displayResultsRef.current = allResults;
-  }
+  useEffect(() => {
+    const allResults = drawResultsRef.current || [];
+    if (videoSkipped) {
+      const onlyFiveStars = allResults.filter(item => item.card?.star === '5星');
+      // console.log(onlyFiveStars)
+      displayResultsRef.current = onlyFiveStars;
+    } else {
+      displayResultsRef.current = allResults;
+    }
 
-  // 如果跳过且没有五星卡，直接展示结算层（跳过 CardOverlay）
-  if (videoSkipped && displayResultsRef.current.length === 0) {
-    setShowCardOverlay(false);
-    setShowSummary(true);
-  }
+    // 如果跳过且没有五星卡，直接展示结算层（跳过 CardOverlay）
+    if (videoSkipped && displayResultsRef.current.length === 0) {
+      setShowCardOverlay(false);
+      setShowSummary(true);
+    }
 
-  setVideoSkipped(false);
-}, [drawResultsRef.current, videoSkipped]);
+    setVideoSkipped(false);
+  }, [drawResultsRef.current, videoSkipped]);
 
 
 
@@ -495,10 +468,7 @@ useEffect(() => {
           currentCardIndex={currentCardIndex}
           drawResultsRef={drawResultsRef}
           setVideoPlayed={setVideoPlayed}
-          cardTypeHeight={cardTypeHeight}
-          shadowColor={shadowColor}
           isSkipped={videoSkipped}
-
         />
 
 

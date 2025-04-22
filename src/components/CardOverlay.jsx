@@ -1,5 +1,5 @@
 // CardOverlay.jsx
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const CardOverlay = ({
@@ -9,10 +9,45 @@ const CardOverlay = ({
   currentCardIndex,
   drawResultsRef,
   setVideoPlayed,
-  cardTypeHeight,
-  shadowColor,
   isSkipped,
 }) => {
+
+  // ========================================================
+  // 设置日卡月卡图标的大小
+  const [cardTypeHeight, setCardTypeHeight] = useState(36); // 默认值为 36px
+  useEffect(() => {
+    const imageUrl = drawResultsRef.current[currentCardIndex]?.card?.card_type;
+
+    if (imageUrl) {
+      // 解码 URL
+      const decodedUrl = decodeURIComponent(imageUrl);
+
+      // 检查 URL 中是否包含特定的字符串并设置高度
+      if (decodedUrl.includes("日冕")) {
+        setCardTypeHeight(36); // 包含"日冕"时设置为36px
+      } else if (decodedUrl.includes("月晖")) {
+        setCardTypeHeight(28); // 包含"月晖"时设置为24px
+      }
+    }
+  }, [currentCardIndex, drawResultsRef.current]);
+
+
+  // ========================================================
+  // 设置对应卡片的字体阴影颜色
+  const characterShadowColors = {
+    "沈星回": '4px 4px 8px rgba(133,82,161,1)',
+    "黎深": '4px 4px 8px rgba(16,43,106,1)',
+    "祁煜": '4px 4px 8px rgba(239,91,156,1)',
+    "秦彻": '4px 4px 8px rgba(170,33,22,1)',
+    "夏以昼": '4px 4px 8px rgba(244,121,32,1)',
+    // 默认值也可以设一个
+    default: '2px 2px 4px rgba(0, 0, 0, 0.8)'
+  };
+  const currentCharacter = drawResultsRef.current[currentCardIndex]?.card?.character;
+  const shadowColor = characterShadowColors[currentCharacter] || characterShadowColors.default;
+
+
+
   return (
     showCardOverlay && (
       <div className="fixed inset-0 z-30 bg-black bg-opacity-70">
@@ -39,7 +74,7 @@ const CardOverlay = ({
             style={{ pointerEvents: 'none' }} // 禁用点击交互
           >
             <source
-              src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.MOV`}
+              src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.mp4`}
               type="video/mp4"
             />
             Your browser does not support the video tag.
