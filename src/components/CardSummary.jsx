@@ -1,7 +1,24 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';  // 确保你有安装这个库
 
 const CardSummary = ({ drawResults, onClose }) => {
+
+  // ========================================================
+  // 设置音效
+  const summaryAudioRef = useRef(null);
+
+  useEffect(() => {
+    summaryAudioRef.current = new Audio("audios/展示结算.mp3");
+    summaryAudioRef.current.volume = 1;
+    summaryAudioRef.current.currentTime = 0;
+
+    summaryAudioRef.current
+      .play()
+      .catch((err) => console.warn("播放十抽总结音效失败：", err));
+  }, []); // 组件加载时播放一次
+
+
+
   return (
     <div
       className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center overflow-hidden w-full h-full"

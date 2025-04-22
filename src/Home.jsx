@@ -5,6 +5,7 @@ import HistoryModal from './components/HistoryModal';
 import CardOverlay from './components/CardOverlay';
 import SettingsLayer from "./components/SettingsLayer.jsx";
 import CardSummary from "./components/CardSummary.jsx";
+import VideoPreloader from "./components/VideoPreloader.jsx";
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
 
@@ -396,6 +397,8 @@ const getRandomCard = (pity, fourStarCounter) => {
               handleNextCard();
             }
           }}>
+
+        <VideoPreloader />
 
         {/*/!*音频*!/*/}
         <audio

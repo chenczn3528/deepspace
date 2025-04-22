@@ -1,5 +1,5 @@
 // CardOverlay.jsx
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const CardOverlay = ({
@@ -47,6 +47,24 @@ const CardOverlay = ({
   const shadowColor = characterShadowColors[currentCharacter] || characterShadowColors.default;
 
 
+  // ========================================================
+  // 设置音效
+  const cardSoundRef = useRef(null);
+
+  // 每次切换卡片时播放音效
+  useEffect(() => {
+    if (!showCardOverlay) return;
+
+    const card = drawResultsRef.current[currentCardIndex]?.card;
+    if (!card) return;
+
+    cardSoundRef.current = new Audio('audios/切换音效.mp3');
+    cardSoundRef.current.volume = 1;
+    cardSoundRef.current.currentTime = 0;
+    cardSoundRef.current
+      .play()
+      .catch((err) => console.warn('卡片展示音效播放失败:', err));
+  }, [currentCardIndex, showCardOverlay]);
 
   return (
     showCardOverlay && (
