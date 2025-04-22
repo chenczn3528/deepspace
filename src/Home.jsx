@@ -3,7 +3,7 @@ import cardData from './assets/cards.json';
 import DrawAnimationCards from './components/DrawAnimationCards.jsx';
 import HistoryModal from './components/HistoryModal';
 import CardOverlay from './components/CardOverlay';
-import DrawSettings from "./components/DrawSettings.jsx";
+import SettingsLayer from "./components/SettingsLayer.jsx";
 import CardSummary from "./components/CardSummary.jsx";
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
@@ -50,6 +50,12 @@ useEffect(() => {
   return () => {audio.removeEventListener('pause', forcePlay);};
 }, []);
 
+  const [currentCardIndex, setCurrentCardIndex] = useState(0); // 当前的卡片索引
+  const [cards, setCards] = useState([]); // 存储抽卡后的卡片信息
+  const [history, setHistory] = useState([]); // 存储抽卡历史记录
+  const [drawnCards, setDrawnCards] = useState([]); // 存储已抽到的卡片的数组
+  const drawResultsRef = useRef([]); // 引用存储抽卡结果的数组，避免重新渲染时丢失数据，保存每次抽卡的结果，以便后续处理和展示
+
 
   const [selectedRole, setSelectedRole] = useState('随机'); // 当前选择的角色
   const roles = ['随机', ...new Set(cardData.map(card => card.character))]; // 存储可选择的角色列表
@@ -58,6 +64,9 @@ useEffect(() => {
 
   const drawSessionIdRef = useRef(0); // 全局流程控制 ID，抽卡直接出现结果的bug
   const [isDrawing, setIsDrawing] = useState(false);
+
+  const [videoSkipped, setVideoSkipped] = useState(false); // 设置跳过视频的状态
+  const isSingleDraw = drawnCards.length === 1; //是否是一抽，一抽的话不要显示跳过按钮
 
   const [totalDrawCount, setTotalDrawCount] = useState(0); // 统计总抽卡数
   const [totalFiveStarCount, setTotalFiveStarCount] = useState(0); // 统计总出金数
@@ -68,13 +77,6 @@ useEffect(() => {
   const [useSoftGuarantee, setUseSoftGuarantee] = useState(true); // 是否开启小保底
   const currentPityRef = useRef(0); // 引用存储当前保底计数器的值，在每次抽卡时更新，用于确定保底是否触发
   const currentFourStarRef = useRef(0); // 四星保底计数器的值
-
-
-  const [currentCardIndex, setCurrentCardIndex] = useState(0); // 当前的卡片索引
-  const [cards, setCards] = useState([]); // 存储抽卡后的卡片信息
-  const [history, setHistory] = useState([]); // 存储抽卡历史记录
-  const [drawnCards, setDrawnCards] = useState([]); // 存储已抽到的卡片的数组
-  const drawResultsRef = useRef([]); // 引用存储抽卡结果的数组，避免重新渲染时丢失数据，保存每次抽卡的结果，以便后续处理和展示
 
   const [showHistory, setShowHistory] = useState(false); // 是否显示抽卡历史
   const [showAnimationDrawCards, setShowAnimationDrawCards] = useState(false); // 是否显示抽卡动画
@@ -268,7 +270,6 @@ const getRandomCard = (pity, fourStarCounter) => {
   if (rarity === '5') {
     setTotalFiveStarCount((prevCount) => prevCount + 1); // 增加五星卡片数
   }
-  console.log("当前五星卡片数:", totalFiveStarCount);
 
   return { card: chosen, rarity };
 };
@@ -385,6 +386,29 @@ const handleNextCard = () => {
 
 
 
+  // ========================================================
+  // 判断是否要跳过抽卡动画，若跳过则传入展示的卡片数据不一样
+  const displayResultsRef = useRef([]);
+
+useEffect(() => {
+  const allResults = drawResultsRef.current || [];
+  if (videoSkipped) {
+    const onlyFiveStars = allResults.filter(item => item.card?.star === '5星');
+    // console.log(onlyFiveStars)
+    displayResultsRef.current = onlyFiveStars;
+  } else {
+    displayResultsRef.current = allResults;
+  }
+
+  // 如果跳过且没有五星卡，直接展示结算层（跳过 CardOverlay）
+  if (videoSkipped && displayResultsRef.current.length === 0) {
+    setShowCardOverlay(false);
+    setShowSummary(true);
+  }
+
+  setVideoSkipped(false);
+}, [drawResultsRef.current, videoSkipped]);
+
 
 
   // ========================================================
@@ -429,7 +453,7 @@ const handleNextCard = () => {
         </video>
 
         {/* 控件层（中间层） */}
-          <DrawSettings
+          <SettingsLayer
           totalDrawCount={totalDrawCount}
           totalFiveStarCount={totalFiveStarCount}
           selectedRole={selectedRole}
@@ -457,6 +481,8 @@ const handleNextCard = () => {
                 isFiveStar={hasFiveStarAnimation}
                 onAnimationEnd={handleDrawCardsAnimationEnd}
                 cards={drawResultsRef.current.map((r) => r.card)}
+                onSkip={(skipped) => setVideoSkipped(skipped)}
+                isSingleDraw={isSingleDraw}
                 className="fixed inset-0 z-20"
             />
         )}
@@ -471,6 +497,8 @@ const handleNextCard = () => {
           setVideoPlayed={setVideoPlayed}
           cardTypeHeight={cardTypeHeight}
           shadowColor={shadowColor}
+          isSkipped={videoSkipped}
+
         />
 
 

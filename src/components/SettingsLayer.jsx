@@ -1,6 +1,6 @@
 import React from 'react';
 
-const DrawSettings = ({
+const SettingsLayer = ({
   totalDrawCount,
   totalFiveStarCount,
   selectedRole,
@@ -29,7 +29,7 @@ const DrawSettings = ({
             color: 'white',
             fontSize: '20px',
             textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-            fontFamily: '"SimSun", "宋体", serif',
+            // fontFamily: '"SimSun", "宋体", serif',
             fontWeight: '800',
             marginLeft: '20px',
           }}
@@ -43,7 +43,7 @@ const DrawSettings = ({
             color: 'white',
             fontSize: '20px',
             textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-            fontFamily: '"SimSun", "宋体", serif',
+            // fontFamily: '"SimSun", "宋体", serif',
             fontWeight: '800',
             marginLeft: '20px',
           }}
@@ -59,7 +59,7 @@ const DrawSettings = ({
               color: 'white',
               fontSize: '20px',
               textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-              fontFamily: '"SimSun", "宋体", serif',
+              // fontFamily: '"SimSun", "宋体", serif',
               fontWeight: '800',
               marginLeft: '2px',
               alignSelf: 'center',
@@ -87,7 +87,7 @@ const DrawSettings = ({
               color: 'white',
               fontSize: '20px',
               textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-              fontFamily: '"SimSun", "宋体", serif',
+              // fontFamily: '"SimSun", "宋体", serif',
               fontWeight: '800',
               marginLeft: '2px',
               alignSelf: 'center',
@@ -109,7 +109,7 @@ const DrawSettings = ({
               color: 'white',
               fontSize: '20px',
               textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-              fontFamily: '"SimSun", "宋体", serif',
+              // fontFamily: '"SimSun", "宋体", serif',
               fontWeight: '800',
               marginLeft: '20px',
               alignSelf: 'center',
@@ -165,7 +165,7 @@ const DrawSettings = ({
               color: 'white',
               fontSize: '20px',
               textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-              fontFamily: '"SimSun", "宋体", serif',
+              // fontFamily: '"SimSun", "宋体", serif',
               fontWeight: '800',
               marginLeft: '20px',
               alignSelf: 'center',
@@ -196,4 +196,4 @@ const DrawSettings = ({
   );
 };
 
-export default DrawSettings;
+export default SettingsLayer;
