@@ -7,6 +7,8 @@ import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const Home = () => {
 
+
+  // 背景音乐设置
   const audioRef = useRef(null);
 const [isMusicPlaying, setIsMusicPlaying] = useState(false);
 
@@ -40,13 +42,9 @@ useEffect(() => {
     }
   }, 100); // 等 100ms 后再恢复，规避系统切换时冲突
 };
-
   // 当 audio 被浏览器暂停时，立刻尝试重新播放
   audio.addEventListener('pause', forcePlay);
-
-  return () => {
-    audio.removeEventListener('pause', forcePlay);
-  };
+  return () => {audio.removeEventListener('pause', forcePlay);};
 }, []);
 
 
@@ -58,8 +56,13 @@ useEffect(() => {
   const drawSessionIdRef = useRef(0); // 全局流程控制 ID，抽卡直接出现结果的bug
   const [isDrawing, setIsDrawing] = useState(false);
 
+  const [totalDrawCount, setTotalDrawCount] = useState(0); // 统计总抽卡数
+  const [totalFiveStarCount, setTotalFiveStarCount] = useState(0); // 统计总出金数
+
 
   const [pityCount, setPityCount] = useState(0); // 保底计数器
+  const [softPityFailed, setSoftPityFailed] = useState(false); //小保底是否激活
+  const [useSoftGuarantee, setUseSoftGuarantee] = useState(true); // 是否开启小保底
   const currentPityRef = useRef(0); // 引用存储当前保底计数器的值，在每次抽卡时更新，用于确定保底是否触发
   const currentFourStarRef = useRef(0); // 四星保底计数器的值
 
@@ -87,6 +90,8 @@ useEffect(() => {
 
 
 
+
+// 设置对应卡片的字体阴影颜色
   const characterShadowColors = {
     "沈星回": '4px 4px 8px rgba(179, 153, 129, 1)', // 蓝色阴影
     "黎深": '4px 4px 8px rgba(173, 173, 186, 1)', // 粉红阴影
@@ -96,8 +101,6 @@ useEffect(() => {
     // 默认值也可以设一个
     default: '2px 2px 4px rgba(0, 0, 0, 0.8)'
   };
-
-
   const currentCharacter = drawResultsRef.current[currentCardIndex]?.card?.character;
   const shadowColor = characterShadowColors[currentCharacter] || characterShadowColors.default;
 
@@ -125,17 +128,35 @@ useEffect(() => {
     }
   }, [currentCardIndex]);
 
-  // ========================================================
-  // 视频播放完毕，更新状态
-  const handleVideoEnded = () => {
-    setVideoPlayed(true);
-  };
 
-  // ========================================================
-  // 播放完视频后展示卡片
-  const handleAnimationEnd = () => {
-    setShowCardOverlay(true);
-  };
+
+
+
+  // // ========================================================
+  // // 视频播放完毕，更新状态
+  // const handleVideoEnded = () => {
+  //   setVideoPlayed(true);
+  //   handleNextCard();
+  // };
+
+  // 保存抽卡总数和总出金数
+  useEffect(() => {
+  const savedDrawCount = localStorage.getItem('totalDrawCount');
+  const savedFiveStarCount = localStorage.getItem('totalFiveStarCount');
+
+  if (savedDrawCount) {
+    setTotalDrawCount(parseInt(savedDrawCount, 10));
+  }
+  if (savedFiveStarCount) {
+    setTotalFiveStarCount(parseInt(savedFiveStarCount, 10));
+  }
+}, []);
+
+useEffect(() => {
+  localStorage.setItem('totalDrawCount', totalDrawCount);
+  localStorage.setItem('totalFiveStarCount', totalFiveStarCount);
+}, [totalDrawCount, totalFiveStarCount]);
+
 
 
 
@@ -152,7 +173,7 @@ useEffect(() => {
 
   // ========================================================
   // 随机生成一张卡片，并根据保底计数器 (pity) 计算是否触发保底效果
-  const getRandomCard = (pity, fourStarCounter) => {
+const getRandomCard = (pity, fourStarCounter) => {
   const fiveStarBase = 0.01;
   const fourStarBase = 0.07;
   const fiveStarPityStart = 60;
@@ -167,7 +188,6 @@ useEffect(() => {
   const roll = Math.random();
   let rarity = '3';
 
-  // 判断是否需要保底或者五星卡的概率
   if (pity + 1 >= fiveStarGuaranteed || roll < fiveStarChance) {
     rarity = '5';
   } else if ((fourStarCounter + 1) % 10 === 0) {
@@ -177,30 +197,51 @@ useEffect(() => {
   }
 
   const targetStar = parseInt(rarity, 10);
-
-  // 如果角色不是"随机"，那么五星卡必须是该角色的五星卡
   let pool = [];
 
   if (selectedRole === '随机') {
     pool = cardData.filter(card => parseInt(card.star) === targetStar);
   } else {
     if (targetStar === 5) {
-      // 对于五星卡，筛选出所选角色的五星卡
-      pool = cardData.filter(card => card.character === selectedRole && parseInt(card.star) === targetStar);
+      if (useSoftGuarantee) {
+        if (softPityFailed) {
+          // 大保底触发
+          pool = cardData.filter(card => card.character === selectedRole && parseInt(card.star) === 5);
+        } else {
+          // 普通抽取，有几率抽到非目标角色
+          pool = cardData.filter(card => parseInt(card.star) === 5);
+        }
+      } else {
+        // 不使用保底机制，直接限定为指定角色
+        pool = cardData.filter(card => card.character === selectedRole && parseInt(card.star) === 5);
+      }
     } else {
-      // 对于四星和三星卡，不做角色限制
+      // 3星/4星不考虑角色
       pool = cardData.filter(card => parseInt(card.star) === targetStar);
     }
   }
 
-  // 如果没有匹配到卡片，输出警告
   if (pool.length === 0) {
     console.warn("没有找到匹配的卡片！", { rarity, selectedRole });
     return { card: null, rarity };
   }
 
-  // 从符合条件的卡片池中随机选择一张卡
   const chosen = pool[Math.floor(Math.random() * pool.length)];
+
+  if (targetStar === 5 && selectedRole !== '随机' && useSoftGuarantee) {
+    if (chosen.character === selectedRole) {
+      setSoftPityFailed(false);
+    } else {
+      setSoftPityFailed(true);
+    }
+  }
+
+  setTotalDrawCount((prevCount) => prevCount + 1); // 统计总抽卡数
+  if (rarity === 5) {
+    setTotalFiveStarCount((prevCount) => prevCount + 1); // 如果抽到五星卡片，增加出金数
+  }
+  console.log("当前五星卡片数:", totalFiveStarCount);
+
   return { card: chosen, rarity };
 };
 
@@ -373,6 +414,37 @@ const handleNextCard = () => {
         <div className="fixed inset-0 z-10 flex flex-col w-full bottom-[10%] items-center justify-center">
           <div
               className="relative bg-gray-900 bg-opacity-80 p-4 flex flex-col gap-4  ml-[10px] mr-[10px] rounded-xl shadow-lg">
+
+            {/*统计抽数*/}
+            <div
+                style={{
+                  color: 'white',
+                  fontSize: '20px',
+                  textShadow: shadowColor,
+                  fontFamily: '"SimSun", "宋体", serif',
+                  fontWeight: '800',
+                  marginLeft: '20px',
+                  // alignSelf: 'center',
+                }}
+                className="text-sm mt-2"
+            >
+              <label>总抽卡数: {totalDrawCount}</label>
+              <label className="ml-[20px]">总出金数: {totalFiveStarCount}</label>
+            </div>
+            <label style={{
+                  color: 'white',
+                  fontSize: '20px',
+                  textShadow: shadowColor,
+                  fontFamily: '"SimSun", "宋体", serif',
+                  fontWeight: '800',
+                  marginLeft: '20px',
+                  // alignSelf: 'center',
+                }}
+                className="text-sm mt-2">
+              平均出金数: {totalFiveStarCount === 0 ? '0' : (totalDrawCount / totalFiveStarCount).toFixed(2)}
+            </label>
+
+
             {/* 角色选择 */}
             <div className="flex items-center gap-2 ml-[20px]" id="role-selector">
               <label style={{
@@ -414,6 +486,29 @@ const handleNextCard = () => {
                   onChange={(e) => setIncludeThreeStar(e.target.checked)}
                   className="w-[20px] h-[20px]"
               />
+              <label
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    textShadow: shadowColor,
+                    fontFamily: '"SimSun", "宋体", serif',
+                    fontWeight: '800',
+                    marginLeft: '20px',
+                    alignSelf: 'center'
+                  }}
+                  htmlFor="softGuarantee"
+                  className="text-sm"
+              >
+                开启大小保底机制
+              </label>
+              <input
+                  id="softGuarantee"
+                  type="checkbox"
+                  checked={useSoftGuarantee}
+                  onChange={(e) => setUseSoftGuarantee(e.target.checked)}
+                  className="w-[20px] h-[20px]"
+              />
+
             </div>
 
 
@@ -445,15 +540,28 @@ const handleNextCard = () => {
 
             <div className="flex w-screen h-[40px] mt-[16px]">
               {/* 保底显示 */}
-              <div className="text-sm mt-2" id="pity-counter" style={{
-                color: 'white',
-                fontSize: '20px',
-                textShadow: shadowColor,
-                fontFamily: '"SimSun", "宋体", serif',
-                fontWeight: '800',
-                marginLeft: '20px',
-                alignSelf: 'center'
-              }}>{70 - pityCount} 抽内必得5星
+              <div
+                  className="text-sm mt-2"
+                  id="pity-counter"
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    textShadow: shadowColor,
+                    fontFamily: '"SimSun", "宋体", serif',
+                    fontWeight: '800',
+                    marginLeft: '20px',
+                    alignSelf: 'center'
+                  }}
+              >
+                {
+                  selectedRole === '随机' || !useSoftGuarantee ? (
+                      <>还剩 {70 - pityCount} 抽必得五星</>
+                  ) : (
+                      softPityFailed
+                          ? <>还剩 {70 - pityCount} 抽大保底</>
+                          : <>还剩 {70 - pityCount} 抽小保底</>
+                  )
+                }
               </div>
 
               {/* 抽卡历史记录按钮 */}
@@ -484,23 +592,30 @@ const handleNextCard = () => {
 
               {/* 底部图片（绝对定位） */}
               <img
-                  src="结算背景.jpg"
-                  alt="底部装饰"
-                  className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-full h-full opacity-100"
+                src="结算背景.jpg"
+                alt="底部装饰"
+                className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-full h-full opacity-100 z-0"  // 设置 z-index 为 0
               />
-
 
               {isFiveStar && !videoPlayed && (
                   // 只有五星卡片并且视频没有播放完时，先播放视频
                   <video
-                      className="fixed inset-0 w-full h-full object-cover"
-                      autoPlay
-                      playsInline
-                      muted
-                      controls={false}
-                      onEnded={handleVideoEnded}>
-                    <source src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.MOV`}
-                            type="video/mp4"/>
+                    className="fixed inset-0 w-full h-full object-cover z-10"  // 设置 z-index 为 10 确保视频在图片之上
+                    autoPlay
+                    playsInline
+                    muted
+                    controls={false}
+                    onEnded={() => {
+                      setVideoPlayed(true); // 设置视频播放完毕
+                      // handleNextCard(); // 播放完视频后处理下一张卡片
+                    }}
+                    onClick={(e) => e.preventDefault()} // 禁用点击事件，防止跳过视频
+                    style={{ pointerEvents: 'none' }} // 禁用点击交互
+                  >
+                    <source
+                      src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.MOV`}
+                      type="video/mp4"
+                    />
                     Your browser does not support the video tag.
                   </video>
               )}
@@ -508,7 +623,7 @@ const handleNextCard = () => {
               {/* 展示卡片内容 */}
               {(isFiveStar && videoPlayed) || !isFiveStar ? (
                   <>
-                    <div className="fixed w-full h-full inset-0 z-0">  {/* 降低图片的 z-index */}
+                    <div className="fixed w-full h-full inset-0 z-0">  {/* 设置卡片展示层的 z-index 为 0 */}
                       <LazyLoadImage
                           className="w-screen h-screen object-cover"
                           style={{
