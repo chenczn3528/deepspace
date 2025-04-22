@@ -126,20 +126,10 @@ useEffect(() => {
   const card = drawResultsRef.current[currentCardIndex]?.card;
   if (card?.star === '5星') {
     setIsFiveStar(true); // 是五星卡片
-    // setTotalFiveStarCount((prevCount) => prevCount + 1); // 增加五星卡片数
   } else {
     setIsFiveStar(false); // 不是五星卡片，直接展示卡片
   }
 }, [currentCardIndex]);
-
-  // useEffect(() => {
-  //   const card = drawResultsRef.current[currentCardIndex]?.card;
-  //   if (card?.star === '5星') {
-  //     setIsFiveStar(true); // 是五星卡片
-  //   } else {
-  //     setIsFiveStar(false); // 不是五星卡片，直接展示卡片
-  //   }
-  // }, [currentCardIndex]);
 
 
 
@@ -159,11 +149,18 @@ useEffect(() => {
 
 
 
+// useEffect(() => {
+//   localStorage.setItem('totalDrawCount', totalDrawCount);
+//   localStorage.setItem('totalFiveStarCount', totalFiveStarCount); // 同步保存五星卡总数
+// }, [totalDrawCount, totalFiveStarCount]);
+
 useEffect(() => {
+  // 保存抽卡总数、五星卡总数、剩余抽卡次数和是否使用小保底
   localStorage.setItem('totalDrawCount', totalDrawCount);
   localStorage.setItem('totalFiveStarCount', totalFiveStarCount); // 同步保存五星卡总数
-}, [totalDrawCount, totalFiveStarCount]);
-
+  localStorage.setItem('pityCount', pityCount); // 保存剩余抽卡次数
+  localStorage.setItem('useSoftGuarantee', useSoftGuarantee); // 保存是否开启小保底
+}, [totalDrawCount, totalFiveStarCount, pityCount, useSoftGuarantee]);
 
 
 
