@@ -1,7 +1,10 @@
 import React, {useEffect, useState, useRef} from 'react';
 import cardData from './assets/cards.json';
 import DrawAnimationCards from './components/DrawAnimationCards.jsx';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
+import HistoryModal from './components/HistoryModal';
+import CardOverlay from './components/CardOverlay';
+import DrawSettings from "./components/DrawSettings.jsx";
+import CardSummary from "./components/CardSummary.jsx";
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
 
@@ -120,24 +123,25 @@ useEffect(() => {
   // ========================================================
   // 判断当前卡片是不是五星
   useEffect(() => {
-    const card = drawResultsRef.current[currentCardIndex]?.card;
-    if (card?.star === '5星') {
-      setIsFiveStar(true); // 是五星卡片
-    } else {
-      setIsFiveStar(false); // 不是五星卡片，直接展示卡片
-    }
-  }, [currentCardIndex]);
+  const card = drawResultsRef.current[currentCardIndex]?.card;
+  if (card?.star === '5星') {
+    setIsFiveStar(true); // 是五星卡片
+    // setTotalFiveStarCount((prevCount) => prevCount + 1); // 增加五星卡片数
+  } else {
+    setIsFiveStar(false); // 不是五星卡片，直接展示卡片
+  }
+}, [currentCardIndex]);
+
+  // useEffect(() => {
+  //   const card = drawResultsRef.current[currentCardIndex]?.card;
+  //   if (card?.star === '5星') {
+  //     setIsFiveStar(true); // 是五星卡片
+  //   } else {
+  //     setIsFiveStar(false); // 不是五星卡片，直接展示卡片
+  //   }
+  // }, [currentCardIndex]);
 
 
-
-
-
-  // // ========================================================
-  // // 视频播放完毕，更新状态
-  // const handleVideoEnded = () => {
-  //   setVideoPlayed(true);
-  //   handleNextCard();
-  // };
 
   // 保存抽卡总数和总出金数
   useEffect(() => {
@@ -152,10 +156,14 @@ useEffect(() => {
   }
 }, []);
 
+
+
+
 useEffect(() => {
   localStorage.setItem('totalDrawCount', totalDrawCount);
-  localStorage.setItem('totalFiveStarCount', totalFiveStarCount);
+  localStorage.setItem('totalFiveStarCount', totalFiveStarCount); // 同步保存五星卡总数
 }, [totalDrawCount, totalFiveStarCount]);
+
 
 
 
@@ -237,8 +245,8 @@ const getRandomCard = (pity, fourStarCounter) => {
   }
 
   setTotalDrawCount((prevCount) => prevCount + 1); // 统计总抽卡数
-  if (rarity === 5) {
-    setTotalFiveStarCount((prevCount) => prevCount + 1); // 如果抽到五星卡片，增加出金数
+  if (rarity === '5') {
+    setTotalFiveStarCount((prevCount) => prevCount + 1); // 增加五星卡片数
   }
   console.log("当前五星卡片数:", totalFiveStarCount);
 
@@ -356,17 +364,7 @@ const handleNextCard = () => {
   }, [currentCardIndex, drawResultsRef.current]);
 
 
-  // 记录时间的格式化
-  const formatDate = (timestamp) => {
-  const date = new Date(timestamp);
-  const year = String(date.getFullYear()).slice(-2); // 取后两位
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hour = String(date.getHours()).padStart(2, '0');
-  const minute = String(date.getMinutes()).padStart(2, '0');
 
-  return `${year}/${month}/${day} ${hour}:${minute}`;
-};
 
 
   // ========================================================
@@ -411,169 +409,27 @@ const handleNextCard = () => {
         </video>
 
         {/* 控件层（中间层） */}
-        <div className="fixed inset-0 z-10 flex flex-col w-full bottom-[10%] items-center justify-center">
-          <div
-              className="relative bg-gray-900 bg-opacity-80 p-4 flex flex-col gap-4  ml-[10px] mr-[10px] rounded-xl shadow-lg">
-
-            {/*统计抽数*/}
-            <div
-                style={{
-                  color: 'white',
-                  fontSize: '20px',
-                  textShadow: shadowColor,
-                  fontFamily: '"SimSun", "宋体", serif',
-                  fontWeight: '800',
-                  marginLeft: '20px',
-                  // alignSelf: 'center',
-                }}
-                className="text-sm mt-2"
-            >
-              <label>总抽卡数: {totalDrawCount}</label>
-              <label className="ml-[20px]">总出金数: {totalFiveStarCount}</label>
-            </div>
-            <label style={{
-                  color: 'white',
-                  fontSize: '20px',
-                  textShadow: shadowColor,
-                  fontFamily: '"SimSun", "宋体", serif',
-                  fontWeight: '800',
-                  marginLeft: '20px',
-                  // alignSelf: 'center',
-                }}
-                className="text-sm mt-2">
-              平均出金数: {totalFiveStarCount === 0 ? '0' : (totalDrawCount / totalFiveStarCount).toFixed(2)}
-            </label>
-
-
-            {/* 角色选择 */}
-            <div className="flex items-center gap-2 ml-[20px]" id="role-selector">
-              <label style={{
-                color: 'white',
-                fontSize: '20px',
-                textShadow: shadowColor,
-                fontFamily: '"SimSun", "宋体", serif',
-                fontWeight: '800',
-                marginLeft: '2px',
-                alignSelf: 'center'
-              }}>选择角色：</label>
-              <select
-                  className="bg-gray-800 text-white p-2 rounded"
-                  value={selectedRole}
-                  onChange={(e) => setSelectedRole(e.target.value)}>
-                {roles.map((role) => (
-                    <option key={role} value={role}>
-                      {role}
-                    </option>
-                ))}
-              </select>
-            </div>
-
-            {/*是否排除三星*/}
-            <div className="flex items-center gap-2 mb-2 ml-[20px] text-white">
-              <label style={{
-                color: 'white',
-                fontSize: '20px',
-                textShadow: shadowColor,
-                fontFamily: '"SimSun", "宋体", serif',
-                fontWeight: '800',
-                marginLeft: '2px',
-                alignSelf: 'center'
-              }} htmlFor="includeThree" className="text-sm">包括三星卡片</label>
-              <input
-                  id="includeThree"
-                  type="checkbox"
-                  checked={includeThreeStar}
-                  onChange={(e) => setIncludeThreeStar(e.target.checked)}
-                  className="w-[20px] h-[20px]"
-              />
-              <label
-                  style={{
-                    color: 'white',
-                    fontSize: '20px',
-                    textShadow: shadowColor,
-                    fontFamily: '"SimSun", "宋体", serif',
-                    fontWeight: '800',
-                    marginLeft: '20px',
-                    alignSelf: 'center'
-                  }}
-                  htmlFor="softGuarantee"
-                  className="text-sm"
-              >
-                开启大小保底机制
-              </label>
-              <input
-                  id="softGuarantee"
-                  type="checkbox"
-                  checked={useSoftGuarantee}
-                  onChange={(e) => setUseSoftGuarantee(e.target.checked)}
-                  className="w-[20px] h-[20px]"
-              />
-
-            </div>
-
-
-            {/* 一抽/十抽按钮 */}
-            <div className="flex w-screen h-[40px] justify-between px-4"> {/* 新增这层容器 */}
-              <button
-                  onClick={() => {
-                    setHasShownSummary(false);
-                    setShowSummary(false);
-                    handleDraw(1);
-                  }}
-                  className="bg-blue-500 px-8 py-2 rounded flex-1 ml-[20px] h-auto">
-                许愿一次
-              </button>
-              <div className="flex-1 max-w-[20px]"></div>
-              {/* 中间间距 */}
-              <button
-                  onClick={(e) => {
-                    e.stopPropagation(); // 阻止冒泡
-                    setHasShownSummary(false);
-                    setShowSummary(false);
-                    handleDraw(10);
-                  }}
-                  disabled={isDrawing || isAnimatingDrawCards}
-                  className="bg-purple-600 px-8 py-2 rounded flex-1 mr-[20px] h-auto">
-                {isDrawing ? "抽卡中..." : "许愿十次"}
-              </button>
-            </div>
-
-            <div className="flex w-screen h-[40px] mt-[16px]">
-              {/* 保底显示 */}
-              <div
-                  className="text-sm mt-2"
-                  id="pity-counter"
-                  style={{
-                    color: 'white',
-                    fontSize: '20px',
-                    textShadow: shadowColor,
-                    fontFamily: '"SimSun", "宋体", serif',
-                    fontWeight: '800',
-                    marginLeft: '20px',
-                    alignSelf: 'center'
-                  }}
-              >
-                {
-                  selectedRole === '随机' || !useSoftGuarantee ? (
-                      <>还剩 {70 - pityCount} 抽必得五星</>
-                  ) : (
-                      softPityFailed
-                          ? <>还剩 {70 - pityCount} 抽大保底</>
-                          : <>还剩 {70 - pityCount} 抽小保底</>
-                  )
-                }
-              </div>
-
-              {/* 抽卡历史记录按钮 */}
-              <button
-                  className="bg-gray-700 text-white ml-[20px] rounded"
-                  onClick={() => setShowHistory(!showHistory)}
-                  id="history-toggle-button">
-                {showHistory ? "关闭抽卡记录" : "查看抽卡记录"}
-              </button>
-            </div>
-          </div>
-        </div>
+          <DrawSettings
+          shadowColor={shadowColor}
+          totalDrawCount={totalDrawCount}
+          totalFiveStarCount={totalFiveStarCount}
+          selectedRole={selectedRole}
+          setSelectedRole={setSelectedRole}
+          roles={roles}
+          includeThreeStar={includeThreeStar}
+          setIncludeThreeStar={setIncludeThreeStar}
+          useSoftGuarantee={useSoftGuarantee}
+          setUseSoftGuarantee={setUseSoftGuarantee}
+          pityCount={pityCount}
+          softPityFailed={softPityFailed}
+          isDrawing={isDrawing}
+          isAnimatingDrawCards={isAnimatingDrawCards}
+          handleDraw={handleDraw}
+          showHistory={showHistory}
+          setShowHistory={setShowHistory}
+          setHasShownSummary={setHasShownSummary}
+          setShowSummary={setShowSummary}
+        />
 
 
         {/* 抽卡动画层 */}
@@ -587,217 +443,32 @@ const handleNextCard = () => {
         )}
 
         {/* 卡片结果层（最顶层） */}
-        {showCardOverlay && (
-            <div className="fixed inset-0 z-30 bg-black bg-opacity-70">
+        <CardOverlay
+          showCardOverlay={showCardOverlay}
+          isFiveStar={isFiveStar}
+          videoPlayed={videoPlayed}
+          currentCardIndex={currentCardIndex}
+          drawResultsRef={drawResultsRef}
+          setVideoPlayed={setVideoPlayed}
+          cardTypeHeight={cardTypeHeight}
+          shadowColor={shadowColor}
+        />
 
-              {/* 底部图片（绝对定位） */}
-              <img
-                src="结算背景.jpg"
-                alt="底部装饰"
-                className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-full h-full opacity-100 z-0"  // 设置 z-index 为 0
-              />
-
-              {isFiveStar && !videoPlayed && (
-                  // 只有五星卡片并且视频没有播放完时，先播放视频
-                  <video
-                    className="fixed inset-0 w-full h-full object-cover z-10"  // 设置 z-index 为 10 确保视频在图片之上
-                    autoPlay
-                    playsInline
-                    muted
-                    controls={false}
-                    onEnded={() => {
-                      setVideoPlayed(true); // 设置视频播放完毕
-                      // handleNextCard(); // 播放完视频后处理下一张卡片
-                    }}
-                    onClick={(e) => e.preventDefault()} // 禁用点击事件，防止跳过视频
-                    style={{ pointerEvents: 'none' }} // 禁用点击交互
-                  >
-                    <source
-                      src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.MOV`}
-                      type="video/mp4"
-                    />
-                    Your browser does not support the video tag.
-                  </video>
-              )}
-
-              {/* 展示卡片内容 */}
-              {(isFiveStar && videoPlayed) || !isFiveStar ? (
-                  <>
-                    <div className="fixed w-full h-full inset-0 z-0">  {/* 设置卡片展示层的 z-index 为 0 */}
-                      <LazyLoadImage
-                          className="w-screen h-screen object-cover"
-                          style={{
-                            width: '100vw',
-                            height: '100vh',
-                            objectFit: 'cover',
-                            objectPosition: 'center',
-                          }}
-                          src={drawResultsRef.current[currentCardIndex]?.card?.image}
-                          placeholderSrc={drawResultsRef.current[currentCardIndex]?.card?.image_small}
-                          effect="blur"
-                          alt="抽到的卡片"
-                          crossOrigin="anonymous"
-                          key={currentCardIndex}
-                      />
-                    </div>
-
-                    <div className="h-screen w-screen pl-8">
-                      <div className="relative w-full h-full">
-                        <div className="absolute bottom-[22%] left-[10%] w-full h-[6%] flex items-center">
-                          <img
-                              src={drawResultsRef.current[currentCardIndex]?.card?.card_star_icon}
-                              alt="星级"
-                              className="h-[36px] object-contain"
-                          />
-                          <img
-                              src={drawResultsRef.current[currentCardIndex]?.card?.card_color}
-                              alt="星谱"
-                              className="h-[24px] object-contain ml-[12px]"
-                          />
-                          <img
-                              src={drawResultsRef.current[currentCardIndex]?.card?.card_type}
-                              alt="类型（日卡月卡）"
-                              style={{
-                                height: `${cardTypeHeight}px`,
-                                maxHeight: `${cardTypeHeight}px`,
-                                objectFit: 'contain'
-                              }}
-                              className="object-contain ml-[8px]"
-                          />
-
-                        </div>
-
-                        {/* 文字区域 */}
-                        <div className="absolute bottom-[13%] left-[10%] w-full h-[12%] flex items-center">
-                          <img
-                              className="h-[48px] object-contain"
-                              src={`signs/${drawResultsRef.current[currentCardIndex]?.card?.character}.png`}
-                              alt="角色"/>
-                          <h1 style={{
-                            color: 'white',
-                            fontSize: '30px',
-                            textShadow: shadowColor,
-                            fontFamily: '"SimSun", "宋体", serif',
-                            fontWeight: '1000',
-                          }}>·</h1>
-                          <h1
-                              style={{
-                                color: 'white',
-                                fontSize: '40px',
-                                textShadow: shadowColor,
-                                fontFamily: '"SimSun", "宋体", serif',
-                                fontWeight: '800',
-                                marginLeft: '2px',
-                                alignSelf: 'center'
-                              }}>
-                            {drawResultsRef.current[currentCardIndex]?.card?.name}
-                          </h1>
-
-                        </div>
-                      </div>
-                    </div>
-
-                  </>
-              ) : null}
-            </div>
-        )}
 
         {/*十抽后结算层*/}
         {showSummary && drawResultsRef.current.length > 1 && (
-
-            <div
-                className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center overflow-hidden w-full h-full"
-                onClick={() => setShowSummary(false)}
-            >
-              {/* 卡片网格 */}
-              <div className="grid grid-cols-5 gap-4 p-8 w-[80%] h-[70%] relative z-10">
-                {drawResultsRef.current.map((item, index) => {
-                  let glowStyle = {};
-
-                  if (item.card.star === '5星') {
-                    glowStyle = {
-                      boxShadow: '0 -10px 20px rgba(255, 215, 0, 0.6), 0 10px 20px rgba(255, 215, 0, 0.6)', // 上下金光
-                    };
-                  } else if (item.card.star === '4星') {
-                    glowStyle = {
-                      boxShadow: '0 -10px 20px rgba(168, 85, 247, 0.6), 0 10px 20px rgba(168, 85, 247, 0.6)', // 上下紫光
-                    };
-                  }
-
-                  return (
-                      <LazyLoadImage
-                          key={index}
-                          src={item.card.image}
-                          placeholderSrc={item.card.image_small}
-                          effect="blur"
-                          alt={`Card ${index}`}
-                          className="w-[90%] h-[90%] object-cover rounded-lg shadow-lg hover:scale-105 transition-transform duration-300"
-                          style={glowStyle}
-                      />
-                  );
-                })}
-              </div>
-
-              {/*底部图片（绝对定位）*/}
-              <img
-                  src="结算背景.jpg"
-                  alt="底部装饰"
-                  className="absolute w-screen h-screen opacity-100"
-              />
-            </div>
+          <CardSummary
+            drawResults={drawResultsRef.current}  // 传递卡片数据
+            onClose={() => setShowSummary(false)}  // 关闭总结页面的回调
+          />
         )}
-
 
         {/* 页面 抽卡历史记录内容 */}
-        {showHistory && (
-            <div
-                className="fixed inset-0 z-50 flex items-center justify-center w-screen top-[0%] bottom-[30%]"
-                onClick={() => setShowHistory(false)}
-            >
-              <div
-                  className="relative flex flex-col w-[80vw] h-[80%] p-4 rounded-lg overflow-hidden"
-                  onClick={(e) => e.stopPropagation()}
-              >
-                <img
-                    src="结算背景.jpg"
-                    alt="背景"
-                    className="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-90"
-                />
-
-
-                <div className="relative z-10 flex flex-col h-full" style={{color: 'black'}}>
-                  <h2 className="text-xl font-bold mb-4 text-center" style={{color: 'black'}}>
-                    历史记录
-                  </h2>
-
-                  <div className="flex-1 overflow-y-auto pr-2">
-                    {history.map((card, idx) => {
-                      const cardHistoryColors = {
-                        "3星": {color: "black"},
-                        "4星": {color: "#a855f7"},
-                        "5星": {color: "#dda516", fontWeight: "bold"}
-                      };
-                      const historyColor = cardHistoryColors[card.star] || "black";
-
-
-                      return (
-                          <div
-                              key={idx}
-                              className="text-xs mb-2 flex justify-between"
-                          >
-                            <div style={historyColor} className="ml-[20px]">{card.star}</div>
-                            <div style={historyColor}>{card.character}·{card.name}</div>
-                            <div style={historyColor} className="mr-[20px]">{formatDate(card.timestamp)}</div>
-                          </div>
-                      );
-                    })}
-                  </div>
-
-                  <div className="pb-[10px]"></div>
-                </div>
-              </div>
-            </div>
-        )}
+        <HistoryModal
+          showHistory={showHistory}
+          setShowHistory={setShowHistory}
+          history={history}
+        />
       </div>
   );
 };
