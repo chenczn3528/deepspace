@@ -38,7 +38,7 @@ const VideoWithAudio = ({ isFiveStar, setVideoPlayed, onAnimationEnd }) => {
         controls={false}
       >
         <source
-          src={isFiveStar ? "videos/gold_card.MP4" : "videos/no_gold_card.mov"} // 根据是否五星选择视频
+          src={isFiveStar ? "videos/gold_card.MP4" : "videos/no_gold_card.mp4"} // 根据是否五星选择视频
           type="video/mp4"
         />
         Your browser does not support the video tag.
