@@ -58,16 +58,11 @@ const Home = () => {
 
   // ========================================================
   // 背景音乐设置
-
-  const audioRef = useRef(null); // 背景音乐的 audio 引用
+  const audioRef = useRef(null);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
 
-  // 在用户的首次交互时播放背景音乐
   useEffect(() => {
-    // 在用户首次点击页面时触发音频播放
     document.addEventListener('pointerdown', handleFirstInteraction);
-
-    // 清理事件监听
     return () => {
       document.removeEventListener('pointerdown', handleFirstInteraction);
     };
@@ -76,71 +71,30 @@ const Home = () => {
   const handleFirstInteraction = () => {
     if (audioRef.current && !isMusicPlaying) {
       audioRef.current.play().then(() => {
-        setIsMusicPlaying(true);  // 音乐播放后设置状态
+        setIsMusicPlaying(true);
       }).catch((err) => {
         console.warn('播放失败：', err);
       });
     }
   };
 
-  // 音频循环播放处理
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     const forcePlay = () => {
-      setTimeout(() => {
-        if (audio.paused) {
-          audio.play().catch((err) => {
-            console.warn("尝试恢复音频失败", err);
-          });
-        }
-      }, 100); // 延时100ms避免干扰
-    };
-
-    // 监听暂停事件并尝试恢复播放
+    setTimeout(() => {
+      if (audio.paused) {
+        audio.play().catch((err) => {
+          console.warn("尝试恢复音频失败", err);
+        });
+      }
+    }, 100); // 等 100ms 后再恢复，规避系统切换时冲突
+  };
+    // 当 audio 被浏览器暂停时，立刻尝试重新播放
     audio.addEventListener('pause', forcePlay);
-    return () => {
-      audio.removeEventListener('pause', forcePlay);
-    };
+    return () => {audio.removeEventListener('pause', forcePlay);};
   }, []);
-  // const audioRef = useRef(null);
-  // const [isMusicPlaying, setIsMusicPlaying] = useState(false);
-  //
-  // useEffect(() => {
-  //   document.addEventListener('pointerdown', handleFirstInteraction);
-  //   return () => {
-  //     document.removeEventListener('pointerdown', handleFirstInteraction);
-  //   };
-  // }, []);
-  //
-  // const handleFirstInteraction = () => {
-  //   if (audioRef.current && !isMusicPlaying) {
-  //     audioRef.current.play().then(() => {
-  //       setIsMusicPlaying(true);
-  //     }).catch((err) => {
-  //       console.warn('播放失败：', err);
-  //     });
-  //   }
-  // };
-  //
-  // useEffect(() => {
-  //   const audio = audioRef.current;
-  //   if (!audio) return;
-  //
-  //   const forcePlay = () => {
-  //   setTimeout(() => {
-  //     if (audio.paused) {
-  //       audio.play().catch((err) => {
-  //         console.warn("尝试恢复音频失败", err);
-  //       });
-  //     }
-  //   }, 100); // 等 100ms 后再恢复，规避系统切换时冲突
-  // };
-  //   // 当 audio 被浏览器暂停时，立刻尝试重新播放
-  //   audio.addEventListener('pause', forcePlay);
-  //   return () => {audio.removeEventListener('pause', forcePlay);};
-  // }, []);
 
 
 
