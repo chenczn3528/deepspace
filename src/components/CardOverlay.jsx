@@ -93,37 +93,50 @@ const CardOverlay = ({
                 </div>
 
                 {/* 文字区域 */}
-                <div className="absolute bottom-[13%] left-[10%] w-full h-[12%] flex items-center">
-                  <img
-                    className="h-[48px] object-contain"
-                    src={`signs/${drawResultsRef.current[currentCardIndex]?.card?.character}.png`}
-                    alt="角色"
-                  />
-                  <h1
-                    style={{
-                      color: 'white',
-                      fontSize: '30px',
-                      textShadow: shadowColor,
-                      fontFamily: '"SimSun", "宋体", serif',
-                      fontWeight: '1000',
-                    }}
-                  >
-                    ·
-                  </h1>
-                  <h1
-                    style={{
-                      color: 'white',
-                      fontSize: '40px',
-                      textShadow: shadowColor,
-                      fontFamily: '"SimSun", "宋体", serif',
-                      fontWeight: '800',
-                      marginLeft: '2px',
-                      alignSelf: 'center',
-                    }}
-                  >
-                    {drawResultsRef.current[currentCardIndex]?.card?.name}
-                  </h1>
-                </div>
+                  <div className="absolute bottom-[13%] left-[10%] w-full h-[12%] flex items-center">
+                      {/*<img*/}
+                      {/*  className="h-[48px] object-contain"*/}
+                      {/*  src={`signs/${drawResultsRef.current[currentCardIndex]?.card?.character}.png`}*/}
+                      {/*  alt="角色"*/}
+                      {/*/>*/}
+                      <h1
+                          style={{
+                              color: 'white',
+                              fontSize: '30px',
+                              textShadow: shadowColor,
+                              fontFamily: '"SimSun", "宋体", serif',
+                              fontWeight: '800',
+                              marginLeft: '2px',
+                              alignSelf: 'center',
+                          }}
+                      >
+                          {drawResultsRef.current[currentCardIndex]?.card?.character}
+                      </h1>
+                      <h1
+                          style={{
+                              color: 'white',
+                              fontSize: '30px',
+                              textShadow: shadowColor,
+                              fontFamily: '"SimSun", "宋体", serif',
+                              fontWeight: '1000',
+                          }}
+                      >
+                          ·
+                      </h1>
+                      <h1
+                          style={{
+                              color: 'white',
+                              fontSize: '40px',
+                              textShadow: shadowColor,
+                              fontFamily: '"SimSun", "宋体", serif',
+                              fontWeight: '800',
+                              marginLeft: '2px',
+                              alignSelf: 'center',
+                          }}
+                      >
+                          {drawResultsRef.current[currentCardIndex]?.card?.name}
+                      </h1>
+                  </div>
               </div>
             </div>
           </>

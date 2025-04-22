@@ -96,11 +96,11 @@ useEffect(() => {
 
 // 设置对应卡片的字体阴影颜色
   const characterShadowColors = {
-    "沈星回": '4px 4px 8px rgba(179, 153, 129, 1)', // 蓝色阴影
-    "黎深": '4px 4px 8px rgba(173, 173, 186, 1)', // 粉红阴影
-    "祁煜": '4px 4px 8px rgba(119, 122, 149, 1)', // 紫色阴影
-    "秦彻": '4px 4px 8px rgba(189, 114, 112, 1)', // 金色阴影
-    "夏以昼": '4px 4px 8px rgba(227, 203, 190, 1)', // 金色阴影
+    "沈星回": '4px 4px 8px rgba(133,82,161,1)',
+    "黎深": '4px 4px 8px rgba(16,43,106,1)',
+    "祁煜": '4px 4px 8px rgba(239,91,156,1)',
+    "秦彻": '4px 4px 8px rgba(170,33,22,1)',
+    "夏以昼": '4px 4px 8px rgba(244,121,32,1)',
     // 默认值也可以设一个
     default: '2px 2px 4px rgba(0, 0, 0, 0.8)'
   };
@@ -133,17 +133,41 @@ useEffect(() => {
 
 
 
-  // 保存抽卡总数和总出金数
-useEffect(() => {
+
+  useEffect(() => {
+  // 保存到 localStorage
   localStorage.setItem('totalDrawCount', totalDrawCount);
   localStorage.setItem('totalFiveStarCount', totalFiveStarCount);
   localStorage.setItem('pityCount', pityCount);
-  localStorage.setItem('useSoftGuarantee', useSoftGuarantee);
-  localStorage.setItem('history', JSON.stringify(history));  // 将历史记录保存到localStorage
+  localStorage.setItem('useSoftGuarantee', useSoftGuarantee ? 'true' : 'false'); // boolean 转字符串
+  localStorage.setItem('history', JSON.stringify(history)); // 保存历史记录
 }, [totalDrawCount, totalFiveStarCount, pityCount, useSoftGuarantee, history]);
 
+useEffect(() => {
+  // 从 localStorage 恢复状态
+  const savedDrawCount = localStorage.getItem('totalDrawCount');
+  const savedFiveStarCount = localStorage.getItem('totalFiveStarCount');
+  const savedPityCount = localStorage.getItem('pityCount');
+  const savedUseSoftGuarantee = localStorage.getItem('useSoftGuarantee');
+  const savedHistory = localStorage.getItem('history');
 
-
+  // 恢复数据
+  if (savedDrawCount) {
+    setTotalDrawCount(parseInt(savedDrawCount, 10)); // 恢复抽卡总数
+  }
+  if (savedFiveStarCount) {
+    setTotalFiveStarCount(parseInt(savedFiveStarCount, 10)); // 恢复五星卡片数
+  }
+  if (savedPityCount) {
+    setPityCount(parseInt(savedPityCount, 10)); // 恢复保底计数
+  }
+  if (savedUseSoftGuarantee) {
+    setUseSoftGuarantee(savedUseSoftGuarantee === 'true'); // 恢复是否启用软保底
+  }
+  if (savedHistory) {
+    setHistory(JSON.parse(savedHistory)); // 恢复历史记录
+  }
+}, []); // 只在初次加载时执行一次
 
 
 // useEffect(() => {
@@ -159,30 +183,7 @@ useEffect(() => {
 //   localStorage.setItem('useSoftGuarantee', useSoftGuarantee); // 保存是否开启小保底
 // }, [totalDrawCount, totalFiveStarCount, pityCount, useSoftGuarantee]);
 
-// 恢复从 localStorage 中保存的状态
-useEffect(() => {
-  const savedDrawCount = localStorage.getItem('totalDrawCount');
-  const savedFiveStarCount = localStorage.getItem('totalFiveStarCount');
-  const savedPityCount = localStorage.getItem('pityCount');
-  const savedUseSoftGuarantee = localStorage.getItem('useSoftGuarantee');
-  const savedHistory = localStorage.getItem('history');
 
-  if (savedDrawCount) {
-    setTotalDrawCount(parseInt(savedDrawCount, 10));
-  }
-  if (savedFiveStarCount) {
-    setTotalFiveStarCount(parseInt(savedFiveStarCount, 10));
-  }
-  if (savedPityCount) {
-    setPityCount(parseInt(savedPityCount, 10));
-  }
-  if (savedUseSoftGuarantee) {
-    setUseSoftGuarantee(savedUseSoftGuarantee === 'true');
-  }
-  if (savedHistory) {
-    setHistory(JSON.parse(savedHistory));  // 从localStorage中获取并恢复历史记录
-  }
-}, []);
 
 
 
@@ -429,7 +430,6 @@ const handleNextCard = () => {
 
         {/* 控件层（中间层） */}
           <DrawSettings
-          shadowColor={shadowColor}
           totalDrawCount={totalDrawCount}
           totalFiveStarCount={totalFiveStarCount}
           selectedRole={selectedRole}

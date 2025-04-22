@@ -1,7 +1,6 @@
 import React from 'react';
 
 const DrawSettings = ({
-  shadowColor,
   totalDrawCount,
   totalFiveStarCount,
   selectedRole,
@@ -29,7 +28,7 @@ const DrawSettings = ({
           style={{
             color: 'white',
             fontSize: '20px',
-            textShadow: shadowColor,
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
             fontFamily: '"SimSun", "宋体", serif',
             fontWeight: '800',
             marginLeft: '20px',
@@ -43,7 +42,7 @@ const DrawSettings = ({
           style={{
             color: 'white',
             fontSize: '20px',
-            textShadow: shadowColor,
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
             fontFamily: '"SimSun", "宋体", serif',
             fontWeight: '800',
             marginLeft: '20px',
@@ -59,7 +58,7 @@ const DrawSettings = ({
             style={{
               color: 'white',
               fontSize: '20px',
-              textShadow: shadowColor,
+              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
               fontFamily: '"SimSun", "宋体", serif',
               fontWeight: '800',
               marginLeft: '2px',
@@ -87,7 +86,7 @@ const DrawSettings = ({
             style={{
               color: 'white',
               fontSize: '20px',
-              textShadow: shadowColor,
+              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
               fontFamily: '"SimSun", "宋体", serif',
               fontWeight: '800',
               marginLeft: '2px',
@@ -109,7 +108,7 @@ const DrawSettings = ({
             style={{
               color: 'white',
               fontSize: '20px',
-              textShadow: shadowColor,
+              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
               fontFamily: '"SimSun", "宋体", serif',
               fontWeight: '800',
               marginLeft: '20px',
@@ -165,7 +164,7 @@ const DrawSettings = ({
             style={{
               color: 'white',
               fontSize: '20px',
-              textShadow: shadowColor,
+              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
               fontFamily: '"SimSun", "宋体", serif',
               fontWeight: '800',
               marginLeft: '20px',
