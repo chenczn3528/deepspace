@@ -134,17 +134,14 @@ useEffect(() => {
 
 
   // 保存抽卡总数和总出金数
-  useEffect(() => {
-  const savedDrawCount = localStorage.getItem('totalDrawCount');
-  const savedFiveStarCount = localStorage.getItem('totalFiveStarCount');
+useEffect(() => {
+  localStorage.setItem('totalDrawCount', totalDrawCount);
+  localStorage.setItem('totalFiveStarCount', totalFiveStarCount);
+  localStorage.setItem('pityCount', pityCount);
+  localStorage.setItem('useSoftGuarantee', useSoftGuarantee);
+  localStorage.setItem('history', JSON.stringify(history));  // 将历史记录保存到localStorage
+}, [totalDrawCount, totalFiveStarCount, pityCount, useSoftGuarantee, history]);
 
-  if (savedDrawCount) {
-    setTotalDrawCount(parseInt(savedDrawCount, 10));
-  }
-  if (savedFiveStarCount) {
-    setTotalFiveStarCount(parseInt(savedFiveStarCount, 10));
-  }
-}, []);
 
 
 
@@ -154,13 +151,38 @@ useEffect(() => {
 //   localStorage.setItem('totalFiveStarCount', totalFiveStarCount); // 同步保存五星卡总数
 // }, [totalDrawCount, totalFiveStarCount]);
 
+// useEffect(() => {
+//   // 保存抽卡总数、五星卡总数、剩余抽卡次数和是否使用小保底
+//   localStorage.setItem('totalDrawCount', totalDrawCount);
+//   localStorage.setItem('totalFiveStarCount', totalFiveStarCount); // 同步保存五星卡总数
+//   localStorage.setItem('pityCount', pityCount); // 保存剩余抽卡次数
+//   localStorage.setItem('useSoftGuarantee', useSoftGuarantee); // 保存是否开启小保底
+// }, [totalDrawCount, totalFiveStarCount, pityCount, useSoftGuarantee]);
+
+// 恢复从 localStorage 中保存的状态
 useEffect(() => {
-  // 保存抽卡总数、五星卡总数、剩余抽卡次数和是否使用小保底
-  localStorage.setItem('totalDrawCount', totalDrawCount);
-  localStorage.setItem('totalFiveStarCount', totalFiveStarCount); // 同步保存五星卡总数
-  localStorage.setItem('pityCount', pityCount); // 保存剩余抽卡次数
-  localStorage.setItem('useSoftGuarantee', useSoftGuarantee); // 保存是否开启小保底
-}, [totalDrawCount, totalFiveStarCount, pityCount, useSoftGuarantee]);
+  const savedDrawCount = localStorage.getItem('totalDrawCount');
+  const savedFiveStarCount = localStorage.getItem('totalFiveStarCount');
+  const savedPityCount = localStorage.getItem('pityCount');
+  const savedUseSoftGuarantee = localStorage.getItem('useSoftGuarantee');
+  const savedHistory = localStorage.getItem('history');
+
+  if (savedDrawCount) {
+    setTotalDrawCount(parseInt(savedDrawCount, 10));
+  }
+  if (savedFiveStarCount) {
+    setTotalFiveStarCount(parseInt(savedFiveStarCount, 10));
+  }
+  if (savedPityCount) {
+    setPityCount(parseInt(savedPityCount, 10));
+  }
+  if (savedUseSoftGuarantee) {
+    setUseSoftGuarantee(savedUseSoftGuarantee === 'true');
+  }
+  if (savedHistory) {
+    setHistory(JSON.parse(savedHistory));  // 从localStorage中获取并恢复历史记录
+  }
+}, []);
 
 
 
