@@ -22,6 +22,7 @@ const Home = () => {
   const roles = ['随机', ...new Set(cardData.map(card => card.character))]; // 存储可选择的角色列表
 
   const [includeThreeStar, setIncludeThreeStar] = useState(true); // 设置是否包括三星
+  const [onlySelectedRoleCard, setOnlySelectedRoleCard] = useState(false); //设置是否只抽所有单一角色的卡
 
   const drawSessionIdRef = useRef(0); // 全局流程控制 ID，抽卡直接出现结果的bug
   const [isDrawing, setIsDrawing] = useState(false);
@@ -222,25 +223,46 @@ const getRandomCard = (pity, fourStarCounter) => {
   const targetStar = parseInt(rarity, 10);
   let pool = [];
 
-  if (selectedRole === '随机') {
-    pool = cardData.filter(card => parseInt(card.star) === targetStar);
+  if (onlySelectedRoleCard && selectedRole !== '随机') {
+    // 只抽该角色的卡
+    pool = cardData.filter(
+      card =>
+        card.character === selectedRole &&
+        parseInt(card.star) === targetStar &&
+        (includeThreeStar || parseInt(card.star) !== 3)
+    );
   } else {
-    if (targetStar === 5) {
-      if (useSoftGuarantee) {
-        if (softPityFailed) {
-          // 大保底触发
-          pool = cardData.filter(card => card.character === selectedRole && parseInt(card.star) === 5);
+    if (selectedRole === '随机') {
+      pool = cardData.filter(
+        card =>
+          parseInt(card.star) === targetStar &&
+          (includeThreeStar || parseInt(card.star) !== 3)
+      );
+    } else {
+      if (targetStar === 5) {
+        if (useSoftGuarantee) {
+          if (softPityFailed) {
+            // 大保底触发：抽目标角色
+            pool = cardData.filter(
+              card => card.character === selectedRole && parseInt(card.star) === 5
+            );
+          } else {
+            // 正常保底池
+            pool = cardData.filter(card => parseInt(card.star) === 5);
+          }
         } else {
-          // 普通抽取，有几率抽到非目标角色
-          pool = cardData.filter(card => parseInt(card.star) === 5);
+          // 不使用保底机制，直接限定为指定角色
+          pool = cardData.filter(
+            card => card.character === selectedRole && parseInt(card.star) === 5
+          );
         }
       } else {
-        // 不使用保底机制，直接限定为指定角色
-        pool = cardData.filter(card => card.character === selectedRole && parseInt(card.star) === 5);
+        pool = cardData.filter(
+          card =>
+            parseInt(card.star) === targetStar &&
+            (includeThreeStar || parseInt(card.star) !== 3)
+        );
       }
-    } else {
-      // 3星/4星不考虑角色
-      pool = cardData.filter(card => parseInt(card.star) === targetStar);
     }
   }
 
@@ -261,6 +283,7 @@ const getRandomCard = (pity, fourStarCounter) => {
 
   return { card: chosen, rarity };
 };
+
 
 
   // ========================================================
@@ -350,7 +373,14 @@ const getRandomCard = (pity, fourStarCounter) => {
     setPityCount(finalPity);
     setCards(finalResults.map(r => r.card));
     // setHistory(prev => [...finalResults.map(r => r.card), ...prev].slice(0, 50));
-    setHistory(prev => [...finalResults.map(r => ({...r.card, timestamp: new Date().toISOString(),})), ...prev,].slice(0, 50));
+    // setHistory(prev => [...finalResults.map(r => ({...r.card, timestamp: new Date().toISOString(),})), ...prev,]);
+    setHistory(prev => [
+      ...prev, // 保留旧的记录
+      ...finalResults.map(r => ({
+        ...r.card,
+        timestamp: new Date().toISOString(),
+      })), // 追加新的记录
+    ]);
 
     setShowAnimationDrawCards(false);
     setisAnimatingDrawCards(false);
@@ -434,6 +464,8 @@ const getRandomCard = (pity, fourStarCounter) => {
           totalFiveStarCount={totalFiveStarCount}
           selectedRole={selectedRole}
           setSelectedRole={setSelectedRole}
+          onlySelectedRoleCard={onlySelectedRoleCard}
+          setonlySelectedRoleCard={setOnlySelectedRoleCard}
           roles={roles}
           includeThreeStar={includeThreeStar}
           setIncludeThreeStar={setIncludeThreeStar}

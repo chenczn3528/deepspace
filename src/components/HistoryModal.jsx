@@ -35,7 +35,7 @@ const HistoryModal = ({ showHistory, setShowHistory, history }) => {
               历史记录
             </h2>
             <div className="flex-1 overflow-y-auto pr-2">
-              {history.map((card, idx) => {
+              {history.slice().reverse().map((card, idx) => {
                 const cardHistoryColors = {
                   "3星": { color: "black" },
                   "4星": { color: "#a855f7" },
