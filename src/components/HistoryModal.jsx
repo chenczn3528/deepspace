@@ -26,7 +26,8 @@ const HistoryModal = ({ showHistory, setShowHistory, history }) => {
           onClick={(e) => e.stopPropagation()}
         >
           <img
-            src="结算背景.jpg"
+            src="https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E7%BB%93%E7%AE%97%E8%83%8C%E6%99%AF.jpg"
+            // src="结算背景.jpg"
             alt="背景"
             className="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-90"
           />
