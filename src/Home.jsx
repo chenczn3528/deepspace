@@ -584,7 +584,7 @@ const Home = () => {
             }
           }}>
 
-        {/*<VideoPreloader />*/}
+        <VideoPreloader />
 
         {/*/!*音频*!/*/}
         <audio
@@ -596,6 +596,7 @@ const Home = () => {
 
         {/* 视频层（最底层） */}
         <video
+            preload="auto"
             autoPlay
             loop
             playsInline

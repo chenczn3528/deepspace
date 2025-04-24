@@ -64,6 +64,7 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards, onSkip, isSingl
         )}
 
         <video
+            preload="auto"
             ref={videoRef}
             className="rounded-xl shadow-lg w-full h-full fixed top-0 left-0 object-cover"
             onLoadedData={handleVideoLoaded}
@@ -83,6 +84,7 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards, onSkip, isSingl
 
         <audio
             ref={audioRef}
+            preload="auto"
             autoPlay
             loop
             muted={false}

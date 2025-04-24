@@ -106,6 +106,7 @@ const CardOverlay = ({
           // 只有五星卡片并且视频没有播放完时，先播放视频
           <video
             className="fixed inset-0 w-full h-full object-cover z-10" // 设置 z-index 为 10 确保视频在图片之上
+            preload="auto"
             autoPlay
             playsInline
             muted

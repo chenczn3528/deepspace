@@ -5,14 +5,14 @@ const VideoPreloader = () => {
 
   useEffect(() => {
     const videoUrls = [
-        'videos/开屏动画.mp4',
-        'videos/no_gold_card.mp4',
-        'videos/gold_card.MP4',
-        'videos/夏以昼金卡.mp4',
-        'videos/沈星回金卡.mp4',
-        'videos/祁煜金卡.mp4',
-        'videos/秦彻金卡.mp4',
-        'videos/黎深金卡.mp4',
+        'https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/gold_card.MP4',
+        'https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/no_gold_card.mp4',
+        'https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E5%BC%80%E5%B1%8F%E5%8A%A8%E7%94%BB.mp4',
+        'https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E6%B2%88%E6%98%9F%E5%9B%9E%E9%87%91%E5%8D%A1.mp4',
+        'https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E9%BB%8E%E6%B7%B1%E9%87%91%E5%8D%A1.mp4',
+        'https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E7%A5%81%E7%85%9C%E9%87%91%E5%8D%A1.mp4',
+        'https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E7%A7%A6%E5%BD%BB%E9%87%91%E5%8D%A1.mp4',
+        'https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E5%A4%8F%E4%BB%A5%E6%98%BC%E9%87%91%E5%8D%A1.mp4',
     ];
 
     videoUrls.forEach((url, index) => {

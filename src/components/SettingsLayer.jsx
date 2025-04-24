@@ -37,6 +37,23 @@ const SettingsLayer = ({
     <div className="fixed inset-0 z-10 flex flex-col w-full bottom-[10%] items-center justify-center">
         <div
             className="relative bg-gray-900 bg-opacity-80 p-4 flex flex-col gap-4 ml-[10px] mr-[10px] rounded-xl shadow-lg">
+
+            <div
+                style={{
+                    color: 'gray',
+                    fontSize: '16px',
+                    // textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+                    // fontFamily: '"SimSun", "宋体", serif',
+                    fontWeight: '800',
+                    marginLeft: '20px',
+                    marginRight: '20px'
+                }}
+                className="text-sm mt-2 flex flex-col"
+            >
+                <label>请告诉我是更新前还是更新后更卡</label>
+                <label>更新时间4月24日09:07，感谢❤</label>
+            </div>
+
             {/*统计抽数*/}
             <div
                 style={{
@@ -102,43 +119,43 @@ const SettingsLayer = ({
                         id="includeThree"
                         type="checkbox"
                         checked={includeThreeStar}
-                           onChange={(e) => setIncludeThreeStar(e.target.checked)}
+                        onChange={(e) => setIncludeThreeStar(e.target.checked)}
                         className="w-[20px] h-[20px]"
                     />
                 </div>
 
                 {selectedRole !== '随机' && (
-                  <div className="flex items-center gap-2">
-                    <label htmlFor="softGuarantee" style={labelStyle}>开启大小保底机制</label>
-                    <input
-                      id="softGuarantee"
-                      type="checkbox"
-                      checked={useSoftGuarantee}
-                      onChange={(e) => {
-                        const checked = e.target.checked;
-                        setUseSoftGuarantee(checked);
-                        if (checked) setonlySelectedRoleCard(false); // 互斥
-                      }}
-                      className="w-[20px] h-[20px]"
-                    />
-                  </div>
+                    <div className="flex items-center gap-2">
+                        <label htmlFor="softGuarantee" style={labelStyle}>开启大小保底机制</label>
+                        <input
+                            id="softGuarantee"
+                            type="checkbox"
+                            checked={useSoftGuarantee}
+                            onChange={(e) => {
+                                const checked = e.target.checked;
+                                setUseSoftGuarantee(checked);
+                                if (checked) setonlySelectedRoleCard(false); // 互斥
+                            }}
+                            className="w-[20px] h-[20px]"
+                        />
+                    </div>
                 )}
 
                 {selectedRole !== '随机' && (
-                  <div className="flex items-center gap-2">
-                    <label htmlFor="onlyThisRole" style={labelStyle}>只抽 {selectedRole} 的卡</label>
-                    <input
-                      id="onlyThisRole"
-                      type="checkbox"
-                      checked={onlySelectedRoleCard}
-                      onChange={(e) => {
-                        const checked = e.target.checked;
-                        setonlySelectedRoleCard(checked);
-                        if (checked) setUseSoftGuarantee(false); // 互斥
-                      }}
-                      className="w-[20px] h-[20px]"
-                    />
-                  </div>
+                    <div className="flex items-center gap-2">
+                        <label htmlFor="onlyThisRole" style={labelStyle}>只抽 {selectedRole} 的卡</label>
+                        <input
+                            id="onlyThisRole"
+                            type="checkbox"
+                            checked={onlySelectedRoleCard}
+                            onChange={(e) => {
+                                const checked = e.target.checked;
+                                setonlySelectedRoleCard(checked);
+                                if (checked) setUseSoftGuarantee(false); // 互斥
+                            }}
+                            className="w-[20px] h-[20px]"
+                        />
+                    </div>
                 )}
 
 
