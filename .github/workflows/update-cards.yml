@@ -29,7 +29,7 @@ jobs:
       # 运行 Python 脚本
       - name: Run update script
         run: |
-          python update_cards.py  # 替换为你的脚本名称
+          python src/update_cards.py  # 替换为你的脚本名称
 
       # 将更新后的 cards.json 文件提交到 GitHub
       - name: Commit updated cards.json

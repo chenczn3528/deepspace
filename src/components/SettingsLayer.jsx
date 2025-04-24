@@ -44,14 +44,14 @@ const SettingsLayer = ({
                     fontSize: '16px',
                     // textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
                     // fontFamily: '"SimSun", "宋体", serif',
-                    fontWeight: '800',
+                    fontWeight: '400',
                     marginLeft: '20px',
                     marginRight: '20px'
                 }}
                 className="text-sm mt-2 flex flex-col"
             >
                 <label>请告诉我是更新前还是更新后更卡</label>
-                <label>更新时间4月24日09:07，感谢❤</label>
+                <label>更新时间4月24日09:17，感谢❤</label>
             </div>
 
             {/*统计抽数*/}
