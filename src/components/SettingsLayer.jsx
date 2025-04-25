@@ -21,6 +21,7 @@ const SettingsLayer = ({
   setShowHistory,
   setHasShownSummary,
   setShowSummary,
+  clearLocalData,
 }) => {
     const labelStyle = {
       color: 'white',
@@ -54,6 +55,15 @@ const SettingsLayer = ({
                 {/*<label>请告诉我是更新前还是更新后更卡</label>*/}
                 {/*<label>更新时间4月24日09:17，感谢❤</label>*/}
             </div>
+
+
+            <button
+                onClick={clearLocalData}
+                className="bg-blue-500 px-8 py-2 rounded flex-1 ml-[20px] w-[40%]"
+            >
+                清除所有记录
+            </button>
+
 
             {/*统计抽数*/}
             <div
@@ -191,11 +201,10 @@ const SettingsLayer = ({
                 </button>
             </div>
 
-            <div className="flex w-screen h-[40px] mt-[16px]">
+            <div className="flex flex-wrap w-screen h-auto mt-4 items-center px-4">
                 {/* 保底显示 */}
                 <div
-                    className="text-sm mt-2"
-                    id="pity-counter"
+                    className="text-sm text-white font-extrabold text-[20px] break-words ml-[20px]"
                     style={{
                         color: 'white',
                         fontSize: '20px',
@@ -207,25 +216,66 @@ const SettingsLayer = ({
                     }}
                 >
                     {selectedRole === '随机' || !useSoftGuarantee ? (
-                        <>还剩 {70 - pityCount} 抽必得五星</>
+                        <>
+                            还剩 {70 - pityCount} 抽<br/>必得五星
+                        </>
+                    ) : softPityFailed ? (
+                        <>
+                            还剩 {70 - pityCount} 抽<br/>大保底
+                        </>
                     ) : (
-                        softPityFailed ? (
-                            <>还剩 {70 - pityCount} 抽大保底</>
-                        ) : (
-                            <>还剩 {70 - pityCount} 抽小保底</>
-                        )
+                        <>
+                            还剩 {70 - pityCount} 抽<br/>小保底
+                        </>
                     )}
                 </div>
 
                 {/* 抽卡历史记录按钮 */}
                 <button
-                    className="bg-gray-700 text-white ml-[20px] rounded"
+                    className="ml-[20px] px-3 py-1 bg-gray-700 text-white rounded whitespace-nowrap"
                     onClick={() => setShowHistory(!showHistory)}
                     id="history-toggle-button"
                 >
                     {showHistory ? '关闭抽卡记录' : '查看抽卡记录'}
                 </button>
             </div>
+
+
+            {/*<div className="flex w-screen h-[40px] mt-[16px]">*/}
+            {/*    /!* 保底显示 *!/*/}
+            {/*    <div*/}
+            {/*        className="text-sm mt-2"*/}
+            {/*        id="pity-counter"*/}
+            {/*        style={{*/}
+            {/*            color: 'white',*/}
+            {/*            fontSize: '20px',*/}
+            {/*            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',*/}
+            {/*            // fontFamily: '"SimSun", "宋体", serif',*/}
+            {/*            fontWeight: '800',*/}
+            {/*            marginLeft: '20px',*/}
+            {/*            alignSelf: 'center',*/}
+            {/*        }}*/}
+            {/*    >*/}
+            {/*        {selectedRole === '随机' || !useSoftGuarantee ? (*/}
+            {/*            <>还剩 {70 - pityCount} 抽必得五星</>*/}
+            {/*        ) : (*/}
+            {/*            softPityFailed ? (*/}
+            {/*                <>还剩 {70 - pityCount} 抽大保底</>*/}
+            {/*            ) : (*/}
+            {/*                <>还剩 {70 - pityCount} 抽小保底</>*/}
+            {/*            )*/}
+            {/*        )}*/}
+            {/*    </div>*/}
+
+            {/*    /!* 抽卡历史记录按钮 *!/*/}
+            {/*    <button*/}
+            {/*        className="bg-gray-700 text-white ml-[20px] rounded"*/}
+            {/*        onClick={() => setShowHistory(!showHistory)}*/}
+            {/*        id="history-toggle-button"*/}
+            {/*    >*/}
+            {/*        {showHistory ? '关闭抽卡记录' : '查看抽卡记录'}*/}
+            {/*    </button>*/}
+            {/*</div>*/}
         </div>
     </div>
   );

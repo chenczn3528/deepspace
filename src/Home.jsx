@@ -11,18 +11,88 @@ import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const Home = () => {
 
+  // ========================================================
+  // 数据存储与恢复
+  const getInitialValue = (key, defaultValue) => {
+    const saved = localStorage.getItem(key);
+    try {
+      return saved !== null ? JSON.parse(saved) : defaultValue;
+    } catch {
+      return defaultValue;
+    }
+  };
+
+  // 总抽卡数
+  const [totalDrawCount, setTotalDrawCount] = useState(() => getInitialValue('totalDrawCount', 0));
+  // 总出金数
+  const [totalFiveStarCount, setTotalFiveStarCount] = useState(() => getInitialValue('totalFiveStarCount', 0));
+  // 下次出金还需要多少
+  const [pityCount, setPityCount] = useState(() => getInitialValue('pityCount', 0));
+  // 是否开启大小保底机制
+  const [useSoftGuarantee, setUseSoftGuarantee] = useState(() => getInitialValue('useSoftGuarantee', true));
+  // 目前是小保底还是大保底
+  const [softPityFailed, setSoftPityFailed] = useState(() => getInitialValue('softPityFailed', false));
+  // 选择的角色
+  const [selectedRole, setSelectedRole] = useState(() => getInitialValue('selectedRole', '随机'));
+  // 是否包括三星
+  const [includeThreeStar, setIncludeThreeStar] = useState(() => getInitialValue('includeThreeStar', true));
+  // 是否只抽当前角色的卡
+  const [onlySelectedRoleCard, setOnlySelectedRoleCard] = useState(() => getInitialValue('onlySelectedRoleCard', false));
+  // 历史记录
+  const [history, setHistory] = useState(() => getInitialValue('history', []));
+
+  useEffect(() => {
+    localStorage.setItem('totalDrawCount', JSON.stringify(totalDrawCount));
+  }, [totalDrawCount]);
+
+  useEffect(() => {
+    localStorage.setItem('totalFiveStarCount', JSON.stringify(totalFiveStarCount));
+  }, [totalFiveStarCount]);
+
+  useEffect(() => {
+    localStorage.setItem('pityCount', JSON.stringify(pityCount));
+  }, [pityCount]);
+
+  useEffect(() => {
+    localStorage.setItem('useSoftGuarantee', JSON.stringify(useSoftGuarantee));
+  }, [useSoftGuarantee]);
+
+  useEffect(() => {
+    localStorage.setItem('softPityFailed', JSON.stringify(softPityFailed));
+  }, [softPityFailed]);
+
+  useEffect(() => {
+    localStorage.setItem('selectedRole', JSON.stringify(selectedRole));
+  }, [selectedRole]);
+
+  useEffect(() => {
+    localStorage.setItem('includeThreeStar', JSON.stringify(includeThreeStar));
+  }, [includeThreeStar]);
+
+  useEffect(() => {
+    localStorage.setItem('onlySelectedRoleCard', JSON.stringify(onlySelectedRoleCard));
+  }, [onlySelectedRoleCard]);
+
+  useEffect(() => {
+    localStorage.setItem('history', JSON.stringify(history));
+  }, [history]);
+
+  // 清除按钮
+  const clearLocalData = () => {
+    localStorage.clear();     // 清空所有 localStorage 数据
+    location.reload();        // 刷新页面以加载默认状态
+  };
+
+
+
+  // ========================================================
+  // 其余变量
   const [currentCardIndex, setCurrentCardIndex] = useState(0); // 当前的卡片索引
   const [cards, setCards] = useState([]); // 存储抽卡后的卡片信息
-  const [history, setHistory] = useState([]); // 存储抽卡历史记录
   const [drawnCards, setDrawnCards] = useState([]); // 存储已抽到的卡片的数组
   const drawResultsRef = useRef([]); // 引用存储抽卡结果的数组，避免重新渲染时丢失数据，保存每次抽卡的结果，以便后续处理和展示
 
-
-  const [selectedRole, setSelectedRole] = useState('随机'); // 当前选择的角色
   const roles = ['随机', ...new Set(cardData.map(card => card.character))]; // 存储可选择的角色列表
-
-  const [includeThreeStar, setIncludeThreeStar] = useState(true); // 设置是否包括三星
-  const [onlySelectedRoleCard, setOnlySelectedRoleCard] = useState(false); //设置是否只抽所有单一角色的卡
 
   const drawSessionIdRef = useRef(0); // 全局流程控制 ID，抽卡直接出现结果的bug
   const [isDrawing, setIsDrawing] = useState(false);
@@ -30,13 +100,6 @@ const Home = () => {
   const [videoSkipped, setVideoSkipped] = useState(false); // 设置跳过视频的状态
   const isSingleDraw = drawnCards.length === 1; //是否是一抽，一抽的话不要显示跳过按钮
 
-  const [totalDrawCount, setTotalDrawCount] = useState(0); // 统计总抽卡数
-  const [totalFiveStarCount, setTotalFiveStarCount] = useState(0); // 统计总出金数
-
-
-  const [pityCount, setPityCount] = useState(0); // 保底计数器
-  const [softPityFailed, setSoftPityFailed] = useState(false); //小保底是否激活
-  const [useSoftGuarantee, setUseSoftGuarantee] = useState(true); // 是否开启小保底
   const currentPityRef = useRef(0); // 引用存储当前保底计数器的值，在每次抽卡时更新，用于确定保底是否触发
   const currentFourStarRef = useRef(0); // 四星保底计数器的值
 
@@ -125,61 +188,6 @@ const Home = () => {
       setIsFiveStar(false); // 不是五星卡片，直接展示卡片
     }
   }, [currentCardIndex]);
-
-
-
-
-  // ========================================================
-  // 数据存储
-  useEffect(() => {
-    // 保存到 localStorage
-    localStorage.setItem('totalDrawCount', totalDrawCount);
-    localStorage.setItem('totalFiveStarCount', totalFiveStarCount);
-    localStorage.setItem('pityCount', pityCount);
-    localStorage.setItem('useSoftGuarantee', useSoftGuarantee ? 'true' : 'false'); // boolean 转字符串
-    localStorage.setItem('history', JSON.stringify(history)); // 保存历史记录
-  }, [totalDrawCount, totalFiveStarCount, pityCount, useSoftGuarantee, history]);
-
-  useEffect(() => {
-    // 从 localStorage 恢复状态
-    const savedDrawCount = localStorage.getItem('totalDrawCount');
-    const savedFiveStarCount = localStorage.getItem('totalFiveStarCount');
-    const savedPityCount = localStorage.getItem('pityCount');
-    const savedUseSoftGuarantee = localStorage.getItem('useSoftGuarantee');
-    const savedHistory = localStorage.getItem('history');
-
-    // 恢复数据
-    if (savedDrawCount) {
-      setTotalDrawCount(parseInt(savedDrawCount, 10)); // 恢复抽卡总数
-    }
-    if (savedFiveStarCount) {
-      setTotalFiveStarCount(parseInt(savedFiveStarCount, 10)); // 恢复五星卡片数
-    }
-    if (savedPityCount) {
-      setPityCount(parseInt(savedPityCount, 10)); // 恢复保底计数
-    }
-    if (savedUseSoftGuarantee) {
-      setUseSoftGuarantee(savedUseSoftGuarantee === 'true'); // 恢复是否启用软保底
-    }
-    if (savedHistory) {
-      setHistory(JSON.parse(savedHistory)); // 恢复历史记录
-    }
-  }, []); // 只在初次加载时执行一次
-
-// useEffect(() => {
-//   localStorage.setItem('totalDrawCount', totalDrawCount);
-//   localStorage.setItem('totalFiveStarCount', totalFiveStarCount); // 同步保存五星卡总数
-// }, [totalDrawCount, totalFiveStarCount]);
-
-// useEffect(() => {
-//   // 保存抽卡总数、五星卡总数、剩余抽卡次数和是否使用小保底
-//   localStorage.setItem('totalDrawCount', totalDrawCount);
-//   localStorage.setItem('totalFiveStarCount', totalFiveStarCount); // 同步保存五星卡总数
-//   localStorage.setItem('pityCount', pityCount); // 保存剩余抽卡次数
-//   localStorage.setItem('useSoftGuarantee', useSoftGuarantee); // 保存是否开启小保底
-// }, [totalDrawCount, totalFiveStarCount, pityCount, useSoftGuarantee]);
-
-
 
 
 
@@ -639,6 +647,7 @@ const Home = () => {
           setShowHistory={setShowHistory}
           setHasShownSummary={setHasShownSummary}
           setShowSummary={setShowSummary}
+          clearLocalData={clearLocalData}
         />
 
 
