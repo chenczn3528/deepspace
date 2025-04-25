@@ -18,9 +18,9 @@ jobs:
       with:
         node-version: '18'
 
-    - name: Set environment variables
-      run: |
-        echo "NODE_OPTIONS=--openssl-legacy-provider" >> $GITHUB_ENV
+#    - name: Set environment variables
+#      run: |
+#        echo "NODE_OPTIONS=--openssl-legacy-provider" >> $GITHUB_ENV
 
     - name: Clean install dependencies
       run: |
