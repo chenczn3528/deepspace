@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tailwindcss/forms": "^0.5.10",
+    "crypto-browserify": "^3.12.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-lazy-load-image-component": "^1.6.3"
