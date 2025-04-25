@@ -590,8 +590,8 @@ const Home = () => {
         <audio
             ref={audioRef}
             loop
-            // src="audios/时空引力.mp3"
-            src="https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E6%97%B6%E7%A9%BA%E5%BC%95%E5%8A%9B.mp3"
+            src="audios/时空引力.mp3"
+            // src="https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E6%97%B6%E7%A9%BA%E5%BC%95%E5%8A%9B.mp3"
         />
 
         {/* 视频层（最底层） */}
@@ -613,8 +613,8 @@ const Home = () => {
 
             }}
             className="fixed top-0 left-0 w-full h-full object-cover z-0">
-          {/*<source src="videos/开屏动画.mp4" type="video/mp4"/>*/}
-          <source src="https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E5%BC%80%E5%B1%8F%E5%8A%A8%E7%94%BB.mp4" type="video/mp4"/>
+          <source src="videos/开屏动画.mp4" type="video/mp4"/>
+          {/*<source src="https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E5%BC%80%E5%B1%8F%E5%8A%A8%E7%94%BB.mp4" type="video/mp4"/>*/}
         </video>
 
         {/* 控件层（中间层） */}
