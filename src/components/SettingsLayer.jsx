@@ -51,7 +51,8 @@ const SettingsLayer = ({
                 }}
                 className="text-sm mt-2 flex flex-col"
             >
-                <label>优化中……卡顿为正常现象……</label>
+                <label>目前应该是第一次加载网页视频会很卡</label>
+                <label>加载完只要不清除浏览器缓存就不卡</label>
                 {/*<label>请告诉我是更新前还是更新后更卡</label>*/}
                 {/*<label>更新时间4月24日09:17，感谢❤</label>*/}
             </div>
@@ -201,10 +202,11 @@ const SettingsLayer = ({
                 </button>
             </div>
 
-            <div className="flex flex-wrap w-screen h-auto mt-4 items-center px-4">
+
+            <div className="flex w-screen h-auto mt-4 items-center px-4">
                 {/* 保底显示 */}
                 <div
-                    className="text-sm text-white font-extrabold text-[20px] break-words ml-[20px]"
+                    className="text-sm text-white font-extrabold text-[20px] break-words ml-[20px] flex-grow"
                     style={{
                         color: 'white',
                         fontSize: '20px',
@@ -217,22 +219,22 @@ const SettingsLayer = ({
                 >
                     {selectedRole === '随机' || !useSoftGuarantee ? (
                         <>
-                            还剩 {70 - pityCount} 抽<br/>必得五星
+                            还剩 {70 - pityCount} 抽 必得五星
                         </>
                     ) : softPityFailed ? (
                         <>
-                            还剩 {70 - pityCount} 抽<br/>大保底
+                            还剩 {70 - pityCount} 抽 大保底
                         </>
                     ) : (
                         <>
-                            还剩 {70 - pityCount} 抽<br/>小保底
+                            还剩 {70 - pityCount} 抽 小保底
                         </>
                     )}
                 </div>
 
                 {/* 抽卡历史记录按钮 */}
                 <button
-                    className="ml-[20px] px-3 py-1 bg-gray-700 text-white rounded whitespace-nowrap"
+                    className="ml-[20px] px-3 py-1 bg-gray-700 text-white rounded whitespace-nowrap mr-[20px] mt-[5px]"
                     onClick={() => setShowHistory(!showHistory)}
                     id="history-toggle-button"
                 >
@@ -241,11 +243,10 @@ const SettingsLayer = ({
             </div>
 
 
-            {/*<div className="flex w-screen h-[40px] mt-[16px]">*/}
-            {/*    /!* 保底显示 *!/*/}
+            {/*<div className="flex flex-wrap w-screen h-auto mt-4 items-center px-4">*/}
+            {/* 保底显示 */}
             {/*    <div*/}
-            {/*        className="text-sm mt-2"*/}
-            {/*        id="pity-counter"*/}
+            {/*        className="text-sm text-white font-extrabold text-[20px] break-words ml-[20px]"*/}
             {/*        style={{*/}
             {/*            color: 'white',*/}
             {/*            fontSize: '20px',*/}
@@ -257,25 +258,30 @@ const SettingsLayer = ({
             {/*        }}*/}
             {/*    >*/}
             {/*        {selectedRole === '随机' || !useSoftGuarantee ? (*/}
-            {/*            <>还剩 {70 - pityCount} 抽必得五星</>*/}
+            {/*            <>*/}
+            {/*                还剩 {70 - pityCount} 抽<br/>必得五星*/}
+            {/*            </>*/}
+            {/*        ) : softPityFailed ? (*/}
+            {/*            <>*/}
+            {/*                还剩 {70 - pityCount} 抽<br/>大保底*/}
+            {/*            </>*/}
             {/*        ) : (*/}
-            {/*            softPityFailed ? (*/}
-            {/*                <>还剩 {70 - pityCount} 抽大保底</>*/}
-            {/*            ) : (*/}
-            {/*                <>还剩 {70 - pityCount} 抽小保底</>*/}
-            {/*            )*/}
+            {/*            <>*/}
+            {/*                还剩 {70 - pityCount} 抽<br/>小保底*/}
+            {/*            </>*/}
             {/*        )}*/}
             {/*    </div>*/}
 
             {/*    /!* 抽卡历史记录按钮 *!/*/}
             {/*    <button*/}
-            {/*        className="bg-gray-700 text-white ml-[20px] rounded"*/}
+            {/*        className="ml-[20px] px-3 py-1 bg-gray-700 text-white rounded whitespace-nowrap"*/}
             {/*        onClick={() => setShowHistory(!showHistory)}*/}
             {/*        id="history-toggle-button"*/}
             {/*    >*/}
             {/*        {showHistory ? '关闭抽卡记录' : '查看抽卡记录'}*/}
             {/*    </button>*/}
             {/*</div>*/}
+
         </div>
     </div>
   );

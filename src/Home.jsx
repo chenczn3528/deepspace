@@ -5,82 +5,62 @@ import HistoryModal from './components/HistoryModal';
 import CardOverlay from './components/CardOverlay';
 import SettingsLayer from "./components/SettingsLayer.jsx";
 import CardSummary from "./components/CardSummary.jsx";
-import VideoPreloader from "./components/VideoPreloader.jsx";
+import useLocalStorageState from './hooks/useLocalStorageState'
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
 
 const Home = () => {
 
+  // 加载
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker
+        .register('service_worker.js')
+        .then((reg) => console.log('SW registered:', reg))
+        .catch((err) => console.error('SW registration failed:', err));
+    });
+  }
+
+
   // ========================================================
   // 数据存储与恢复
-  const getInitialValue = (key, defaultValue) => {
-    const saved = localStorage.getItem(key);
-    try {
-      return saved !== null ? JSON.parse(saved) : defaultValue;
-    } catch {
-      return defaultValue;
-    }
-  };
 
   // 总抽卡数
-  const [totalDrawCount, setTotalDrawCount] = useState(() => getInitialValue('totalDrawCount', 0));
-  // 总出金数
-  const [totalFiveStarCount, setTotalFiveStarCount] = useState(() => getInitialValue('totalFiveStarCount', 0));
-  // 下次出金还需要多少
-  const [pityCount, setPityCount] = useState(() => getInitialValue('pityCount', 0));
-  // 是否开启大小保底机制
-  const [useSoftGuarantee, setUseSoftGuarantee] = useState(() => getInitialValue('useSoftGuarantee', true));
-  // 目前是小保底还是大保底
-  const [softPityFailed, setSoftPityFailed] = useState(() => getInitialValue('softPityFailed', false));
+  const [totalDrawCount, setTotalDrawCount] = useLocalStorageState('totalDrawCount', 0);
   // 选择的角色
-  const [selectedRole, setSelectedRole] = useState(() => getInitialValue('selectedRole', '随机'));
+  const [selectedRole, setSelectedRole] = useLocalStorageState('selectedRole', '随机');
+  // 总出金数
+  const [totalFiveStarCount, setTotalFiveStarCount] = useLocalStorageState('totalFiveStarCount', 0);
+  // 下次出金还需要多少
+  const [pityCount, setPityCount] = useLocalStorageState('pityCount', 0);
+  // 是否开启大小保底机制
+  const [useSoftGuarantee, setUseSoftGuarantee] = useLocalStorageState('useSoftGuarantee', true);
+  // 目前是小保底还是大保底
+  const [softPityFailed, setSoftPityFailed] = useLocalStorageState('softPityFailed', false);
   // 是否包括三星
-  const [includeThreeStar, setIncludeThreeStar] = useState(() => getInitialValue('includeThreeStar', true));
+  const [includeThreeStar, setIncludeThreeStar] = useLocalStorageState('includeThreeStar', true);
   // 是否只抽当前角色的卡
-  const [onlySelectedRoleCard, setOnlySelectedRoleCard] = useState(() => getInitialValue('onlySelectedRoleCard', false));
+  const [onlySelectedRoleCard, setOnlySelectedRoleCard] = useLocalStorageState('onlySelectedRoleCard', false);
   // 历史记录
-  const [history, setHistory] = useState(() => getInitialValue('history', []));
+  const [history, setHistory] = useLocalStorageState('history', []);
 
-  useEffect(() => {
-    localStorage.setItem('totalDrawCount', JSON.stringify(totalDrawCount));
-  }, [totalDrawCount]);
 
-  useEffect(() => {
-    localStorage.setItem('totalFiveStarCount', JSON.stringify(totalFiveStarCount));
-  }, [totalFiveStarCount]);
+  // 清除缓存数据
+  const keysToClear = [
+    'totalDrawCount',
+    'totalFiveStarCount',
+    'pityCount',
+    'useSoftGuarantee',
+    'softPityFailed',
+    'selectedRole',
+    'includeThreeStar',
+    'onlySelectedRoleCard',
+    'history'
+  ];
 
-  useEffect(() => {
-    localStorage.setItem('pityCount', JSON.stringify(pityCount));
-  }, [pityCount]);
-
-  useEffect(() => {
-    localStorage.setItem('useSoftGuarantee', JSON.stringify(useSoftGuarantee));
-  }, [useSoftGuarantee]);
-
-  useEffect(() => {
-    localStorage.setItem('softPityFailed', JSON.stringify(softPityFailed));
-  }, [softPityFailed]);
-
-  useEffect(() => {
-    localStorage.setItem('selectedRole', JSON.stringify(selectedRole));
-  }, [selectedRole]);
-
-  useEffect(() => {
-    localStorage.setItem('includeThreeStar', JSON.stringify(includeThreeStar));
-  }, [includeThreeStar]);
-
-  useEffect(() => {
-    localStorage.setItem('onlySelectedRoleCard', JSON.stringify(onlySelectedRoleCard));
-  }, [onlySelectedRoleCard]);
-
-  useEffect(() => {
-    localStorage.setItem('history', JSON.stringify(history));
-  }, [history]);
-
-  // 清除按钮
   const clearLocalData = () => {
-    localStorage.clear();     // 清空所有 localStorage 数据
-    location.reload();        // 刷新页面以加载默认状态
+    keysToClear.forEach(key => localStorage.removeItem(key));
+    location.reload();
   };
 
 
@@ -536,15 +516,17 @@ const Home = () => {
     const finalPity = currentPityRef.current;
     setPityCount(finalPity);
     setCards(finalResults.map(r => r.card));
-    // setHistory(prev => [...finalResults.map(r => r.card), ...prev].slice(0, 50));
-    // setHistory(prev => [...finalResults.map(r => ({...r.card, timestamp: new Date().toISOString(),})), ...prev,]);
-    setHistory(prev => [
+
+    setHistory(prev => {
+    const updated = [
       ...prev, // 保留旧的记录
       ...finalResults.map(r => ({
         ...r.card,
         timestamp: new Date().toISOString(),
       })), // 追加新的记录
-    ]);
+    ];
+    return updated.slice(-10000); // 保留最新的10000条
+  });
 
     setShowAnimationDrawCards(false);
     setisAnimatingDrawCards(false);
@@ -592,14 +574,11 @@ const Home = () => {
             }
           }}>
 
-        {/*<VideoPreloader />*/}
-
         {/*/!*音频*!/*/}
         <audio
             ref={audioRef}
             loop
             src="audios/时空引力.mp3"
-            // src="https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E6%97%B6%E7%A9%BA%E5%BC%95%E5%8A%9B.mp3"
         />
 
         {/* 视频层（最底层） */}
@@ -622,7 +601,6 @@ const Home = () => {
             }}
             className="fixed top-0 left-0 w-full h-full object-cover z-0">
           <source src="videos/开屏动画.mp4" type="video/mp4"/>
-          {/*<source src="https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E5%BC%80%E5%B1%8F%E5%8A%A8%E7%94%BB.mp4" type="video/mp4"/>*/}
         </video>
 
         {/* 控件层（中间层） */}

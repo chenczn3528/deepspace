@@ -56,7 +56,7 @@ const CardSummary = ({ drawResults, onClose }) => {
 
       {/* 底部图片（绝对定位） */}
       <img
-        src="结算背景.jpg"
+        src="images/结算背景.jpg"
         // src="https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E7%BB%93%E7%AE%97%E8%83%8C%E6%99%AF.jpg"
         alt="底部装饰"
         className="absolute w-screen h-screen opacity-100"
