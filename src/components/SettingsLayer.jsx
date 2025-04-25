@@ -53,6 +53,7 @@ const SettingsLayer = ({
             >
                 <label>目前应该是第一次加载网页视频会很卡</label>
                 <label>加载完只要不清除浏览器缓存就不卡</label>
+                <label>如果还是很卡，请告诉我，感谢❤</label>
                 {/*<label>请告诉我是更新前还是更新后更卡</label>*/}
                 {/*<label>更新时间4月24日09:17，感谢❤</label>*/}
             </div>
