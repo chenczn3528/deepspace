@@ -50,8 +50,9 @@ const SettingsLayer = ({
                 }}
                 className="text-sm mt-2 flex flex-col"
             >
-                <label>请告诉我是更新前还是更新后更卡</label>
-                <label>更新时间4月24日09:17，感谢❤</label>
+                <label>优化中……卡顿为正常现象……</label>
+                {/*<label>请告诉我是更新前还是更新后更卡</label>*/}
+                {/*<label>更新时间4月24日09:17，感谢❤</label>*/}
             </div>
 
             {/*统计抽数*/}
