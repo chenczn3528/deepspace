@@ -53,33 +53,32 @@ self.addEventListener('activate', (event) => {
 
 // 处理 fetch 请求，优先从缓存中加载
 self.addEventListener('fetch', (event) => {
-  console.log('[Service Worker] Fetching:', event.request.url); // 打印请求的 URL
+  const url = new URL(event.request.url);
+
+  // 跳过来自 patchwiki 或其他外部源的请求
+  if (url.origin !== self.location.origin) {
+    // 只要是外部请求，直接返回，不处理缓存
+    return fetch(event.request);
+  }
+
+  // 处理缓存和其他逻辑
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
-        // 如果缓存中有该资源，直接返回缓存的资源
-        console.log('[Service Worker] Returning cached resource:', event.request.url);
+        // 如果缓存中有，直接返回
         return cachedResponse;
       }
-      // 如果缓存没有，尝试从网络获取资源
+
+      // 否则从网络获取资源并缓存
       return fetch(event.request).then((response) => {
-        // 只缓存图片、视频和音频等静态资源
-        if (event.request.url.includes('/videos/') ||
-            event.request.url.includes('/audios/') ||
-            event.request.url.includes('/images/')) {
+        // 只缓存静态资源
+        if (event.request.url.includes('/images/') || event.request.url.includes('/videos/') || event.request.url.includes('/audios/')) {
           return caches.open(CACHE_NAME).then((cache) => {
-            console.log('[Service Worker] Caching new resource:', event.request.url);
-            cache.put(event.request, response.clone());  // 缓存新请求的资源
-            return response;
-          }).catch((error) => {
-            console.error('[Service Worker] Error caching new resource:', event.request.url, error);
+            cache.put(event.request, response.clone());
             return response;
           });
         }
         return response;
-      }).catch((error) => {
-        console.error('[Service Worker] Error fetching resource:', event.request.url, error);
-        return error; // 返回错误
       });
     })
   );

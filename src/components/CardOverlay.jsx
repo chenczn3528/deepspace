@@ -59,7 +59,6 @@ const CardOverlay = ({
 
     // 只有当背景音乐已经播放并且卡片音效存在时，才播放卡片音效
     cardSoundRef.current = new Audio('audios/切换音效.mp3');
-    // cardSoundRef.current = new Audio('https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E5%88%87%E6%8D%A2%E9%9F%B3%E6%95%88.mp3');
     cardSoundRef.current.volume = 1;
     cardSoundRef.current.currentTime = 0;
 
@@ -70,34 +69,17 @@ const CardOverlay = ({
     // 这里的音效播放不会影响背景音乐
   }, [currentCardIndex, showCardOverlay]);
 
-  // ========================================================
-  // 设置出金链接
-  // let videoLink = ''; // 初始为空字符串
-  //
-  // // 判断 `drawResultsRef.current[currentCardIndex]?.card?.character` 的值，选择对应的链接
-  // const character = drawResultsRef.current[currentCardIndex]?.card?.character;
-  //
-  // if (character === '沈星回') {
-  //   videoLink = 'https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E6%B2%88%E6%98%9F%E5%9B%9E%E9%87%91%E5%8D%A1.mp4';
-  // } else if (character === '黎深') {
-  //   videoLink = 'https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E9%BB%8E%E6%B7%B1%E9%87%91%E5%8D%A1.mp4';
-  // } else if (character === '祁煜') {
-  //   videoLink = 'https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E7%A5%81%E7%85%9C%E9%87%91%E5%8D%A1.mp4';
-  // } else if (character === '秦彻') {
-  //   videoLink = 'https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E7%A7%A6%E5%BD%BB%E9%87%91%E5%8D%A1.mp4';
-  // } else if (character === '夏以昼') {
-  //   videoLink = 'https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E5%A4%8F%E4%BB%A5%E6%98%BC%E9%87%91%E5%8D%A1.mp4';
-  // }
+
 
 
 
   return (
     showCardOverlay && (
-      <div className="fixed inset-0 z-30 bg-black bg-opacity-70">
+      <div className="fixed inset-0 z-30 bg-black bg-opacity-70"
+      style={{ pointerEvents: 'none' }}>
         {/* 底部图片（绝对定位） */}
         <img
           src="images/结算背景.jpg"
-          // src="https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E7%BB%93%E7%AE%97%E8%83%8C%E6%99%AF.jpg"
           alt="底部装饰"
           className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-full h-full opacity-100 z-0" // 设置 z-index 为 0
         />
@@ -113,14 +95,12 @@ const CardOverlay = ({
             controls={false}
             onEnded={() => {
               setVideoPlayed(true); // 设置视频播放完毕
-              // handleNextCard(); // 播放完视频后处理下一张卡片
             }}
             onClick={(e) => e.preventDefault()} // 禁用点击事件，防止跳过视频
             style={{ pointerEvents: 'none' }} // 禁用点击交互
           >
             <source
               src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.mp4`}
-              // src={videoLink}
               type="video/mp4"
             />
             Your browser does not support the video tag.
