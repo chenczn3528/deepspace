@@ -1,4 +1,4 @@
-const CACHE_NAME = 'deepspace-cache-v1';
+const CACHE_NAME = 'deepspace-cache-v2';
 
 const FILES_TO_CACHE = [
   '/deepspace/videos/gold_card.MP4',
@@ -17,6 +17,8 @@ const FILES_TO_CACHE = [
   '/deepspace/images/结算背景.jpg'
 ];
 
+
+
 // 安装 Service Worker，缓存需要的资源
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -28,6 +30,10 @@ self.addEventListener('install', (event) => {
     })
   );
 });
+
+
+
+
 
 // 激活 Service Worker，删除旧的缓存
 self.addEventListener('activate', (event) => {
@@ -50,6 +56,10 @@ self.addEventListener('activate', (event) => {
 
   self.clients.claim();  // 让 Service Worker 控制所有页面
 });
+
+
+
+
 
 // 处理 fetch 请求，优先从缓存中加载
 self.addEventListener('fetch', (event) => {
@@ -82,4 +92,26 @@ self.addEventListener('fetch', (event) => {
       });
     })
   );
+});
+
+
+
+
+
+
+// 强制注销旧的service worker
+navigator.serviceWorker.getRegistrations().then((registrations) => {
+  registrations.forEach((registration) => {
+    // 判断 Service Worker 名称是否与指定名称匹配
+    if (registration.scope !== CACHE_NAME) {
+      // 如果不匹配，注销该 Service Worker
+      registration.unregister().then((success) => {
+        if (success) {
+          console.log(`注销了 Service Worker：${registration.scope}`);
+        } else {
+          console.log(`注销 Service Worker 失败：${registration.scope}`);
+        }
+      });
+    }
+  });
 });

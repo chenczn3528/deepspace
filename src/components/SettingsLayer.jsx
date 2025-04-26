@@ -54,6 +54,7 @@ const SettingsLayer = ({
                 <label>目前应该是第一次加载网页视频会很卡</label>
                 <label>加载完只要不清除浏览器缓存就不卡</label>
                 <label>如果还是很卡，请告诉我，感谢❤</label>
+                <label>跳过有bug，努力修复中……</label>
                 {/*<label>请告诉我是更新前还是更新后更卡</label>*/}
                 {/*<label>更新时间4月24日09:17，感谢❤</label>*/}
             </div>
@@ -242,46 +243,6 @@ const SettingsLayer = ({
                     {showHistory ? '关闭抽卡记录' : '查看抽卡记录'}
                 </button>
             </div>
-
-
-            {/*<div className="flex flex-wrap w-screen h-auto mt-4 items-center px-4">*/}
-            {/* 保底显示 */}
-            {/*    <div*/}
-            {/*        className="text-sm text-white font-extrabold text-[20px] break-words ml-[20px]"*/}
-            {/*        style={{*/}
-            {/*            color: 'white',*/}
-            {/*            fontSize: '20px',*/}
-            {/*            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',*/}
-            {/*            // fontFamily: '"SimSun", "宋体", serif',*/}
-            {/*            fontWeight: '800',*/}
-            {/*            marginLeft: '20px',*/}
-            {/*            alignSelf: 'center',*/}
-            {/*        }}*/}
-            {/*    >*/}
-            {/*        {selectedRole === '随机' || !useSoftGuarantee ? (*/}
-            {/*            <>*/}
-            {/*                还剩 {70 - pityCount} 抽<br/>必得五星*/}
-            {/*            </>*/}
-            {/*        ) : softPityFailed ? (*/}
-            {/*            <>*/}
-            {/*                还剩 {70 - pityCount} 抽<br/>大保底*/}
-            {/*            </>*/}
-            {/*        ) : (*/}
-            {/*            <>*/}
-            {/*                还剩 {70 - pityCount} 抽<br/>小保底*/}
-            {/*            </>*/}
-            {/*        )}*/}
-            {/*    </div>*/}
-
-            {/*    /!* 抽卡历史记录按钮 *!/*/}
-            {/*    <button*/}
-            {/*        className="ml-[20px] px-3 py-1 bg-gray-700 text-white rounded whitespace-nowrap"*/}
-            {/*        onClick={() => setShowHistory(!showHistory)}*/}
-            {/*        id="history-toggle-button"*/}
-            {/*    >*/}
-            {/*        {showHistory ? '关闭抽卡记录' : '查看抽卡记录'}*/}
-            {/*    </button>*/}
-            {/*</div>*/}
 
         </div>
     </div>
