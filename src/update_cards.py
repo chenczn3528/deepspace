@@ -7,7 +7,7 @@ import time
 import os
 
 
-cards_path = 'assets/cards.json'
+cards_path = 'src/assets/cards.json'
 
 urls = [
     "https://wiki.biligame.com/lysk/%E6%B2%88%E6%98%9F%E5%9B%9E:%E6%80%9D%E5%BF%B5",
