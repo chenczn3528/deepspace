@@ -57,8 +57,12 @@ const CardOverlay = ({
     const card = drawResultsRef.current[currentCardIndex]?.card;
     if (!card) return;
 
+    const isCurrentFiveStar = card.star === '5星';
+
+    const soundEffect = isCurrentFiveStar ? 'audios/金卡展示.mp3' : 'audios/切换音效.mp3';
+
     // 只有当背景音乐已经播放并且卡片音效存在时，才播放卡片音效
-    cardSoundRef.current = new Audio('audios/切换音效.mp3');
+    cardSoundRef.current = new Audio(soundEffect);
     cardSoundRef.current.volume = 1;
     cardSoundRef.current.currentTime = 0;
 

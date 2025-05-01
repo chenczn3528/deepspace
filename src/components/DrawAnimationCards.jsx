@@ -75,7 +75,7 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards, onSkip, isSingl
             controls={false}
         >
           <source
-              src={isFiveStar ? 'videos/gold_card.MP4' : 'videos/no_gold_card.mp4'}
+              src={isFiveStar ? 'videos/gold_card.mp4' : 'videos/no_gold_card.mp4'}
               type="video/mp4"
           />
           Your browser does not support the video tag.
