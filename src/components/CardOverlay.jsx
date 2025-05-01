@@ -4,13 +4,14 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const CardOverlay = ({
   showCardOverlay,
-  isFiveStar,
-  videoPlayed,
   currentCardIndex,
   drawResultsRef,
+  videoPlayed,
   setVideoPlayed,
-  isSkipped,
+  handleNextCard,
 }) => {
+
+  const isCurrentFiveStar = drawResultsRef.current[currentCardIndex]?.card?.star === '5星';
 
   // ========================================================
   // 设置日卡月卡图标的大小
@@ -80,7 +81,13 @@ const CardOverlay = ({
   return (
     showCardOverlay && (
       <div className="fixed inset-0 z-30 bg-black bg-opacity-70"
-      style={{ pointerEvents: 'none' }}>
+           onClick={() => {
+            // 只有视频播放完了，才能允许切换
+            if (!isCurrentFiveStar || videoPlayed) {
+              handleNextCard();
+            }
+          }}
+      >
         {/* 底部图片（绝对定位） */}
         <img
           src="images/结算背景.jpg"
@@ -88,31 +95,37 @@ const CardOverlay = ({
           className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-full h-full opacity-100 z-0" // 设置 z-index 为 0
         />
 
-        {isFiveStar && !videoPlayed && (
-          // 只有五星卡片并且视频没有播放完时，先播放视频
-          <video
-            className="fixed inset-0 w-full h-full object-cover z-10" // 设置 z-index 为 10 确保视频在图片之上
-            preload="auto"
-            autoPlay
-            playsInline
-            muted
-            controls={false}
-            onEnded={() => {
-              setVideoPlayed(true); // 设置视频播放完毕
-            }}
-            onClick={(e) => e.preventDefault()} // 禁用点击事件，防止跳过视频
-            style={{ pointerEvents: 'none' }} // 禁用点击交互
-          >
-            <source
-              src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.mp4`}
-              type="video/mp4"
+        {isCurrentFiveStar && !videoPlayed && (
+          <>
+            {/* 透明遮罩层：防止点击任何内容 */}
+            <div
+              className="fixed inset-0 z-20"
+              style={{ backgroundColor: 'transparent', pointerEvents: 'auto' }}
             />
-            Your browser does not support the video tag.
-          </video>
+
+            {/* 视频播放层 */}
+            <video
+              className="fixed inset-0 w-full h-full object-cover z-10"
+              preload="auto"
+              autoPlay
+              playsInline
+              muted
+              controls={false}
+              onEnded={() => setVideoPlayed(true)}
+              style={{ pointerEvents: 'none' }}
+            >
+              <source
+                src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.mp4`}
+                type="video/mp4"
+              />
+              Your browser does not support the video tag.
+            </video>
+          </>
         )}
 
+
         {/* 展示卡片内容 */}
-        {(isFiveStar && videoPlayed) || !isFiveStar ? (
+        {(isCurrentFiveStar && videoPlayed) || !isCurrentFiveStar ? (
           <>
             <div className="fixed w-full h-full inset-0 z-0">
               {/* 设置卡片展示层的 z-index 为 0 */}

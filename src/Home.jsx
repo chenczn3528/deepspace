@@ -7,7 +7,6 @@ import SettingsLayer from "./components/SettingsLayer.jsx";
 import CardSummary from "./components/CardSummary.jsx";
 import useLocalStorageState from './hooks/useLocalStorageState'
 import 'react-lazy-load-image-component/src/effects/blur.css';
-import { Play, Pause } from 'lucide-react';
 
 const Home = () => {
 
@@ -91,7 +90,9 @@ const Home = () => {
   const [hasFiveStarAnimation, setHasFiveStarAnimation] = useState(false); // 一抽或十抽里是否包含五星卡
 
   const displayResultsRef = useRef([]); // 跳过时展示的卡片
-  const [videoPlayed, setVideoPlayed] = useState(false); // 判断五星卡视频是否播放完成
+
+  const [videoPlayed, setVideoPlayed] = useState(false);
+
 
   const [showCardOverlay, setShowCardOverlay] = useState(false); // 控制是否显示卡片结果的覆盖层，为true时展示抽到的卡片
 
@@ -182,45 +183,6 @@ const Home = () => {
     };
   }, [isMusicPlaying]);
 
-  // const audioRef = useRef(null);
-  // const [isMusicPlaying, setIsMusicPlaying] = useState(false);
-  //
-  // useEffect(() => {
-  //   document.addEventListener('pointerdown', handleFirstInteraction);
-  //   return () => {
-  //     document.removeEventListener('pointerdown', handleFirstInteraction);
-  //   };
-  // }, []);
-  //
-  // const handleFirstInteraction = () => {
-  //   if (audioRef.current && !isMusicPlaying) {
-  //     audioRef.current.volume = 0.5;
-  //     audioRef.current.play().then(() => {
-  //       setIsMusicPlaying(true);
-  //     }).catch((err) => {
-  //       console.warn('播放失败：', err);
-  //     });
-  //   }
-  // };
-  //
-  // useEffect(() => {
-  //   const audio = audioRef.current;
-  //   if (!audio) return;
-  //
-  //   const forcePlay = () => {
-  //   setTimeout(() => {
-  //     if (audio.paused) {
-  //       audio.play().catch((err) => {
-  //         console.warn("尝试恢复音频失败", err);
-  //       });
-  //     }
-  //   }, 100); // 等 100ms 后再恢复，规避系统切换时冲突
-  // };
-  //   // 当 audio 被浏览器暂停时，立刻尝试重新播放
-  //   audio.addEventListener('pause', forcePlay);
-  //   return () => {audio.removeEventListener('pause', forcePlay);};
-  // }, []);
-
 
 
 
@@ -255,93 +217,101 @@ const Home = () => {
 
   // ========================================================
   //抽卡动画结束后开始展示卡片
-  // const displayResultsRef = useRef([]);
+  // 处理跳过视频的逻辑
+// ==============================
+// ✅ useEffect：控制卡片展示或结算页展示
   useEffect(() => {
-  const allResults = drawResultsRef.current || [];
-  const onlyFiveStars = allResults.filter(item => item.card?.star === '5星');
+    const allResults = drawResultsRef.current || [];
+    const onlyFiveStars = allResults.filter(item => item.card?.star === '5星');
 
-  // 设置显示的卡片，如果跳过且没有五星卡，直接跳过卡片展示，展示结算页面
-  if (videoSkipped) {
-    displayResultsRef.current = onlyFiveStars;
-
-    // 如果没有五星卡，直接展示结算页面
-    if (displayResultsRef.current.length === 0) {
-      setShowCardOverlay(false);
-      setShowSummary(true);  // 展示结算页面
+    if (
+      allResults.length > 0 &&
+      !hasShownSummary &&
+      !isDrawing &&
+      !isAnimatingDrawCards &&
+      !showAnimationDrawCards
+    ) {
+      if (videoSkipped) {
+        if (onlyFiveStars.length === 0) {
+          // 跳过且没有五星卡，直接展示结算
+          setShowCardOverlay(false);
+          setShowSummary(true);
+          setHasShownSummary(true);
+        } else {
+          // 跳过但有五星卡，只展示五星卡片
+          displayResultsRef.current = onlyFiveStars;
+          setShowCardOverlay(true);
+          setShowSummary(false);
+        }
+      } else {
+        // 正常播放流程，展示全部卡片
+        displayResultsRef.current = allResults;
+        setCurrentCardIndex(0);
+        setShowCardOverlay(true);
+        setShowSummary(false);
+      }
     }
-  } else {
-    // 非跳过情况下展示所有卡片
-    displayResultsRef.current = allResults;
-  }
+  }, [
+    videoSkipped,
+    showAnimationDrawCards,
+    isDrawing,
+    isAnimatingDrawCards,
+    hasShownSummary,
+  ]);
 
-  // 如果动画已结束并且视频未跳过，展示卡片
-  if (!showAnimationDrawCards && displayResultsRef.current.length > 0 && !videoSkipped) {
-    setCurrentCardIndex(0);
-    setShowCardOverlay(true);  // 展示卡片
-  }
-
-  setVideoSkipped(false); // 重置跳过状态
-}, [showAnimationDrawCards, videoSkipped, drawResultsRef.current]);
-
-
-  // ========================================================
-  // 处理卡片的切换
   const handleNextCard = () => {
-  // 如果当前卡片是五星卡片并且视频没有播放完，不进行切换
-  if (isFiveStar && !videoPlayed) {
-    return;  // 阻止切换
-  }
-
-  // 如果跳过且已经展示结算页面，防止重复触发
-  if (showSummary) return;
-
-  if (currentCardIndex < drawResultsRef.current.length - 1) {
-    setCurrentCardIndex(prev => prev + 1);
+    // 每次点下一张卡时都先重置视频播放状态
     setVideoPlayed(false);
-  } else {
-    setShowCardOverlay(false);
-    setSummaryCards(drawnCards);
 
-    if (drawResultsRef.current.length > 1 && !hasShownSummary) {
-      setShowSummary(true);
-      setHasShownSummary(true); // 防止重复展示
+    if (showSummary) return;
+
+    if (currentCardIndex < displayResultsRef.current.length - 1) {
+      const nextIndex = currentCardIndex + 1;
+      setCurrentCardIndex(nextIndex);
+    } else {
+      setShowCardOverlay(false);
+      setSummaryCards(drawnCards);
+      if (!hasShownSummary) {
+        setShowSummary(true);
+        setHasShownSummary(true);
+      }
     }
-  }
-};
+  };
 
-  // ========================================================
-  // 处理抽卡逻辑，调用 getRandomCard 函数并更新抽卡结果
-  // 处理抽卡逻辑，调用 getRandomCard 函数并更新抽卡结果
-  const handleDraw = async (count) => {
 
+
+
+const handleDraw = async (count) => {
   if (isDrawing || isAnimatingDrawCards) return;
-  // 加锁
-  setIsDrawing(true);
 
+  setIsDrawing(true);
   setisAnimatingDrawCards(true);
 
   const currentDrawId = Date.now();
   drawSessionIdRef.current = currentDrawId;
 
+  // 重置所有状态
+  setShowSummary(false);
+  setShowCardOverlay(false);
+  setHasShownSummary(false);
+  setCurrentCardIndex(0);
+  setVideoSkipped(false);
+  displayResultsRef.current = [];
+  drawResultsRef.current = [];
+
   let drawResults = [];
   let currentPity = pityCount;
   let currentFourStarCounter = currentFourStarRef.current;
-  let gotFourStarOrAbove = false;
 
   for (let i = 0; i < count; i++) {
     let result;
-
-    // 保证不包括三星时不会抽到三星
     do {
       result = getRandomCard(currentPity, currentFourStarCounter);
     } while (!includeThreeStar && result.rarity === '3');
 
-    setTotalDrawCount((prevCount) => prevCount + 1); // 统计总抽卡数
-    if (result.rarity === '5') {
-      setTotalFiveStarCount((prevCount) => prevCount + 1); // 增加五星卡片数
-    }
+    setTotalDrawCount(prev => prev + 1);
+    if (result.rarity === '5') setTotalFiveStarCount(prev => prev + 1);
 
-    // 处理保底逻辑
     if (result.rarity === '5') {
       currentPity = 0;
       currentFourStarCounter++;
@@ -349,7 +319,6 @@ const Home = () => {
       currentPity++;
       if (result.rarity === '4') {
         currentFourStarCounter = 0;
-        gotFourStarOrAbove = true;
       } else {
         currentFourStarCounter++;
       }
@@ -357,9 +326,9 @@ const Home = () => {
 
     drawResults.push(result);
   }
+
   setIsDrawing(false);
 
-  // 更新状态
   drawResultsRef.current = drawResults;
   currentPityRef.current = currentPity;
   currentFourStarRef.current = currentFourStarCounter;
@@ -367,6 +336,9 @@ const Home = () => {
   setShowAnimationDrawCards(true);
   setDrawnCards(drawResults.map(r => r.card).filter(Boolean));
 };
+
+
+
 
 
 
@@ -502,14 +474,6 @@ const Home = () => {
       <div
           className="relative w-screen h-screen cursor-pointer overflow-hidden outline-none focus:outline-none"
           tabIndex={0}
-          onClick={() => {
-
-            // handleFirstInteraction();
-            // 只有在展示五星卡片时，且视频正在播放时，禁止切换
-            if (!isDrawing && !isAnimatingDrawCards && !(isFiveStar && !videoPlayed)) {
-              handleNextCard();
-            }
-          }}
       >
 
         {/*/!*音频*!/*/}
@@ -530,8 +494,6 @@ const Home = () => {
             onEnded={() => {
               const validDrawId = drawSessionIdRef.current;
               if (!validDrawId) return;
-
-              setVideoPlayed(false);     // 播放结束后解锁
               setisAnimatingDrawCards(false);
 
               drawSessionIdRef.current = 0; // 重置流程 ID，防止后续重复触发
@@ -584,12 +546,11 @@ const Home = () => {
         {/* 卡片结果层（最顶层） */}
         <CardOverlay
             showCardOverlay={showCardOverlay}
-            isFiveStar={isFiveStar}
-            videoPlayed={videoPlayed}
             currentCardIndex={currentCardIndex}
             drawResultsRef={displayResultsRef}
+            videoPlayed={videoPlayed}
             setVideoPlayed={setVideoPlayed}
-            isSkipped={videoSkipped}
+            handleNextCard={handleNextCard}
         />
 
 
