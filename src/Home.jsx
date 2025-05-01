@@ -7,7 +7,7 @@ import SettingsLayer from "./components/SettingsLayer.jsx";
 import CardSummary from "./components/CardSummary.jsx";
 import useLocalStorageState from './hooks/useLocalStorageState'
 import 'react-lazy-load-image-component/src/effects/blur.css';
-
+import { Play, Pause } from 'lucide-react';
 
 const Home = () => {
 
@@ -104,43 +104,122 @@ const Home = () => {
   // ========================================================
   // 背景音乐设置
   const audioRef = useRef(null);
-  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(true); // 默认播放
 
   useEffect(() => {
-    document.addEventListener('pointerdown', handleFirstInteraction);
-    return () => {
-      document.removeEventListener('pointerdown', handleFirstInteraction);
-    };
+    const audio = audioRef.current;
+    if (audio) {
+      audio.volume = 0.3;
+
+      // 尝试自动播放音乐，只会在组件挂载时自动播放一次
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .catch((err) => {
+            console.warn("自动播放失败：", err);
+          })
+          .then(() => {
+            console.log("音频自动播放成功");
+          });
+      }
+    }
+
+    // 清理：组件卸载时不需要做额外处理
+    return () => {};
   }, []);
 
-  const handleFirstInteraction = () => {
-    if (audioRef.current && !isMusicPlaying) {
-      audioRef.current.volume = 0.5;
-      audioRef.current.play().then(() => {
-        setIsMusicPlaying(true);
-      }).catch((err) => {
-        console.warn('播放失败：', err);
-      });
+  const toggleMusic = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    // 如果音频正在播放，点击暂停；如果音频暂停，点击播放
+    if (isMusicPlaying) {
+      audio.pause();  // 暂停音频
+    } else {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            console.log("音频播放成功");
+          })
+          .catch((err) => {
+            console.warn("播放失败：", err);
+          });
+      }
     }
+
+    // 更新播放状态
+    setIsMusicPlaying(!isMusicPlaying);
   };
 
   useEffect(() => {
+    // 如果其他音频或视频播放器引起了音频暂停，我们尝试恢复播放
     const audio = audioRef.current;
     if (!audio) return;
 
     const forcePlay = () => {
-    setTimeout(() => {
-      if (audio.paused) {
-        audio.play().catch((err) => {
-          console.warn("尝试恢复音频失败", err);
-        });
-      }
-    }, 100); // 等 100ms 后再恢复，规避系统切换时冲突
-  };
-    // 当 audio 被浏览器暂停时，立刻尝试重新播放
-    audio.addEventListener('pause', forcePlay);
-    return () => {audio.removeEventListener('pause', forcePlay);};
-  }, []);
+      setTimeout(() => {
+        if (audio.paused && isMusicPlaying) {
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            playPromise
+              .catch((err) => {
+                console.warn("尝试恢复音频失败", err);
+              })
+              .then(() => {
+                console.log("音频恢复播放");
+              });
+          }
+        }
+      }, 100); // 等待 100ms 后再恢复，避免系统冲突
+    };
+
+    audio.addEventListener("pause", forcePlay);
+
+    // 清理：移除事件监听器
+    return () => {
+      audio.removeEventListener("pause", forcePlay);
+    };
+  }, [isMusicPlaying]);
+
+  // const audioRef = useRef(null);
+  // const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  //
+  // useEffect(() => {
+  //   document.addEventListener('pointerdown', handleFirstInteraction);
+  //   return () => {
+  //     document.removeEventListener('pointerdown', handleFirstInteraction);
+  //   };
+  // }, []);
+  //
+  // const handleFirstInteraction = () => {
+  //   if (audioRef.current && !isMusicPlaying) {
+  //     audioRef.current.volume = 0.5;
+  //     audioRef.current.play().then(() => {
+  //       setIsMusicPlaying(true);
+  //     }).catch((err) => {
+  //       console.warn('播放失败：', err);
+  //     });
+  //   }
+  // };
+  //
+  // useEffect(() => {
+  //   const audio = audioRef.current;
+  //   if (!audio) return;
+  //
+  //   const forcePlay = () => {
+  //   setTimeout(() => {
+  //     if (audio.paused) {
+  //       audio.play().catch((err) => {
+  //         console.warn("尝试恢复音频失败", err);
+  //       });
+  //     }
+  //   }, 100); // 等 100ms 后再恢复，规避系统切换时冲突
+  // };
+  //   // 当 audio 被浏览器暂停时，立刻尝试重新播放
+  //   audio.addEventListener('pause', forcePlay);
+  //   return () => {audio.removeEventListener('pause', forcePlay);};
+  // }, []);
 
 
 
@@ -176,8 +255,6 @@ const Home = () => {
 
   // ========================================================
   //抽卡动画结束后开始展示卡片
-  // ========================================================
-  // //抽卡动画结束后开始展示卡片
   // const displayResultsRef = useRef([]);
   useEffect(() => {
   const allResults = drawResultsRef.current || [];
@@ -210,43 +287,27 @@ const Home = () => {
   // ========================================================
   // 处理卡片的切换
   const handleNextCard = () => {
-    // 如果当前卡片是五星卡片并且视频没有播放完，不进行切换
-    if (isFiveStar && !videoPlayed) {
-      return;  // 阻止切换
+  // 如果当前卡片是五星卡片并且视频没有播放完，不进行切换
+  if (isFiveStar && !videoPlayed) {
+    return;  // 阻止切换
+  }
+
+  // 如果跳过且已经展示结算页面，防止重复触发
+  if (showSummary) return;
+
+  if (currentCardIndex < drawResultsRef.current.length - 1) {
+    setCurrentCardIndex(prev => prev + 1);
+    setVideoPlayed(false);
+  } else {
+    setShowCardOverlay(false);
+    setSummaryCards(drawnCards);
+
+    if (drawResultsRef.current.length > 1 && !hasShownSummary) {
+      setShowSummary(true);
+      setHasShownSummary(true); // 防止重复展示
     }
-
-    // 如果跳过且已经展示结算页面，防止重复触发
-    if (showSummary) return;
-
-    // 如果跳过且没有五星卡片，直接进入结算页
-    if (videoSkipped) {
-      if (!isFiveStar) {
-        setShowCardOverlay(false); // 直接关闭卡片展示
-        setShowSummary(true); // 直接显示结算
-        setHasShownSummary(true); // 防止重复展示结算
-        return;  // 跳出，避免触发下一步逻辑
-      } else {
-        // 如果有五星卡片，继续展示视频等（但不显示卡片）
-        setCurrentCardIndex(0); // 让currentCardIndex指向第一张五星卡片
-        return;
-      }
-    }
-
-    // 正常切换卡片逻辑
-    if (currentCardIndex < drawResultsRef.current.length - 1) {
-      setCurrentCardIndex(prev => prev + 1);
-      setVideoPlayed(false);
-    } else {
-      setShowCardOverlay(false);
-      setSummaryCards(drawnCards);
-
-      if (drawResultsRef.current.length > 1 && !hasShownSummary) {
-        setShowSummary(true);
-        setHasShownSummary(true); // 防止重复展示
-      }
-    }
-  };
-
+  }
+};
 
   // ========================================================
   // 处理抽卡逻辑，调用 getRandomCard 函数并更新抽卡结果
@@ -442,11 +503,12 @@ const Home = () => {
           className="relative w-screen h-screen cursor-pointer overflow-hidden outline-none focus:outline-none"
           tabIndex={0}
           onClick={() => {
-            handleFirstInteraction();
-              // 只有在展示五星卡片时，且视频正在播放时，禁止切换
-              if (!isDrawing && !isAnimatingDrawCards && !(isFiveStar && !videoPlayed)) {
-                handleNextCard();
-              }
+
+            // handleFirstInteraction();
+            // 只有在展示五星卡片时，且视频正在播放时，禁止切换
+            if (!isDrawing && !isAnimatingDrawCards && !(isFiveStar && !videoPlayed)) {
+              handleNextCard();
+            }
           }}
       >
 
@@ -481,27 +543,29 @@ const Home = () => {
 
         {/* 控件层（中间层） */}
         <SettingsLayer
-          totalDrawCount={totalDrawCount}
-          totalFiveStarCount={totalFiveStarCount}
-          selectedRole={selectedRole}
-          setSelectedRole={setSelectedRole}
-          onlySelectedRoleCard={onlySelectedRoleCard}
-          setonlySelectedRoleCard={setOnlySelectedRoleCard}
-          roles={roles}
-          includeThreeStar={includeThreeStar}
-          setIncludeThreeStar={setIncludeThreeStar}
-          useSoftGuarantee={useSoftGuarantee}
-          setUseSoftGuarantee={setUseSoftGuarantee}
-          pityCount={pityCount}
-          softPityFailed={softPityFailed}
-          isDrawing={isDrawing}
-          isAnimatingDrawCards={isAnimatingDrawCards}
-          handleDraw={handleDraw}
-          showHistory={showHistory}
-          setShowHistory={setShowHistory}
-          setHasShownSummary={setHasShownSummary}
-          setShowSummary={setShowSummary}
-          clearLocalData={clearLocalData}
+            totalDrawCount={totalDrawCount}
+            totalFiveStarCount={totalFiveStarCount}
+            selectedRole={selectedRole}
+            setSelectedRole={setSelectedRole}
+            onlySelectedRoleCard={onlySelectedRoleCard}
+            setonlySelectedRoleCard={setOnlySelectedRoleCard}
+            roles={roles}
+            includeThreeStar={includeThreeStar}
+            setIncludeThreeStar={setIncludeThreeStar}
+            useSoftGuarantee={useSoftGuarantee}
+            setUseSoftGuarantee={setUseSoftGuarantee}
+            pityCount={pityCount}
+            softPityFailed={softPityFailed}
+            isDrawing={isDrawing}
+            isAnimatingDrawCards={isAnimatingDrawCards}
+            handleDraw={handleDraw}
+            showHistory={showHistory}
+            setShowHistory={setShowHistory}
+            setHasShownSummary={setHasShownSummary}
+            setShowSummary={setShowSummary}
+            clearLocalData={clearLocalData}
+            toggleMusic={toggleMusic}
+            isMusicPlaying={isMusicPlaying}
         />
 
 
@@ -519,29 +583,29 @@ const Home = () => {
 
         {/* 卡片结果层（最顶层） */}
         <CardOverlay
-          showCardOverlay={showCardOverlay}
-          isFiveStar={isFiveStar}
-          videoPlayed={videoPlayed}
-          currentCardIndex={currentCardIndex}
-          drawResultsRef={displayResultsRef}
-          setVideoPlayed={setVideoPlayed}
-          isSkipped={videoSkipped}
+            showCardOverlay={showCardOverlay}
+            isFiveStar={isFiveStar}
+            videoPlayed={videoPlayed}
+            currentCardIndex={currentCardIndex}
+            drawResultsRef={displayResultsRef}
+            setVideoPlayed={setVideoPlayed}
+            isSkipped={videoSkipped}
         />
 
 
         {/*十抽后结算层*/}
         {showSummary && drawResultsRef.current.length > 1 && (
-          <CardSummary
-            drawResults={drawResultsRef.current}  // 传递卡片数据
-            onClose={() => setShowSummary(false)}  // 关闭总结页面的回调
-          />
+            <CardSummary
+                drawResults={drawResultsRef.current}  // 传递卡片数据
+                onClose={() => setShowSummary(false)}  // 关闭总结页面的回调
+            />
         )}
 
         {/* 页面 抽卡历史记录内容 */}
         <HistoryModal
-          showHistory={showHistory}
-          setShowHistory={setShowHistory}
-          history={history}
+            showHistory={showHistory}
+            setShowHistory={setShowHistory}
+            history={history}
         />
       </div>
   );
