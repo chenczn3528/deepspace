@@ -79,10 +79,6 @@ const SettingsLayer = ({
                   <label>加载完只要不清除浏览器缓存就不卡</label>
                   <label>如果还是很卡，请告诉我，感谢❤</label>
                   <label>新出的卡面显示不出来是没有图片资源，需要等几天</label>
-                  <label>有些bug暂时修不了凑合用吧</label>
-                  {/*<label>跳过有bug，努力修复中……</label>*/}
-                  {/*<label>请告诉我是更新前还是更新后更卡</label>*/}
-                  {/*<label>更新时间4月24日09:17，感谢❤</label>*/}
               </div>
 
 
