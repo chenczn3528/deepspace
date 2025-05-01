@@ -31,12 +31,18 @@ jobs:
         run: |
           python src/update_cards.py  # 替换为你的脚本名称
 
+      # 确认是否有文件变动
+      - name: Check for changes
+        run: |
+          git diff --exit-code src/assets/cards.json || echo "Changes detected"
+
       # 将更新后的 cards.json 文件提交到 GitHub
       - name: Commit updated cards.json
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add src/assets/cards.json
-          git commit -m "Update cards.json"
-          git push
+          git status # 查看是否有变更
+          git diff --exit-code src/assets/cards.json || (git commit -m "Update cards.json" && git push)
+
 
