@@ -24,6 +24,7 @@ const SettingsLayer = ({
   clearLocalData,
   toggleMusic,
   isMusicPlaying,
+  setShowGallery,
 }) => {
     const labelStyle = {
       color: 'white',
@@ -60,6 +61,24 @@ const SettingsLayer = ({
           </button>
 
 
+          {/*查看图鉴*/}
+          <button
+              onClick={() => setShowGallery(true)}
+              style={{
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                  position: 'fixed', // 使按钮脱离flex布局
+                  top: '60px',  // 靠近顶部
+                  right: '20px', // 靠近右侧
+                  width: 'auto',
+                  height: 'auto',
+              }}
+              className="mt-4 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 ml-auto"
+          >
+              图鉴
+          </button>
+
+
           <div
               className="relative bg-gray-900 bg-opacity-80 p-4 flex flex-col gap-4 ml-[10px] mr-[10px] rounded-xl shadow-lg">
 
@@ -67,8 +86,6 @@ const SettingsLayer = ({
                   style={{
                       color: 'gray',
                       fontSize: '16px',
-                      // textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-                      // fontFamily: '"SimSun", "宋体", serif',
                       fontWeight: '400',
                       marginLeft: '20px',
                       marginRight: '20px'
@@ -78,7 +95,7 @@ const SettingsLayer = ({
                   <label>目前应该是第一次加载网页视频会很卡</label>
                   <label>加载完只要不清除浏览器缓存就不卡</label>
                   <label>如果还是很卡，请告诉我，感谢❤</label>
-                  <label>新出的卡面显示不出来是没有图片资源，需要等几天</label>
+                  <label>图鉴排序正在写……</label>
               </div>
 
 
@@ -147,54 +164,54 @@ const SettingsLayer = ({
                   </select>
               </div>
 
-              {/*是否排除三星*/}
-              <div className="flex flex-col gap-2 mb-2 ml-[20px] text-white">
-                  <div className="flex items-center gap-2">
-                      <label htmlFor="includeThree" style={labelStyle}>包括三星卡片</label>
-                      <input
-                          id="includeThree"
-                          type="checkbox"
-                          checked={includeThreeStar}
-                          onChange={(e) => setIncludeThreeStar(e.target.checked)}
-                          className="w-[20px] h-[20px]"
-                      />
+              <div className="flex flex-row mr-[20px] mb-[4px]">
+                  {/*是否排除三星*/}
+                  <div className="flex flex-col gap-2 mb-2 ml-[20px] text-white">
+                      <div className="flex items-center gap-2">
+                          <label htmlFor="includeThree" style={labelStyle}>包括三星卡片</label>
+                          <input
+                              id="includeThree"
+                              type="checkbox"
+                              checked={includeThreeStar}
+                              onChange={(e) => setIncludeThreeStar(e.target.checked)}
+                              className="w-[20px] h-[20px]"
+                          />
+                      </div>
+
+                      {selectedRole !== '随机' && (
+                          <div className="flex items-center gap-2">
+                              <label htmlFor="softGuarantee" style={labelStyle}>开启大小保底机制</label>
+                              <input
+                                  id="softGuarantee"
+                                  type="checkbox"
+                                  checked={useSoftGuarantee}
+                                  onChange={(e) => {
+                                      const checked = e.target.checked;
+                                      setUseSoftGuarantee(checked);
+                                      if (checked) setonlySelectedRoleCard(false); // 互斥
+                                  }}
+                                  className="w-[20px] h-[20px]"
+                              />
+                          </div>
+                      )}
+
+                      {selectedRole !== '随机' && (
+                          <div className="flex items-center gap-2">
+                              <label htmlFor="onlyThisRole" style={labelStyle}>只抽 {selectedRole} 的卡</label>
+                              <input
+                                  id="onlyThisRole"
+                                  type="checkbox"
+                                  checked={onlySelectedRoleCard}
+                                  onChange={(e) => {
+                                      const checked = e.target.checked;
+                                      setonlySelectedRoleCard(checked);
+                                      if (checked) setUseSoftGuarantee(false); // 互斥
+                                  }}
+                                  className="w-[20px] h-[20px]"
+                              />
+                          </div>
+                      )}
                   </div>
-
-                  {selectedRole !== '随机' && (
-                      <div className="flex items-center gap-2">
-                          <label htmlFor="softGuarantee" style={labelStyle}>开启大小保底机制</label>
-                          <input
-                              id="softGuarantee"
-                              type="checkbox"
-                              checked={useSoftGuarantee}
-                              onChange={(e) => {
-                                  const checked = e.target.checked;
-                                  setUseSoftGuarantee(checked);
-                                  if (checked) setonlySelectedRoleCard(false); // 互斥
-                              }}
-                              className="w-[20px] h-[20px]"
-                          />
-                      </div>
-                  )}
-
-                  {selectedRole !== '随机' && (
-                      <div className="flex items-center gap-2">
-                          <label htmlFor="onlyThisRole" style={labelStyle}>只抽 {selectedRole} 的卡</label>
-                          <input
-                              id="onlyThisRole"
-                              type="checkbox"
-                              checked={onlySelectedRoleCard}
-                              onChange={(e) => {
-                                  const checked = e.target.checked;
-                                  setonlySelectedRoleCard(checked);
-                                  if (checked) setUseSoftGuarantee(false); // 互斥
-                              }}
-                              className="w-[20px] h-[20px]"
-                          />
-                      </div>
-                  )}
-
-
               </div>
 
 
@@ -235,7 +252,6 @@ const SettingsLayer = ({
                           color: 'white',
                           fontSize: '20px',
                           textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-                          // fontFamily: '"SimSun", "宋体", serif',
                           fontWeight: '800',
                           marginLeft: '20px',
                           alignSelf: 'center',

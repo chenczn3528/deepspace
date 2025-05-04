@@ -84,9 +84,5 @@ button:focus-visible {
 }
 
 
-@font-face {
-  font-family: 'SourceHanSerifSC';
-  src: url('/fonts/SourceHanSerifSC-VF.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
-}
+* {-webkit-tap-highlight-color: transparent;outline: none;}
+

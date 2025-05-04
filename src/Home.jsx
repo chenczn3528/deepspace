@@ -6,6 +6,7 @@ import CardOverlay from './components/CardOverlay';
 import SettingsLayer from "./components/SettingsLayer.jsx";
 import CardSummary from "./components/CardSummary.jsx";
 import useLocalStorageState from './hooks/useLocalStorageState'
+import {GalleryPage} from "./components/GalleryPage.jsx";
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const Home = () => {
@@ -100,6 +101,51 @@ const Home = () => {
   const [showSummary, setShowSummary] = useState(false); // 是否显示结算十抽的卡片
   const [summaryCards, setSummaryCards] = useState([]); // 存储结算十抽的卡片
   const [hasShownSummary, setHasShownSummary] = useState(false); // 是否已经展示过结算页面
+  const [showGallery, setShowGallery] = useState(false); // 是否展示图鉴
+
+  const [galleryHistory, setGalleryHistory] = useState([]);  // 图鉴历史
+
+
+
+  // ========================================================
+  // 图鉴相关
+
+  // 去重逻辑
+  const removeDuplicates = (arr) => {
+    const seen = new Set();
+    return arr.filter((item) => {
+      const duplicate = seen.has(item.name);  // 假设每个卡片都有一个唯一的 id
+      seen.add(item.name);
+      return !duplicate;
+    });
+  };
+
+  // 初始化 galleryHistory
+  useEffect(() => {
+    if (galleryHistory.length === 0 && history.length > 0) {
+      const uniqueHistory = removeDuplicates(history);
+      setGalleryHistory(uniqueHistory);
+    }
+  }, [history, galleryHistory.length]);
+
+  console.log("galleryHistory:",galleryHistory)
+
+  // 合并新的抽卡记录
+  useEffect(() => {
+  if (drawResultsRef.current && drawResultsRef.current.length > 0) {
+    const newCards = drawResultsRef.current.map(item => item.card).filter(Boolean); // 提取所有有效 card
+
+    if (newCards.length > 0) {
+      setGalleryHistory(prevGalleryHistory => {
+        const combined = [...prevGalleryHistory, ...newCards];
+        return removeDuplicates(combined);
+      });
+    }
+  }
+}, [history.length]);
+
+
+
 
 
 
@@ -302,109 +348,65 @@ const handleDraw = async (count) => {
   let currentPity = pityCount;
   let currentFourStarCounter = currentFourStarRef.current;
 
-  let mustBeTargetNext = !lastFiveStarWasTarget; // ⭐跨十连机制
-
-  let localLastFiveStarWasTarget = true;
+  let localSoftPityFailed = softPityFailed;
 
   for (let i = 0; i < count; i++) {
     let result;
-    do {
-      result = getRandomCard(currentPity, currentFourStarCounter, mustBeTargetNext);
-    } while (!includeThreeStar && result.rarity === '3');
 
-    setTotalDrawCount(prev => prev + 1);
-    if (result.rarity === '5') setTotalFiveStarCount(prev => prev + 1);
+    if (onlySelectedRoleCard && selectedRole !== '随机') {
+      // 只抽当前角色卡，关闭大小保底
+      do {
+        result = getRandomCard(currentPity, currentFourStarCounter, false);
+      } while (!includeThreeStar && result.rarity === '3');
 
-    if (result.rarity === '5') {
-      currentPity = 0;
-      currentFourStarCounter++;
-
-      if (result.card?.character === selectedRole) {
-        mustBeTargetNext = false;
-        localLastFiveStarWasTarget = true;
-      } else {
-        mustBeTargetNext = true;
-        localLastFiveStarWasTarget = false;
-      }
-    } else {
-      currentPity++;
-      if (result.rarity === '4') {
+      if (result.rarity === '5') {
+        currentPity = 0;
         currentFourStarCounter = 0;
       } else {
-        currentFourStarCounter++;
+        currentPity++;
+        currentFourStarCounter = result.rarity === '4' ? 0 : currentFourStarCounter + 1;
+      }
+    } else {
+      // 启用或关闭大小保底逻辑
+      const mustBeTarget = useSoftGuarantee && selectedRole !== '随机' && localSoftPityFailed;
+
+      do {
+        result = getRandomCard(currentPity, currentFourStarCounter, mustBeTarget);
+      } while (!includeThreeStar && result.rarity === '3');
+
+      if (result.rarity === '5') {
+        currentPity = 0;
+        currentFourStarCounter = 0;
+
+        if (useSoftGuarantee && selectedRole !== '随机') {
+          if (result.card?.character === selectedRole) {
+            localSoftPityFailed = false; // 命中选定角色
+          } else {
+            localSoftPityFailed = true;  // 小保底失败，开启大保底
+          }
+        }
+      } else {
+        currentPity++;
+        currentFourStarCounter = result.rarity === '4' ? 0 : currentFourStarCounter + 1;
       }
     }
 
     drawResults.push(result);
+    setTotalDrawCount(prev => prev + 1);
+    if (result.rarity === '5') setTotalFiveStarCount(prev => prev + 1);
   }
 
+  // 更新状态
   setIsDrawing(false);
   drawResultsRef.current = drawResults;
   currentPityRef.current = currentPity;
   currentFourStarRef.current = currentFourStarCounter;
+  setSoftPityFailed(localSoftPityFailed);
   setHasFiveStarAnimation(drawResults.some(r => r.rarity === '5'));
   setShowAnimationDrawCards(true);
   setDrawnCards(drawResults.map(r => r.card).filter(Boolean));
-
-  setLastFiveStarWasTarget(localLastFiveStarWasTarget); // ✅ 记录最后一个五星卡的归属
 };
 
-
-// const handleDraw = async (count) => {
-//   if (isDrawing || isAnimatingDrawCards) return;
-//
-//   setIsDrawing(true);
-//   setisAnimatingDrawCards(true);
-//
-//   const currentDrawId = Date.now();
-//   drawSessionIdRef.current = currentDrawId;
-//
-//   // 重置所有状态
-//   setShowSummary(false);
-//   setShowCardOverlay(false);
-//   setHasShownSummary(false);
-//   setCurrentCardIndex(0);
-//   setVideoSkipped(false);
-//   displayResultsRef.current = [];
-//   drawResultsRef.current = [];
-//
-//   let drawResults = [];
-//   let currentPity = pityCount;
-//   let currentFourStarCounter = currentFourStarRef.current;
-//
-//   for (let i = 0; i < count; i++) {
-//     let result;
-//     do {
-//       result = getRandomCard(currentPity, currentFourStarCounter);
-//     } while (!includeThreeStar && result.rarity === '3');
-//
-//     setTotalDrawCount(prev => prev + 1);
-//     if (result.rarity === '5') setTotalFiveStarCount(prev => prev + 1);
-//
-//     if (result.rarity === '5') {
-//       currentPity = 0;
-//       currentFourStarCounter++;
-//     } else {
-//       currentPity++;
-//       if (result.rarity === '4') {
-//         currentFourStarCounter = 0;
-//       } else {
-//         currentFourStarCounter++;
-//       }
-//     }
-//
-//     drawResults.push(result);
-//   }
-//
-//   setIsDrawing(false);
-//
-//   drawResultsRef.current = drawResults;
-//   currentPityRef.current = currentPity;
-//   currentFourStarRef.current = currentFourStarCounter;
-//   setHasFiveStarAnimation(drawResults.some(r => r.rarity === '5'));
-//   setShowAnimationDrawCards(true);
-//   setDrawnCards(drawResults.map(r => r.card).filter(Boolean));
-// };
 
 
 
@@ -413,171 +415,68 @@ const handleDraw = async (count) => {
 
   // ========================================================
   // 随机生成一张卡片，并根据保底计数器 (pity) 计算是否触发保底效果
-const getRandomCard = (pity, fourStarCounter, mustBeTargetFiveStar = false) => {
-  const fiveStarBase = 0.01;
-  const fourStarBase = 0.07;
-  const fiveStarPityStart = 60;
-  const fiveStarGuaranteed = 70;
-
-  let fiveStarChance = fiveStarBase;
-
-  if (pity >= fiveStarPityStart) {
-    fiveStarChance = Math.min(1, fiveStarBase + 0.1 * (pity - fiveStarPityStart + 1));
-  }
-
-  const roll = Math.random();
-  let rarity = '3';
-
-  if (pity + 1 >= fiveStarGuaranteed || roll < fiveStarChance) {
-    rarity = '5';
-  } else if ((fourStarCounter + 1) % 10 === 0) {
-    rarity = '4';
-  } else if (roll < fiveStarChance + fourStarBase) {
-    rarity = '4';
-  }
-
-  const targetStar = parseInt(rarity, 10);
+const getRandomCard = (
+  pity,
+  fourStarCounter,
+  mustBeTargetFiveStar = false
+) => {
+  let rarity;
   let pool = [];
 
+  const roll = Math.random() * 100;
+
+  let dynamicFiveStarRate = 1; // ⭐ 基础1%
+
+  if (pity < 60) {
+    dynamicFiveStarRate = 1 + (1.1 / 59) * pity; // ⭐ 到第60抽最多涨到2.1%
+  } else {
+    dynamicFiveStarRate = Math.min(1 + (pity - 59) * 10, 100); // ⭐ 软保底阶段
+  }
+
+  const fourStarRate = 12; // ⭐ 综合12%（基础+软保底）
+
+  if (pity >= 69) {
+    rarity = '5';
+  } else if (fourStarCounter >= 9) {
+    rarity = '4';
+  } else if (roll < dynamicFiveStarRate) {
+    rarity = '5';
+  } else if (roll < dynamicFiveStarRate + fourStarRate) {
+    rarity = '4';
+  } else {
+    rarity = '3';
+  }
+
+  const targetStar = parseInt(rarity);
+
+  // 卡池筛选逻辑
   if (targetStar === 5) {
-    if (mustBeTargetFiveStar && selectedRole !== '随机') {
-      pool = cardData.filter(
-        card => card.character === selectedRole && parseInt(card.star) === 5
-      );
+    if (onlySelectedRoleCard && selectedRole !== '随机') {
+      pool = cardData.filter(card => card.character === selectedRole && parseInt(card.star) === 5);
+    } else if (mustBeTargetFiveStar && selectedRole !== '随机') {
+      pool = cardData.filter(card => card.character === selectedRole && parseInt(card.star) === 5);
     } else {
       pool = cardData.filter(card => parseInt(card.star) === 5);
     }
   } else {
-    // 4星或3星卡池
     if (onlySelectedRoleCard && selectedRole !== '随机') {
-      pool = cardData.filter(
-        card =>
-          card.character === selectedRole &&
-          parseInt(card.star) === targetStar &&
-          (includeThreeStar || parseInt(card.star) !== 3)
+      pool = cardData.filter(card =>
+        card.character === selectedRole &&
+        parseInt(card.star) === targetStar &&
+        (includeThreeStar || parseInt(card.star) !== 3)
       );
     } else {
-      if (selectedRole === '随机') {
-        pool = cardData.filter(
-          card =>
-            parseInt(card.star) === targetStar &&
-            (includeThreeStar || parseInt(card.star) !== 3)
-        );
-      } else {
-        if (targetStar === 5) {
-          pool = cardData.filter(
-            card => card.character === selectedRole && parseInt(card.star) === 5
-          );
-        } else {
-          pool = cardData.filter(
-            card =>
-              parseInt(card.star) === targetStar &&
-              (includeThreeStar || parseInt(card.star) !== 3)
-          );
-        }
-      }
+      pool = cardData.filter(card =>
+        parseInt(card.star) === targetStar &&
+        (includeThreeStar || parseInt(card.star) !== 3)
+      );
     }
   }
 
-  if (pool.length === 0) {
-    return { card: null, rarity };
-  }
-
+  if (pool.length === 0) return { card: null, rarity };
   const chosen = pool[Math.floor(Math.random() * pool.length)];
   return { card: chosen, rarity };
 };
-
-
-//   const getRandomCard = (pity, fourStarCounter) => {
-//   const fiveStarBase = 0.01;
-//   const fourStarBase = 0.07;
-//   const fiveStarPityStart = 60;
-//   const fiveStarGuaranteed = 70;
-//
-//   let fiveStarChance = fiveStarBase;
-//
-//   if (pity >= fiveStarPityStart) {
-//     fiveStarChance = Math.min(1, fiveStarBase + 0.1 * (pity - fiveStarPityStart + 1));
-//   }
-//
-//   const roll = Math.random();
-//   let rarity = '3';
-//
-//   if (pity + 1 >= fiveStarGuaranteed || roll < fiveStarChance) {
-//     rarity = '5';
-//   } else if ((fourStarCounter + 1) % 10 === 0) {
-//     rarity = '4';
-//   } else if (roll < fiveStarChance + fourStarBase) {
-//     rarity = '4';
-//   }
-//
-//   const targetStar = parseInt(rarity, 10);
-//   let pool = [];
-//
-//   // 在此处判断是否触发大保底机制，并根据是否失败来调整pool
-//   if (useSoftGuarantee && targetStar === 5) {
-//     if (softPityFailed) {
-//       // 大保底触发：强制抽目标角色
-//       pool = cardData.filter(
-//         card => card.character === selectedRole && parseInt(card.star) === 5
-//       );
-//     } else {
-//       // 普通抽取五星卡池
-//       pool = cardData.filter(card => parseInt(card.star) === 5);
-//     }
-//   } else {
-//     // 处理普通抽卡逻辑
-//     if (onlySelectedRoleCard && selectedRole !== '随机') {
-//       pool = cardData.filter(
-//         card =>
-//           card.character === selectedRole &&
-//           parseInt(card.star) === targetStar &&
-//           (includeThreeStar || parseInt(card.star) !== 3)
-//       );
-//     } else {
-//       if (selectedRole === '随机') {
-//         pool = cardData.filter(
-//           card =>
-//             parseInt(card.star) === targetStar &&
-//             (includeThreeStar || parseInt(card.star) !== 3)
-//         );
-//       } else {
-//         if (targetStar === 5) {
-//           // 保底机制仍然适用
-//           pool = cardData.filter(
-//             card => card.character === selectedRole && parseInt(card.star) === 5
-//           );
-//         } else {
-//           pool = cardData.filter(
-//             card =>
-//               parseInt(card.star) === targetStar &&
-//               (includeThreeStar || parseInt(card.star) !== 3)
-//           );
-//         }
-//       }
-//     }
-//   }
-//
-//   if (pool.length === 0) {
-//     // console.warn("没有找到匹配的卡片！", { rarity, selectedRole });
-//     return { card: null, rarity };
-//   }
-//
-//   const chosen = pool[Math.floor(Math.random() * pool.length)];
-//
-//   // 如果是5星且使用了大保底机制，检查是否抽到目标角色
-//   if (targetStar === 5 && selectedRole !== '随机' && useSoftGuarantee) {
-//     if (chosen.character === selectedRole) {
-//       setSoftPityFailed(false); // 如果抽到目标角色，重置大保底失败标志
-//     } else {
-//       setSoftPityFailed(true); // 如果没抽到目标角色，设置为大保底失败
-//     }
-//   }
-//
-//   return { card: chosen, rarity };
-// };
-
-
 
 
 
@@ -671,6 +570,7 @@ const getRandomCard = (pity, fourStarCounter, mustBeTargetFiveStar = false) => {
             clearLocalData={clearLocalData}
             toggleMusic={toggleMusic}
             isMusicPlaying={isMusicPlaying}
+            setShowGallery={setShowGallery}
         />
 
 
@@ -711,6 +611,15 @@ const getRandomCard = (pity, fourStarCounter, mustBeTargetFiveStar = false) => {
             setShowHistory={setShowHistory}
             history={history}
         />
+
+        {/*查看图鉴*/}
+        {showGallery && (
+          <GalleryPage
+            allCards={galleryHistory}
+            onClose={() => setShowGallery(false)}
+          />
+        )}
+
       </div>
   );
 };
