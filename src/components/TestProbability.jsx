@@ -54,12 +54,10 @@ const TestProbability = ({ getRandomCard, setShowProbability }) => {
             onClick={(e) => e.stopPropagation()}
         >
 
-          <label
-              className="ml-[20px] mr-[20px] mt-[20px]"
-              style={{fontSize: '14px'}}
-          >
-            （测试概率有没有出bug）
-          </label>
+          <div className="flex flex-col ml-[20px] mr-[20px] mt-[20px] mb-[20px]" style={{fontSize: '14px'}}>
+            <label>（测试概率有没有出bug）</label>
+            <label>（仅测试基础版，即常驻池概率）</label>
+          </div>
 
           <div className="flex flex-row mt-[20px] mb-[20px] ml-[20px] mr-[20px]">
             <label style={{"fontWeight": 800}}>测试次数：</label>
@@ -86,7 +84,7 @@ const TestProbability = ({ getRandomCard, setShowProbability }) => {
             </div>
 
             <div className="flex-row">
-            <label style={{"fontWeight": 800}}>五星数量：</label>
+              <label style={{"fontWeight": 800}}>五星数量：</label>
               <label>
                 {result ? result.fiveStarCount : ''}（
                 {result ? ((result.fiveStarCount / result.total) * 100).toFixed(2) : '?'}%）
