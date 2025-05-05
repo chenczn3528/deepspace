@@ -18,11 +18,11 @@ const HistoryModal = ({ showHistory, setShowHistory, history }) => {
   return (
     showHistory && (
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center w-screen top-[0%] bottom-[30%]"
+        className="fixed inset-0 z-50 flex items-center justify-center w-screen h-screen"
         onClick={() => setShowHistory(false)}
       >
         <div
-          className="relative flex flex-col w-[80vw] h-[80%] p-4 rounded-lg overflow-hidden"
+          className="relative flex flex-col w-[80vw] h-[60%] mb-[30%] p-4 rounded-lg overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           <img

@@ -2,6 +2,7 @@ import React, {useEffect, useState, useRef} from 'react';
 import cardData from './assets/cards.json';
 import DrawAnimationCards from './components/DrawAnimationCards.jsx';
 import HistoryModal from './components/HistoryModal';
+import TestProbability from "./components/TestProbability.jsx";
 import CardOverlay from './components/CardOverlay';
 import SettingsLayer from "./components/SettingsLayer.jsx";
 import CardSummary from "./components/CardSummary.jsx";
@@ -102,6 +103,7 @@ const Home = () => {
   const [summaryCards, setSummaryCards] = useState([]); // 存储结算十抽的卡片
   const [hasShownSummary, setHasShownSummary] = useState(false); // 是否已经展示过结算页面
   const [showGallery, setShowGallery] = useState(false); // 是否展示图鉴
+  const [showProbability, setShowProbability] = useState(false); // 是否展示概率测试界面
 
   const [galleryHistory, setGalleryHistory] = useState([]);  // 图鉴历史
 
@@ -482,49 +484,6 @@ const getRandomCard = (
 
 
 
-window.testDraws = (numDraws = 100000) => {
-  let pity = 0;
-  let fourStarCounter = 0;
-  let fiveStarCount = 0;
-  let fourStarCount = 0;
-  let threeStarCount = 0;
-
-  for (let i = 0; i < numDraws; i++) {
-    const result = getRandomCard(pity, fourStarCounter, false, '随机', false, true);
-    const rarity = result.rarity;
-
-    if (rarity === '5') {
-      fiveStarCount++;
-      pity = 0;  // Reset pity after 5-star draw
-      fourStarCounter++;
-    } else {
-      pity++;
-      if (rarity === '4') {
-        fourStarCount++;
-        fourStarCounter = 0; // Reset counter after 4-star draw
-      } else {
-        threeStarCount++;
-        fourStarCounter++;
-      }
-    }
-  }
-
-  const total = fiveStarCount + fourStarCount + threeStarCount;
-
-  console.log(`⭐ 抽卡总次数：${total}`);
-  console.log(`⭐ 五星数量：${fiveStarCount}（${(fiveStarCount / total * 100).toFixed(2)}%）`);
-  console.log(`⭐ 四星数量：${fourStarCount}（${(fourStarCount / total * 100).toFixed(2)}%）`);
-  console.log(`⭐ 三星数量：${threeStarCount}（${(threeStarCount / total * 100).toFixed(2)}%）`);
-  console.log(`⭐ 平均出金：${(total / fiveStarCount).toFixed(2)}`);
-};
-
-
-
-
-
-
-
-
 
 
   // ========================================================
@@ -614,6 +573,8 @@ window.testDraws = (numDraws = 100000) => {
             toggleMusic={toggleMusic}
             isMusicPlaying={isMusicPlaying}
             setShowGallery={setShowGallery}
+            showProbability={showProbability}
+            setShowProbability={setShowProbability}
         />
 
 
@@ -661,6 +622,13 @@ window.testDraws = (numDraws = 100000) => {
             allCards={galleryHistory}
             onClose={() => setShowGallery(false)}
           />
+        )}
+
+        {showProbability && (
+            <TestProbability
+                getRandomCard={getRandomCard}
+                setShowProbability={setShowProbability}
+            />
         )}
 
       </div>

@@ -25,6 +25,8 @@ const SettingsLayer = ({
   toggleMusic,
   isMusicPlaying,
   setShowGallery,
+  showProbability,
+  setShowProbability,
 }) => {
     const labelStyle = {
       color: 'white',
@@ -76,6 +78,25 @@ const SettingsLayer = ({
               className="mt-4 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 ml-auto"
           >
               图鉴
+          </button>
+
+
+
+          {/*测试概率*/}
+          <button
+              onClick={() => setShowProbability(!showProbability)}
+              style={{
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                  position: 'fixed', // 使按钮脱离flex布局
+                  top: '20px',  // 靠近顶部
+                  left: '20px', // 靠近右侧
+                  width: 'auto',
+                  height: 'auto',
+              }}
+              className="mt-4 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 ml-auto"
+          >
+              测试概率
           </button>
 
 

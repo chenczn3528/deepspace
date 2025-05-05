@@ -1,4 +1,4 @@
-import React, {useState, useMemo, useEffect} from 'react';
+import React, {useState, useMemo} from 'react';
 import { FullImageViewer } from './FullImageViewer';
 import LeftIcon from './LeftIcon.jsx'
 import FunctionIcon from "./FunctionIcon.jsx";
