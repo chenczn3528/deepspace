@@ -3,6 +3,7 @@
 ## 恋与深空抽卡模拟器
 - 数据来源：[恋与深空wiki](https://wiki.biligame.com/lysk/%E9%A6%96%E9%A1%B5)
 - 部分素材来源：[恋与深空官网](https://deepspace.papegames.com/home)
+- 主要贡献者：ChatGPT老师、DeepSeek老师
 
 
 ### 目前的bug和优化

@@ -109,14 +109,14 @@ const SettingsLayer = ({
                       fontSize: '16px',
                       fontWeight: '400',
                       marginLeft: '20px',
-                      marginRight: '20px'
+                      marginRight: '20px',
+                      marginBottom: '10px'
                   }}
                   className="text-sm mt-2 flex flex-col"
               >
                   <label>目前应该是第一次加载网页视频会很卡</label>
                   <label>加载完只要不清除浏览器缓存就不卡</label>
                   <label>如果还是很卡，请告诉我，感谢❤</label>
-                  <label>图鉴排序正在写……</label>
               </div>
 
 

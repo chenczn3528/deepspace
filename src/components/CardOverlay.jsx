@@ -17,18 +17,11 @@ const CardOverlay = ({
   // 设置日卡月卡图标的大小
   const [cardTypeHeight, setCardTypeHeight] = useState(36); // 默认值为 36px
   useEffect(() => {
-    const imageUrl = drawResultsRef.current[currentCardIndex]?.card?.card_type;
-
-    if (imageUrl) {
-      // 解码 URL
-      const decodedUrl = decodeURIComponent(imageUrl);
-
-      // 检查 URL 中是否包含特定的字符串并设置高度
-      if (decodedUrl.includes("日冕")) {
-        setCardTypeHeight(36); // 包含"日冕"时设置为36px
-      } else if (decodedUrl.includes("月晖")) {
-        setCardTypeHeight(28); // 包含"月晖"时设置为24px
-      }
+    const card_type = drawResultsRef.current[currentCardIndex]?.card?.card_type_tag;
+    if (card_type === "日冕") {
+      setCardTypeHeight(36); // 包含"日冕"时设置为36px
+    } else if (card_type === "月晖") {
+      setCardTypeHeight(28); // 包含"月晖"时设置为24px
     }
   }, [currentCardIndex, drawResultsRef.current]);
 

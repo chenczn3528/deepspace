@@ -16,12 +16,93 @@ export const GalleryPage = ({ allCards, onClose }) => {
       : sorted.filter((c) => c.character === selectedCharacter);
   }, [selectedCharacter, allCards]);
 
-  console.log("allCards:", allCards)
+
+
+
+    const [sortOption, setSortOption] = useState("稀有度");
+
+    // 稀有度排序
+    const rarityOrder = { '5星': 1, '4星': 2, '3星': 3 };
+
+    // 角色排序
+    const roleOrder = {
+      "沈星回": 1,
+      "黎深": 2,
+      "祁煜": 3,
+      "秦彻": 4,
+      "夏以昼": 5
+    };
+
+    // 星谱排序
+    const starMapOrder = {
+      "绿珥": 1,
+      "蓝弧": 2,
+      "紫辉": 3,
+      "黄璃": 4,
+      "红漪": 5,
+      "粉珀": 6
+    };
+
+    // 套装排序
+    const suitOrder = {
+      "日冕": 1,
+      "月晖": 2
+    };
+
+    // 获取稀有度索引
+    const getRarityIndex = (card) => rarityOrder[card.star] || 999;
+
+    // 获取角色排序索引
+    const getRoleIndex = (card) => roleOrder[card.character] || 999;
+
+    // 获取星谱排序索引
+    const getStarMapIndex = (card) => starMapOrder[card.card_color_tag || ""] || 999;
+
+    // 获取套装排序索引
+    const getSuitIndex = (card) => suitOrder[card.card_type_tag || ""] || 999;
+
+    const sortedCards = [...filteredCards].sort((a, b) => {
+      // 打印比较的每个卡片信息，查看排序逻辑是否正确
+      if (sortOption === "稀有度") {
+        console.log('按稀有度排序');
+        return (
+          getRarityIndex(a) - getRarityIndex(b) ||
+          getRoleIndex(a) - getRoleIndex(b) ||
+          getSuitIndex(a) - getSuitIndex(b) ||
+          getStarMapIndex(a) - getStarMapIndex(b)
+        );
+      }
+
+      if (sortOption === "套装") {
+        console.log('按套装排序');
+        return (
+          getSuitIndex(a) - getSuitIndex(b) ||
+          getRarityIndex(a) - getRarityIndex(b) ||
+          getRoleIndex(a) - getRoleIndex(b) ||
+          getStarMapIndex(a) - getStarMapIndex(b)
+        );
+      }
+
+      if (sortOption === "星谱") {
+        console.log('按星谱排序');
+        return (
+          getStarMapIndex(a) - getStarMapIndex(b) ||
+          getRarityIndex(a) - getRarityIndex(b) ||
+          getRoleIndex(a) - getRoleIndex(b) ||
+          getSuitIndex(a) - getSuitIndex(b)
+        );
+      }
+
+      return 0; // 默认返回0
+    });
+
+
+
 
 
   return (
       <div
-          className="h-screen w-screen z-60 relative flex flex-col"
+          className="h-screen w-screen z-60 relative flex flex-col overflow-hidden"
           style={{backgroundImage: "url('images/结算背景.jpg')"}}
       >
           {/* 顶部操作栏 */}
@@ -53,6 +134,28 @@ export const GalleryPage = ({ allCards, onClose }) => {
               >
                   图鉴
               </h2>
+
+
+              {/*排序*/}
+              <select
+                  id="sortOption"
+                  value={sortOption}
+                  onChange={(e) => setSortOption(e.target.value)}
+                  style={{
+                      background: 'transparent',
+                      padding: 0,
+                      margin: 0,
+                      position: 'fixed', // 使按钮脱离flex布局
+                      top: '24px',  // 靠近顶部
+                      right: '60px', // 靠近右侧
+                      width: 'auto',
+                      height: 'auto',
+                  }}
+              >
+                  <option value="稀有度">稀有度</option>
+                  <option value="套装">套装</option>
+                  <option value="星谱">星谱</option>
+              </select>
 
 
               <button
@@ -177,76 +280,82 @@ export const GalleryPage = ({ allCards, onClose }) => {
 
           {/* 卡片网格展示 */}
           <div className="h-screen overflow-y-auto">
-              <div className="grid grid-cols-3 gap-[16px] p-4 ml-[20px] mr-[20px] mt-[10px] mb-[20px]">
-                  {filteredCards.map((card, index) => (
-                      <div
-                          key={card.name}
-                          className="relative w-full"
-                          style={{paddingBottom: squareView ? '100%' : '177.78%'}}
-                      >
-                          {/*星谱*/}
-                          <img
-                              src={card.card_color}
-                              alt="icon"
-                              className="absolute top-[4px] left-[4px] w-[20px] z-10"
-                          />
+              <div className="grid grid-cols-3 gap-[16px] p-4 ml-[20px] mr-[20px] mt-[10px] mb-[60px]">
+                  {sortedCards.map((card, index) => {
+                      // const cardTypeHeight = '20px'
+                      const cardTypeHeight = card.card_type_tag === "日冕" ? '20px' :
+                         card.card_type_tag === "月晖" ? '16px' : '20px';
 
+                      return (
                           <div
-                              className="absolute bottom-0 left-0 w-full h-[20px] bg-gray-400 z-10"
-                              // style={{zIndex: 10}} // 确保它覆盖在主图底部
-                          />
-
-                          {/*日卡月卡*/}
-                          <img
-                              src={card.card_type}
-                              alt="icon"
-                              className="absolute bottom-[28px] left-[4px] w-[20px] z-10"
-                          />
-
-                          {/*主图*/}
-                          <img
-                              src={card.image_small}
-                              alt={card.name}
-                              className={`absolute inset-0 w-full h-full rounded ${squareView ? 'object-cover object-top' : 'object-cover'}`}
-                              style={{maxHeight: squareView ? 'auto' : 'calc(100% - 24px)'}}
-                              onClick={() => {
-                                  setCurrentIndex(index);
-                                  setShowFullImage(true);
-                              }}
-                          />
-
-                          {/* 渐变灰色覆盖层 */}
-                          <div
-                            className="absolute bottom-[24px] left-0 w-full"
-                            style={{
-                              height: '28px',
-                              background: 'linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4))',
-                              pointerEvents: 'none', // 保证点击透传到下方
-                            }}
-                          />
-
-                          {/*星级*/}
-                          <img
-                              src={card.card_star_icon}
-                              alt="icon"
-                              className="absolute bottom-[28px] right-[4px] h-[16px] z-10"
-                          />
-
-                          {/*名称*/}
-                          <div
-                              className="absolute bottom-[0px] left-0 right-0 text-center text-white"
-                              style={{
-                                  textAlign: 'center',
-                                  fontSize: '12px',         // 设置字体大小
-                                  whiteSpace: 'nowrap',     // 禁止换行
-                                  overflow: 'hidden',       // 超出隐藏
-                              }}
+                              key={card.name}
+                              className="relative w-full"
+                              style={{paddingBottom: squareView ? '100%' : '177.78%'}}
                           >
-                              {card.character}·{card.name}
-                          </div>
-                      </div>
+                              {/*星谱*/}
+                              <img
+                                  src={card.card_color}
+                                  alt="icon"
+                                  className="absolute top-[4px] left-[4px] w-[20px] z-10"
+                              />
 
-                  ))}
+                              <div
+                                  className="absolute bottom-0 left-0 w-full h-[20px] bg-gray-400 z-10"
+                                  // style={{zIndex: 10}} // 确保它覆盖在主图底部
+                              />
+
+                              {/*日卡月卡*/}
+                              <img
+                                  src={card.card_type}
+                                  alt="icon"
+                                  className={`absolute bottom-[28px] left-[4px] w-[${cardTypeHeight}] z-10`}
+                              />
+
+                              {/*主图*/}
+                              <img
+                                  src={card.image_small}
+                                  alt={card.name}
+                                  className={`absolute inset-0 w-full h-full rounded ${squareView ? 'object-cover object-top' : 'object-cover'}`}
+                                  style={{maxHeight: squareView ? 'auto' : 'calc(100% - 24px)'}}
+                                  onClick={() => {
+                                      setCurrentIndex(index);
+                                      setShowFullImage(true);
+                                  }}
+                              />
+
+                              {/* 渐变灰色覆盖层 */}
+                              <div
+                                className="absolute bottom-[24px] left-0 w-full"
+                                style={{
+                                  height: '28px',
+                                  background: 'linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4))',
+                                  pointerEvents: 'none', // 保证点击透传到下方
+                                }}
+                              />
+
+                              {/*星级*/}
+                              <img
+                                  src={card.card_star_icon}
+                                  alt="icon"
+                                  className="absolute bottom-[28px] right-[4px] h-[16px] z-10"
+                              />
+
+                              {/*名称*/}
+                              <div
+                                  className="absolute bottom-[0px] left-0 right-0 text-center text-white"
+                                  style={{
+                                      textAlign: 'center',
+                                      fontSize: '12px',         // 设置字体大小
+                                      whiteSpace: 'nowrap',     // 禁止换行
+                                      overflow: 'hidden',       // 超出隐藏
+                                  }}
+                              >
+                                  {card.character}·{card.name}
+                              </div>
+                          </div>
+
+                      );
+                  })}
               </div>
           </div>
 
@@ -256,7 +365,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
           {/* 全屏大图预览 */}
           {showFullImage && (
               <FullImageViewer
-                  cards={filteredCards}
+                  cards={sortedCards}
                   currentIndex={currentIndex}
                   onClose={() => setShowFullImage(false)}
                   setCurrentIndex={setCurrentIndex}
