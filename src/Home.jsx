@@ -418,27 +418,29 @@ const handleDraw = async (count) => {
 const getRandomCard = (
   pity,
   fourStarCounter,
-  mustBeTargetFiveStar = false
+  mustBeTargetFiveStar = false,
+  selectedRole = '随机',
+  onlySelectedRoleCard = false,
+  includeThreeStar = true
 ) => {
   let rarity;
   let pool = [];
 
   const roll = Math.random() * 100;
 
-  let dynamicFiveStarRate = 1; // ⭐ 基础1%
-
-  if (pity < 60) {
-    dynamicFiveStarRate = 1 + (1.1 / 59) * pity; // ⭐ 到第60抽最多涨到2.1%
-  } else {
-    dynamicFiveStarRate = Math.min(1 + (pity - 59) * 10, 100); // ⭐ 软保底阶段
+  // ⭐⭐⭐⭐ 五星概率计算 ⭐⭐⭐⭐
+  let dynamicFiveStarRate = 1;
+  if (pity >= 60) {
+    dynamicFiveStarRate = 1 + (pity - 59) * 10;
   }
 
-  const fourStarRate = 12; // ⭐ 综合12%（基础+软保底）
 
-  if (pity >= 69) {
-    rarity = '5';
-  } else if (fourStarCounter >= 9) {
-    rarity = '4';
+  // ⭐⭐⭐⭐ 四星概率固定 ⭐⭐⭐⭐
+  const fourStarRate = 7;
+
+  // ⭐⭐⭐⭐ 保底判断 ⭐⭐⭐⭐
+  if (fourStarCounter >= 9) {
+    rarity = roll < dynamicFiveStarRate ? '5' : '4';
   } else if (roll < dynamicFiveStarRate) {
     rarity = '5';
   } else if (roll < dynamicFiveStarRate + fourStarRate) {
@@ -449,7 +451,7 @@ const getRandomCard = (
 
   const targetStar = parseInt(rarity);
 
-  // 卡池筛选逻辑
+  // ⭐⭐⭐⭐ 筛选卡池 ⭐⭐⭐⭐
   if (targetStar === 5) {
     if (onlySelectedRoleCard && selectedRole !== '随机') {
       pool = cardData.filter(card => card.character === selectedRole && parseInt(card.star) === 5);
@@ -463,12 +465,12 @@ const getRandomCard = (
       pool = cardData.filter(card =>
         card.character === selectedRole &&
         parseInt(card.star) === targetStar &&
-        (includeThreeStar || parseInt(card.star) !== 3)
+        (includeThreeStar || targetStar !== 3)
       );
     } else {
       pool = cardData.filter(card =>
         parseInt(card.star) === targetStar &&
-        (includeThreeStar || parseInt(card.star) !== 3)
+        (includeThreeStar || targetStar !== 3)
       );
     }
   }
@@ -477,6 +479,47 @@ const getRandomCard = (
   const chosen = pool[Math.floor(Math.random() * pool.length)];
   return { card: chosen, rarity };
 };
+
+
+
+window.testDraws = (numDraws = 100000) => {
+  let pity = 0;
+  let fourStarCounter = 0;
+  let fiveStarCount = 0;
+  let fourStarCount = 0;
+  let threeStarCount = 0;
+
+  for (let i = 0; i < numDraws; i++) {
+    const result = getRandomCard(pity, fourStarCounter, false, '随机', false, true);
+    const rarity = result.rarity;
+
+    if (rarity === '5') {
+      fiveStarCount++;
+      pity = 0;  // Reset pity after 5-star draw
+      fourStarCounter++;
+    } else {
+      pity++;
+      if (rarity === '4') {
+        fourStarCount++;
+        fourStarCounter = 0; // Reset counter after 4-star draw
+      } else {
+        threeStarCount++;
+        fourStarCounter++;
+      }
+    }
+  }
+
+  const total = fiveStarCount + fourStarCount + threeStarCount;
+
+  console.log(`⭐ 抽卡总次数：${total}`);
+  console.log(`⭐ 五星数量：${fiveStarCount}（${(fiveStarCount / total * 100).toFixed(2)}%）`);
+  console.log(`⭐ 四星数量：${fourStarCount}（${(fourStarCount / total * 100).toFixed(2)}%）`);
+  console.log(`⭐ 三星数量：${threeStarCount}（${(threeStarCount / total * 100).toFixed(2)}%）`);
+  console.log(`⭐ 平均出金：${(total / fiveStarCount).toFixed(2)}`);
+};
+
+
+
 
 
 
