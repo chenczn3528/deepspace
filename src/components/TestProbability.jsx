@@ -5,7 +5,11 @@ const TestProbability = ({ getRandomCard, setShowProbability }) => {
   const [testCount, setTestCount] = useState(100000);
   const [result, setResult] = useState(null);
 
+  const [loading, setLoading] = useState(false);
+
+
   const runTest = () => {
+    setLoading(true);
     let pity = 0;
     let fourStarCounter = 0;
     let fiveStarCount = 0;
@@ -41,6 +45,7 @@ const TestProbability = ({ getRandomCard, setShowProbability }) => {
       threeStarCount,
       averageFive: fiveStarCount ? (total / fiveStarCount).toFixed(2) : 'N/A',
     });
+    setLoading(false);
   };
 
   return (
@@ -59,7 +64,7 @@ const TestProbability = ({ getRandomCard, setShowProbability }) => {
             <label>（仅测试基础版，即常驻池概率）</label>
           </div>
 
-          <div className="flex flex-row mt-[20px] mb-[20px] ml-[20px] mr-[20px]">
+          <div className="flex flex-row mb-[20px] ml-[20px] mr-[20px]">
             <label style={{"fontWeight": 800}}>测试次数：</label>
             <input
                 type="number"
@@ -71,11 +76,13 @@ const TestProbability = ({ getRandomCard, setShowProbability }) => {
 
           <button
               onClick={runTest}
-              className="ml-[20px] mr-[20px]"
+              className={`ml-[20px] mr-[20px] px-4 py-2 font-semibold rounded ${
+                loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
+              } text-white`}
+              disabled={loading}
           >
             开始测试
           </button>
-
 
           <div className="flex flex-col mt-[20px] mb-[20px] ml-[20px] mr-[20px]">
             <div className="flex-row">
