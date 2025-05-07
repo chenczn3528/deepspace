@@ -283,8 +283,8 @@ export const GalleryPage = ({ allCards, onClose }) => {
               <div className="grid grid-cols-3 gap-[16px] p-4 ml-[20px] mr-[20px] mt-[10px] mb-[60px]">
                   {sortedCards.map((card, index) => {
                       // const cardTypeHeight = '20px'
-                      const cardTypeHeight = card.card_type_tag === "日冕" ? '20px' :
-                         card.card_type_tag === "月晖" ? '16px' : '20px';
+                      const cardTypeHeight = card.card_type_tag === "日冕" ? '24px' :
+                         card.card_type_tag === "月晖" ? '20px' : '24px';
 
                       return (
                           <div
