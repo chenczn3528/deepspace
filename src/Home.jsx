@@ -358,7 +358,15 @@ const handleDraw = async (count) => {
     if (onlySelectedRoleCard && selectedRole !== '随机') {
       // 只抽当前角色卡，关闭大小保底
       do {
-        result = getRandomCard(currentPity, currentFourStarCounter, false);
+        result = getRandomCard(
+          currentPity,
+          currentFourStarCounter,
+          false,
+          selectedRole,
+          onlySelectedRoleCard,
+          includeThreeStar
+        );
+        // result = getRandomCard(currentPity, currentFourStarCounter, false);
       } while (!includeThreeStar && result.rarity === '3');
 
       if (result.rarity === '5') {
@@ -373,7 +381,15 @@ const handleDraw = async (count) => {
       const mustBeTarget = useSoftGuarantee && selectedRole !== '随机' && localSoftPityFailed;
 
       do {
-        result = getRandomCard(currentPity, currentFourStarCounter, mustBeTarget);
+        result = getRandomCard(
+          currentPity,
+          currentFourStarCounter,
+          mustBeTarget,
+          selectedRole,
+          onlySelectedRoleCard,
+          includeThreeStar
+        );
+        // result = getRandomCard(currentPity, currentFourStarCounter, mustBeTarget);
       } while (!includeThreeStar && result.rarity === '3');
 
       if (result.rarity === '5') {
