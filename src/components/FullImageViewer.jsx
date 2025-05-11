@@ -146,7 +146,7 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose 
 
           <div className="h-screen w-screen pl-8">
               <div className="relative w-full h-full">
-                  <div className="absolute bottom-[22vw] left-[8vw] w-full h-[10vw] flex items-center">
+                  <div className="absolute bottom-[32vw] left-[8vw] w-full h-[10vw] flex items-center">
                       <img
                           src={card.card_star_icon}
                           alt="星级"
@@ -170,7 +170,7 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose 
                   </div>
 
                   {/* 文字区域 */}
-                  <div className="absolute bottom-[12vw] left-[8vw] w-full h-[12vw] flex items-center">
+                  <div className="absolute bottom-[22vw] left-[8vw] w-full h-[12vw] flex items-center">
                       <h1
                           style={{
                               color: 'white',
