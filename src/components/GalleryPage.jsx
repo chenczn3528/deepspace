@@ -106,7 +106,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
           style={{backgroundImage: "url('images/结算背景.jpg')"}}
       >
           {/* 顶部操作栏 */}
-          <div className="flex justify-between items-center mb-4 ml-[20px] mr-[20px]">
+          <div className="flex justify-between items-center mb-4 ml-[3vw] mr-[3vw]">
               <button
                   onClick={onClose}
                   style={{
@@ -115,8 +115,8 @@ export const GalleryPage = ({ allCards, onClose }) => {
                       padding: 0,
                       margin: 0,
                       position: 'fixed', // 使按钮脱离flex布局
-                      top: '20px',  // 靠近顶部
-                      left: '20px', // 靠近右侧
+                      top: '3vw',  // 靠近顶部
+                      left: '3vw', // 靠近右侧
                       width: 'auto',
                       height: 'auto',
                   }}
@@ -124,16 +124,18 @@ export const GalleryPage = ({ allCards, onClose }) => {
                   <LeftIcon size={24} color="black"/>
               </button>
 
-              <h2
+              <label
                   style={{
                       flex: 1,
                       textAlign: 'center',
                       fontSize: '1.5rem',
-                      fontWeight: '800'
+                      fontWeight: '800',
+                      marginTop: '2vw',
+                      marginBottom: '2vw',
                   }}
               >
                   图鉴
-              </h2>
+              </label>
 
 
               {/*排序*/}
@@ -146,8 +148,8 @@ export const GalleryPage = ({ allCards, onClose }) => {
                       padding: 0,
                       margin: 0,
                       position: 'fixed', // 使按钮脱离flex布局
-                      top: '24px',  // 靠近顶部
-                      right: '60px', // 靠近右侧
+                      top: '3vw',  // 靠近顶部
+                      right: '12vw', // 靠近右侧
                       width: 'auto',
                       height: 'auto',
                   }}
@@ -166,8 +168,8 @@ export const GalleryPage = ({ allCards, onClose }) => {
                       padding: 0,
                       margin: 0,
                       position: 'fixed', // 使按钮脱离flex布局
-                      top: '20px',  // 靠近顶部
-                      right: '20px', // 靠近右侧
+                      top: '3vw',  // 靠近顶部
+                      right: '5vw', // 靠近右侧
                       width: 'auto',
                       height: 'auto',
                   }}
@@ -175,14 +177,14 @@ export const GalleryPage = ({ allCards, onClose }) => {
                   <img
                       src={squareView ? "images/放大.png" : "images/缩小.png"}
                       alt="music toggle"
-                      className="w-[24px] h-[24px]"
+                      className="w-[20px] h-[20px]"
                   />
               </button>
           </div>
 
 
           {/*选择角色*/}
-          <div className="ml-[20px] mr-[20px]">
+          <div className="ml-[3vw] mr-[3vw] mt-[0.5rem]">
               <div style={{display: 'flex', width: '100%'}}>
                   {/* 左侧“全部”按钮 */}
                   <button
@@ -214,7 +216,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
                       justifyContent: 'space-between'
                   }}>
                       {/* 上面三个 */}
-                      <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem'}}>
+                      <div style={{display: 'flex', justifyContent: 'space-between'}}>
                           {['沈星回', '黎深', '祁煜'].map((char) => (
                               <button
                                   key={char}
@@ -222,6 +224,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
                                   style={{
                                       flex: 1,
                                       padding: '0',
+                                      height: '2rem',
                                       borderRadius: '0.25rem',
                                       fontSize: '1rem', // 增大字体
                                       backgroundColor: selectedCharacter === char ? 'black' : 'transparent',
@@ -237,7 +240,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
                       </div>
 
                       {/* 分隔线 */}
-                      <div style={{width: '100%', height: '1px', backgroundColor: '#ccc', marginBottom: '0.5rem'}}/>
+                      <div style={{width: '100%', height: '1px', backgroundColor: '#ccc'}}/>
 
                       {/* 下面两个 */}
                       <div style={{display: 'flex', justifyContent: 'space-between'}}>
@@ -248,6 +251,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
                                   style={{
                                       flex: 1,
                                       padding: '0',
+                                      height: '2rem',
                                       borderRadius: '0.25rem',
                                       fontSize: '1rem', // 增大字体
                                       backgroundColor: selectedCharacter === char ? 'black' : 'transparent',
@@ -268,8 +272,8 @@ export const GalleryPage = ({ allCards, onClose }) => {
           {/* 横线 + 阴影 */}
           <div
               style={{
-                  marginTop: '8px',
-                  marginBottom: '14px',
+                  marginTop: '0.5rem',
+                  marginBottom: '0.8rem',
                   borderBottom: '2px solid #888', // 灰色线条
                   boxShadow: '0 4px 10px rgba(0, 0, 0, 1)', // 让阴影向下扩散
               }}
@@ -280,23 +284,23 @@ export const GalleryPage = ({ allCards, onClose }) => {
 
           {/* 卡片网格展示 */}
           <div className="h-screen overflow-y-auto">
-              <div className="grid grid-cols-3 gap-[16px] p-4 ml-[20px] mr-[20px] mt-[10px] mb-[60px]">
+              <div className="grid grid-cols-3 gap-[3vw] p-4 ml-[3vw] mr-[3vw] mt-[2vw] mb-[6vw]">
                   {sortedCards.map((card, index) => {
                       // const cardTypeHeight = '20px'
-                      const cardTypeHeight = card.card_type_tag === "日冕" ? '24px' :
-                         card.card_type_tag === "月晖" ? '20px' : '24px';
+                      const cardTypeHeight = card.card_type_tag === "日冕" ? '5vw' :
+                         card.card_type_tag === "月晖" ? '4vw' : '5vw';
 
                       return (
                           <div
                               key={card.name}
                               className="relative w-full"
-                              style={{paddingBottom: squareView ? '100%' : '177.78%'}}
+                              style={{paddingBottom: squareView ? '99%' : '177.2%'}}
                           >
                               {/*星谱*/}
                               <img
                                   src={card.card_color}
                                   alt="icon"
-                                  className="absolute top-[4px] left-[4px] w-[20px] z-10"
+                                  className="absolute top-[1.5vw] left-[1.5vw] w-[4vw] z-10"
                               />
 
                               <div
@@ -308,7 +312,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
                               <img
                                   src={card.card_type}
                                   alt="icon"
-                                  className={`absolute bottom-[28px] left-[4px] w-[${cardTypeHeight}] z-10`}
+                                  className={`absolute bottom-[5.5vw] left-[1vw] w-[${cardTypeHeight}] z-10`}
                               />
 
                               {/*主图*/}
@@ -316,7 +320,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
                                   src={card.image_small}
                                   alt={card.name}
                                   className={`absolute inset-0 w-full h-full rounded ${squareView ? 'object-cover object-top' : 'object-cover'}`}
-                                  style={{maxHeight: squareView ? 'auto' : 'calc(100% - 24px)'}}
+                                  style={{maxHeight: squareView ? '25vw' : '48vw'}}//{{maxHeight: squareView ? 'auto' : 'calc(100% - 24px)'}}
                                   onClick={() => {
                                       setCurrentIndex(index);
                                       setShowFullImage(true);
@@ -325,9 +329,9 @@ export const GalleryPage = ({ allCards, onClose }) => {
 
                               {/* 渐变灰色覆盖层 */}
                               <div
-                                className="absolute bottom-[24px] left-0 w-full"
+                                className="absolute bottom-[4vw] left-0 w-full"
                                 style={{
-                                  height: '28px',
+                                  height: '7vw',
                                   background: 'linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4))',
                                   pointerEvents: 'none', // 保证点击透传到下方
                                 }}
@@ -337,15 +341,15 @@ export const GalleryPage = ({ allCards, onClose }) => {
                               <img
                                   src={card.card_star_icon}
                                   alt="icon"
-                                  className="absolute bottom-[28px] right-[4px] h-[16px] z-10"
+                                  className="absolute bottom-[5vw] right-[1vw] h-[4vw] z-10"
                               />
 
                               {/*名称*/}
                               <div
-                                  className="absolute bottom-[0px] left-0 right-0 text-center text-white"
+                                  className="absolute bottom-[-0.5vw] w-full text-center text-white"
                                   style={{
                                       textAlign: 'center',
-                                      fontSize: '12px',         // 设置字体大小
+                                      fontSize: '3vw',         // 设置字体大小
                                       whiteSpace: 'nowrap',     // 禁止换行
                                       overflow: 'hidden',       // 超出隐藏
                                   }}

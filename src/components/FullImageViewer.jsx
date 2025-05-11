@@ -18,13 +18,13 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose 
 
   // ========================================================
   // 设置日卡月卡图标的大小
-  const [cardTypeHeight, setCardTypeHeight] = useState(36); // 默认值为 36px
+  const [cardTypeHeight, setCardTypeHeight] = useState(6); // 默认值为 36px
   useEffect(() => {
     const card_type = card.card_type_tag;
     if (card_type === "日冕") {
-      setCardTypeHeight(36); // 包含"日冕"时设置为36px
+      setCardTypeHeight(7); // 包含"日冕"时设置为36px
     } else if (card_type === "月晖") {
-      setCardTypeHeight(28); // 包含"月晖"时设置为24px
+      setCardTypeHeight(6); // 包含"月晖"时设置为24px
     }
   }, [card]);
 
@@ -146,23 +146,23 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose 
 
           <div className="h-screen w-screen pl-8">
               <div className="relative w-full h-full">
-                  <div className="absolute bottom-[22%] left-[10%] w-full h-[6%] flex items-center">
+                  <div className="absolute bottom-[22vw] left-[8vw] w-full h-[10vw] flex items-center">
                       <img
                           src={card.card_star_icon}
                           alt="星级"
-                          className="h-[36px] object-contain"
+                          className="h-[6vw] object-contain"
                       />
                       <img
                           src={card.card_color}
                           alt="星谱"
-                          className="h-[24px] object-contain ml-[12px]"
+                          className="h-[5vw] object-contain ml-[12px]"
                       />
                       <img
                           src={card.card_type}
                           alt="类型（日卡月卡）"
                           style={{
-                              height: `${cardTypeHeight}px`,
-                              maxHeight: `${cardTypeHeight}px`,
+                              height: `${cardTypeHeight}vw`,
+                              maxHeight: `${cardTypeHeight}vw`,
                               objectFit: 'contain',
                           }}
                           className="object-contain ml-[8px]"
@@ -170,11 +170,11 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose 
                   </div>
 
                   {/* 文字区域 */}
-                  <div className="absolute bottom-[13%] left-[10%] w-full h-[12%] flex items-center">
+                  <div className="absolute bottom-[12vw] left-[8vw] w-full h-[12vw] flex items-center">
                       <h1
                           style={{
                               color: 'white',
-                              fontSize: '30px',
+                              fontSize: '6vw',
                               textShadow: shadowColor,
                               fontFamily: '"SimSun", "宋体", serif',
                               fontWeight: '800',
@@ -188,7 +188,7 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose 
                       <h1
                           style={{
                               color: 'white',
-                              fontSize: '40px',
+                              fontSize: '8vw',
                               textShadow: shadowColor,
                               fontFamily: '"SimSun", "宋体", serif',
                               fontWeight: '800',

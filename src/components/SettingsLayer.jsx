@@ -40,7 +40,7 @@ const SettingsLayer = ({
 
 
   return (
-      <div className="fixed inset-0 z-10 flex flex-col w-full bottom-[10%] items-center justify-center">
+      <div className="fixed inset-0 z-10 flex flex-col w-full bottom-[10vw] items-center justify-center">
           <button
               onClick={toggleMusic}
               style={{
