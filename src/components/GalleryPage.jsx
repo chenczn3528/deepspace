@@ -312,7 +312,8 @@ export const GalleryPage = ({ allCards, onClose }) => {
                               <img
                                   src={card.card_type}
                                   alt="icon"
-                                  className={`absolute bottom-[5.5vw] left-[1vw] w-[${cardTypeHeight}] z-10`}
+                                  className={`absolute bottom-[5.5vw] left-[1vw] z-10`}
+                                  style={{ width: cardTypeHeight }}
                               />
 
                               {/*主图*/}
