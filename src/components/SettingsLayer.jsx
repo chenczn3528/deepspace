@@ -107,16 +107,18 @@ const SettingsLayer = ({
                   style={{
                       color: 'gray',
                       fontSize: '16px',
-                      fontWeight: '400',
+                      fontWeight: '600',
                       marginLeft: '20px',
                       marginRight: '20px',
                       marginBottom: '10px'
                   }}
                   className="text-sm mt-2 flex flex-col"
               >
-                  <label>目前应该是第一次加载网页视频会很卡</label>
+                  <span style={{color: 'red', fontWeight: 800}}>重要提示：</span>
+                  <label>第一次加载网页的视频、动画会很卡</label>
+                  <label>需要等待一段时间让资源加载完</label>
                   <label>加载完只要不清除浏览器缓存就不卡</label>
-                  <label>如果还是很卡，请告诉我，感谢❤</label>
+                  <label>已经加速了，再卡真的没招了🥲</label>
               </div>
 
 
