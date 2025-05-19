@@ -9,12 +9,12 @@ export default defineConfig({
       react(),
     VitePWA({
       filename: 'sw-beyond.js', // ✅ 与模拟器 A 区分
-      scope: '/deepspace/',   // ✅ base 路径一致
+      scope: '/',   // ✅ base 路径一致
       registerType: 'autoUpdate',
       manifest: {
         name: '恋与深空 抽卡模拟器',
-        short_name: 'deepspace',
-        start_url: '/deepspace/',
+        short_name: '深空抽卡',
+        start_url: '/',
         display: 'standalone',
         background_color: '#ffffff',
         icons: [
