@@ -16,7 +16,8 @@
     "prop-types": "^15.8.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-lazy-load-image-component": "^1.6.3"
+    "react-lazy-load-image-component": "^1.6.3",
+    "react-router-dom": "^6.30.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
@@ -31,7 +32,8 @@
     "globals": "^16.0.0",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.4",
-    "vite": "^6.3.1"
+    "vite": "^6.3.1",
+    "vite-plugin-pwa": "^1.0.0"
   },
   "homepage": "/deepspace/"
 }
