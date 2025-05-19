@@ -1,1 +1,1 @@
-{"name":"恋与深空 抽卡模拟器","short_name":"deepspace","start_url":"/deepspace/","display":"standalone","background_color":"#ffffff","theme_color":"#42b883","lang":"en","scope":"/deepspace/","icons":[{"src":"images/icon.png","sizes":"512x512","type":"image/png"}]}
+{"name":"恋与深空 抽卡模拟器","short_name":"深空抽卡","start_url":"/","display":"standalone","background_color":"#ffffff","theme_color":"#42b883","lang":"en","scope":"/","icons":[{"src":"images/icon.png","sizes":"512x512","type":"image/png"}]}
