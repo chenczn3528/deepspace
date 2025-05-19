@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
       react(),
     VitePWA({
-      filename: 'sw-beyond.js', // ✅ 与模拟器 A 区分
+      filename: 'ds-beyond.js', // ✅ 与模拟器 A 区分
       scope: '/',   // ✅ base 路径一致
       registerType: 'autoUpdate',
       manifest: {
