@@ -48,10 +48,10 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards, onSkip, isSingl
                 onClick={handleSkip}
                 style={{
                   position: 'absolute',
-                  top: '75%',
+                  bottom: '20vmin',
                   right: '1rem',
                   color: 'white',
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)', // 透明白色背景
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)', // 透明白色背景
                   borderRadius: '0.5rem', // 圆角
                   padding: '0.5rem 1rem', // 上下和左右的内边距
                   zIndex: 50,

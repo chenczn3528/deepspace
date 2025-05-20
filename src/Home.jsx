@@ -154,7 +154,7 @@ const Home = () => {
   // ========================================================
   // 背景音乐设置
   const audioRef = useRef(null);
-  const [isMusicPlaying, setIsMusicPlaying] = useState(true); // 默认播放
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false); // 默认播放
 
   useEffect(() => {
     const audio = audioRef.current;

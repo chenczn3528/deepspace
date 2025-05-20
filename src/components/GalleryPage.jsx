@@ -132,6 +132,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
                       fontWeight: '800',
                       marginTop: '2vw',
                       marginBottom: '2vw',
+                      color: 'black'
                   }}
               >
                   图鉴
@@ -152,6 +153,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
                       right: '12vw', // 靠近右侧
                       width: 'auto',
                       height: 'auto',
+                      color: 'black'
                   }}
               >
                   <option value="稀有度">稀有度</option>
@@ -353,6 +355,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
                                       fontSize: '3vw',         // 设置字体大小
                                       whiteSpace: 'nowrap',     // 禁止换行
                                       overflow: 'hidden',       // 超出隐藏
+                                      color: 'black'
                                   }}
                               >
                                   {card.character}·{card.name}
