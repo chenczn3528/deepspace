@@ -138,7 +138,7 @@ const SettingsLayer = ({
                 <div className="flex flex-row gap-[2vmin]" id="role-selector">
                     <label>选择角色：</label>
                     <select
-                        className="bg-gray-800 text-white p-2 rounded"
+                        style={{fontSize: '2.5vmin'}}
                         value={selectedRole}
                         onChange={(e) => setSelectedRole(e.target.value)}
                     >
@@ -150,10 +150,11 @@ const SettingsLayer = ({
                 <div className="flex flex-col">
 
                     {/*是否包括三星卡*/}
-                    <div className="flex flex-row gap-[2vmin]">
+                    <div className="flex flex-row gap-[2vmin] items-center">
                         <label htmlFor="includeThree">包括三星卡片</label>
                         <input
                             id="includeThree"
+                            style={{width:'3vmin', height: '3vmin'}}
                             type="checkbox"
                             checked={includeThreeStar}
                             onChange={(e) => setIncludeThreeStar(e.target.checked)}
@@ -162,10 +163,11 @@ const SettingsLayer = ({
 
                     {/*是否开启大小保底*/}
                     {selectedRole !== '随机' && (
-                        <div className="flex flex-row gap-[2vmin]">
+                        <div className="flex flex-row gap-[2vmin] items-center">
                             <label htmlFor="softGuarantee">开启大小保底机制</label>
                             <input
                                 id="softGuarantee"
+                                style={{width:'3vmin', height: '3vmin'}}
                                 type="checkbox"
                                 checked={useSoftGuarantee}
                                 onChange={(e) => {
@@ -179,9 +181,10 @@ const SettingsLayer = ({
 
                     {/*是否只抽xx的卡*/}
                     {selectedRole !== '随机' && (
-                        <div className="flex flex-row gap-[2vmin]">
+                        <div className="flex flex-row gap-[2vmin] items-center">
                             <label htmlFor="onlyThisRole">只抽 {selectedRole} 的卡</label>
                             <input
+                                style={{width:'3vmin', height: '3vmin'}}
                                 id="onlyThisRole"
                                 type="checkbox"
                                 checked={onlySelectedRoleCard}
