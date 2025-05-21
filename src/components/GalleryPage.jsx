@@ -103,7 +103,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
   return (
       <div
           className="h-screen w-screen z-60 relative flex flex-col overflow-hidden"
-          style={{backgroundImage: "url('images/结算背景.jpg')"}}
+          style={{backgroundImage: "url('https://cdn.chenczn3528.dpdns.org/deepspace/images/结算背景.jpg')"}}
       >
           {/* 顶部操作栏 */}
           <div className="flex justify-between items-center mb-4 ml-[3vw] mr-[3vw]">
@@ -177,7 +177,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
                   }}
               >
                   <img
-                      src={squareView ? "images/放大.png" : "images/缩小.png"}
+                      src={squareView ? "https://cdn.chenczn3528.dpdns.org/deepspace/images/放大.png" : "https://cdn.chenczn3528.dpdns.org/deepspace/images/缩小.png"}
                       alt="music toggle"
                       className="w-[20px] h-[20px]"
                   />

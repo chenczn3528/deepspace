@@ -26,7 +26,7 @@ const HistoryModal = ({ showHistory, setShowHistory, history }) => {
           onClick={(e) => e.stopPropagation()}
         >
           <img
-            src="images/结算背景.jpg"
+            src="https://cdn.chenczn3528.dpdns.org/deepspace/images/结算背景.jpg"
             alt="背景"
             className="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-90"
           />

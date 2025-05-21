@@ -75,7 +75,7 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards, onSkip, isSingl
             controls={false}
         >
           <source
-              src={isFiveStar ? 'videos/gold_card.mp4' : 'videos/no_gold_card.mp4'}
+              src={isFiveStar ? 'https://cdn.chenczn3528.dpdns.org/deepspace/videos/gold_card.mp4' : 'https://cdn.chenczn3528.dpdns.org/deepspace/videos/no_gold_card.mp4'}
               type="video/mp4"
           />
           Your browser does not support the video tag.
@@ -89,7 +89,7 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards, onSkip, isSingl
             muted={false}
         >
           <source
-              src={isFiveStar ? 'audios/出金.mp3' : 'audios/不出金.mp3'}
+              src={isFiveStar ? 'https://cdn.chenczn3528.dpdns.org/deepspace/audios/出金.mp3' : 'https://cdn.chenczn3528.dpdns.org/deepspace/audios/不出金.mp3'}
               type="audio/mp3"
           />
           Your browser does not support the audio element.

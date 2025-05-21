@@ -119,7 +119,7 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose 
 
           {/* 底部图片（绝对定位） */}
           <img
-              src="images/结算背景.jpg"
+              src="https://cdn.chenczn3528.dpdns.org/deepspace/images/结算背景.jpg"
               alt="底部装饰"
               className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-full h-full opacity-100 z-0" // 设置 z-index 为 0
           />

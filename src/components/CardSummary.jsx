@@ -8,8 +8,7 @@ const CardSummary = ({ drawResults, onClose }) => {
   const summaryAudioRef = useRef(null);
 
   useEffect(() => {
-    summaryAudioRef.current = new Audio("audios/展示结算.mp3");
-    // summaryAudioRef.current = new Audio("https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E5%B1%95%E7%A4%BA%E7%BB%93%E7%AE%97.mp3");
+    summaryAudioRef.current = new Audio("https://cdn.chenczn3528.dpdns.org/deepspace/audios/展示结算.mp3");
     summaryAudioRef.current.volume = 1;
     summaryAudioRef.current.currentTime = 0;
 
@@ -56,8 +55,7 @@ const CardSummary = ({ drawResults, onClose }) => {
 
       {/* 底部图片（绝对定位） */}
       <img
-        src="images/结算背景.jpg"
-        // src="https://vqdlonhi.ap-northeast-1.clawcloudrun.com/d/deepspace/%E7%BB%93%E7%AE%97%E8%83%8C%E6%99%AF.jpg"
+        src="https://cdn.chenczn3528.dpdns.org/deepspace/images/结算背景.jpg"
         alt="底部装饰"
         className="absolute w-screen h-screen opacity-100"
       />

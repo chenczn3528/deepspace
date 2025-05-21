@@ -540,7 +540,7 @@ const getRandomCard = (
         <audio
             ref={audioRef}
             loop
-            src="audios/时空引力.mp3"
+            src="https://cdn.chenczn3528.dpdns.org/deepspace/audios/时空引力.mp3"
         />
 
         {/* 视频层（最底层） */}
@@ -560,7 +560,7 @@ const getRandomCard = (
 
             }}
             className="fixed top-0 left-0 w-full h-full object-cover z-0">
-          <source src="videos/开屏动画.mp4" type="video/mp4"/>
+          <source src="https://cdn.chenczn3528.dpdns.org/deepspace/videos/开屏动画.mp4" type="video/mp4"/>
         </video>
 
         {/* 控件层（中间层） */}
