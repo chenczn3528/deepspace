@@ -8,7 +8,7 @@ const CardSummary = ({ drawResults, onClose }) => {
   const summaryAudioRef = useRef(null);
 
   useEffect(() => {
-    summaryAudioRef.current = new Audio("https://cdn.chenczn3528.dpdns.org/deepspace/audios/展示结算.mp3");
+    summaryAudioRef.current = new Audio("audios/展示结算.mp3");
     summaryAudioRef.current.volume = 1;
     summaryAudioRef.current.currentTime = 0;
 
@@ -55,7 +55,7 @@ const CardSummary = ({ drawResults, onClose }) => {
 
       {/* 底部图片（绝对定位） */}
       <img
-        src="https://cdn.chenczn3528.dpdns.org/deepspace/images/结算背景.jpg"
+        src="images/结算背景.jpg"
         alt="底部装饰"
         className="absolute w-screen h-screen opacity-100"
       />

@@ -19,7 +19,7 @@ export default defineConfig({
         background_color: '#ffffff',
         icons: [
           {
-            src: 'https://cdn.chenczn3528.dpdns.org/deepspace/images/icon.png',
+            src: 'images/icon.png',
             sizes: '512x512',
             type: 'image/png'
           }

@@ -58,7 +58,7 @@ const SettingsLayer = ({
                 }}
             >
                 <img
-                    src={isMusicPlaying ? "https://cdn.chenczn3528.dpdns.org/deepspace/images/放音.png" : "https://cdn.chenczn3528.dpdns.org/deepspace/images/静音.png"}
+                    src={isMusicPlaying ? "images/放音.png" : "images/静音.png"}
                     alt="music toggle"
                     className="w-[6vmin] h-[6vmin]"
                 />

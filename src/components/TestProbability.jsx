@@ -55,7 +55,7 @@ const TestProbability = ({ getRandomCard, setShowProbability }) => {
       >
         <div
             className="relative flex flex-col px-5 py-5 mt-[100px]"
-            style={{backgroundImage: "url('https://cdn.chenczn3528.dpdns.org/deepspace/images/结算背景.jpg')"}}
+            style={{backgroundImage: "url('images/结算背景.jpg')"}}
             onClick={(e) => e.stopPropagation()}
         >
 
