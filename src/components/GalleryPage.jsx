@@ -298,7 +298,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
                           >
                               {/*星谱*/}
                               <img
-                                  src={card.card_color}
+                                  src={`images/${card.card_color_tag}.png`}
                                   alt="icon"
                                   className="absolute top-[1.5vw] left-[1.5vw] w-[4vw] z-10"
                               />
@@ -310,7 +310,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
 
                               {/*日卡月卡*/}
                               <img
-                                  src={card.card_type}
+                                  src={`images/${card.card_type_tag}.png`}
                                   alt="icon"
                                   className={`absolute bottom-[5.5vw] left-[1vw] z-10`}
                                   style={{ width: cardTypeHeight }}
@@ -340,7 +340,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
 
                               {/*星级*/}
                               <img
-                                  src={card.card_star_icon}
+                                  src={`images/${card.star}.png`}
                                   alt="icon"
                                   className="absolute bottom-[5vw] right-[1vw] h-[4vw] z-10"
                               />

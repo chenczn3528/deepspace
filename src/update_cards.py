@@ -7,7 +7,7 @@ import time
 import os
 
 
-cards_path = 'assets/cards.json'
+cards_path = 'src/assets/cards.json'
 
 urls = [
     "https://wiki.biligame.com/lysk/%E6%B2%88%E6%98%9F%E5%9B%9E:%E6%80%9D%E5%BF%B5",
@@ -70,8 +70,7 @@ def fetch_detail_image(card_url):
 
 def is_card_data_complete(card_data):
     """检查卡片数据是否完整"""
-    required_fields = ["character", "name", "star", "image", "image_small", "card_color", "card_color_tag", "card_type", "card_type_tag", "card_star_icon",
-                       "detail_url"]
+    required_fields = ["character", "name", "star", "image", "image_small", "card_color_tag", "card_type_tag"]
     return all(card_data.get(field) for field in required_fields)
 
 
