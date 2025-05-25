@@ -1,5 +1,4 @@
-const CACHE_NAME = 'deepspace-cache-v2';
-
+const CACHE_NAME = 'deepspace-cache-v4';
 const FILES_TO_CACHE = [
   '/deepspace/videos/gold_card.MP4',
   '/deepspace/videos/no_gold_card.mp4',
@@ -17,58 +16,44 @@ const FILES_TO_CACHE = [
   '/deepspace/images/结算背景.jpg'
 ];
 
-
-
-// 安装 Service Worker，缓存需要的资源
+// 安装阶段：缓存资源，跳过等待
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('[Service Worker] Caching files:', FILES_TO_CACHE);
-      return cache.addAll(FILES_TO_CACHE); // 缓存文件
-    }).catch((error) => {
-      console.error('[Service Worker] Caching failed:', error);
-    })
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        console.log('[SW] Caching files:', FILES_TO_CACHE);
+        return cache.addAll(FILES_TO_CACHE);
+      })
+      .catch(err => console.error('[SW] Cache failed:', err))
   );
 });
 
-
-
-
-
-// 激活 Service Worker，删除旧的缓存
+// 激活阶段：清除旧缓存，立即接管控制权
 self.addEventListener('activate', (event) => {
-  const cacheWhitelist = [CACHE_NAME];
-
   event.waitUntil(
-    caches.keys().then((keyList) =>
-      Promise.all(
-        keyList.map((key) => {
-          if (!cacheWhitelist.includes(key)) {
-            console.log('[Service Worker] Deleting old cache:', key);
-            return caches.delete(key); // 删除不需要的缓存
+    (async () => {
+      const keyList = await caches.keys();
+      await Promise.all(
+        keyList.map(key => {
+          if (key !== CACHE_NAME) {
+            console.log('[SW] Deleting old cache:', key);
+            return caches.delete(key);
           }
         })
-      )
-    ).catch((error) => {
-      console.error('[Service Worker] Error during activation:', error);
-    })
+      );
+      await self.clients.claim();
+    })()
   );
-
-  self.clients.claim();  // 让 Service Worker 控制所有页面
 });
 
-
-
-
-
-// 处理 fetch 请求，优先从缓存中加载
+// 拦截 fetch 请求
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
   // 跳过来自 patchwiki 或其他外部源的请求
   if (url.origin !== self.location.origin) {
-    // 只要是外部请求，直接返回，不处理缓存
-    return fetch(event.request);
+    return fetch(event.request); // 外部请求直接返回
   }
 
   // 处理缓存和其他逻辑
@@ -81,37 +66,18 @@ self.addEventListener('fetch', (event) => {
 
       // 否则从网络获取资源并缓存
       return fetch(event.request).then((response) => {
-        // 只缓存静态资源
-        if (event.request.url.includes('/images/') || event.request.url.includes('/videos/') || event.request.url.includes('/audios/')) {
-          return caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, response.clone());
-            return response;
-          });
+        // 确保只缓存完整的响应（状态码 200）
+        if (response.status === 200) {
+          // 只缓存静态资源
+          if (event.request.url.includes('/images/') || event.request.url.includes('/videos/') || event.request.url.includes('/audios/')) {
+            return caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, response.clone());
+              return response;
+            });
+          }
         }
-        return response;
+        return response; // 如果是部分响应或其他响应，直接返回，不缓存
       });
     })
   );
-});
-
-
-
-
-
-
-// 强制注销旧的service worker
-navigator.serviceWorker.getRegistrations().then((registrations) => {
-  registrations.forEach((registration) => {
-    // 判断 Service Worker 名称是否与指定名称匹配
-    if (registration.scope !== CACHE_NAME) {
-      // 如果不匹配，注销该 Service Worker
-      registration.unregister().then((success) => {
-        if (success) {
-          console.log(`注销了 Service Worker：${registration.scope}`);
-        } else {
-          console.log(`注销 Service Worker 失败：${registration.scope}`);
-        }
-      });
-    }
-  });
 });
