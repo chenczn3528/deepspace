@@ -2,6 +2,8 @@ import React, {useState, useMemo} from 'react';
 import { FullImageViewer } from './FullImageViewer';
 import FunctionIcon from "../icons/FunctionIcon.jsx";
 import LeftIcon from "../icons/LeftIcon.jsx";
+import FullScreenIcon from "../icons/FullScreenIcon.jsx";
+import SmallScreenIcon from "../icons/SmallScreenIcon.jsx";
 
 
 export const GalleryPage = ({ allCards, onClose }) => {
@@ -137,49 +139,47 @@ export const GalleryPage = ({ allCards, onClose }) => {
               </label>
 
 
-              {/*排序*/}
-              <select
-                  id="sortOption"
-                  value={sortOption}
-                  onChange={(e) => setSortOption(e.target.value)}
-                  style={{
-                      background: 'transparent',
-                      padding: 0,
-                      margin: 0,
-                      position: 'fixed', // 使按钮脱离flex布局
-                      top: '3vw',  // 靠近顶部
-                      right: '12vw', // 靠近右侧
-                      width: 'auto',
-                      height: 'auto',
-                      color: 'black'
-                  }}
-              >
-                  <option value="稀有度">稀有度</option>
-                  <option value="套装">套装</option>
-                  <option value="星谱">星谱</option>
-              </select>
+              <div className="absolute flex flex-row top-[3vw] right-[3vw] gap-[3vw]">
+                  {/*排序*/}
+                  <select
+                      id="sortOption"
+                      value={sortOption}
+                      onChange={(e) => setSortOption(e.target.value)}
+                      style={{
+                          background: 'transparent',
+                          padding: 0,
+                          margin: 0,
+                          width: 'auto',
+                          height: 'auto',
+                          color: 'black'
+                      }}
+                  >
+                      <option value="稀有度">稀有度</option>
+                      <option value="套装">套装</option>
+                      <option value="星谱">星谱</option>
+                  </select>
 
 
-              <button
-                  onClick={() => setSquareView(!squareView)}
-                  style={{
-                      background: 'transparent',
-                      border: 'none',
-                      padding: 0,
-                      margin: 0,
-                      position: 'fixed', // 使按钮脱离flex布局
-                      top: '3vw',  // 靠近顶部
-                      right: '5vw', // 靠近右侧
-                      width: 'auto',
-                      height: 'auto',
-                  }}
-              >
-                  <img
-                      src={squareView ? "images/放大.png" : "images/缩小.png"}
-                      alt="music toggle"
-                      className="w-[20px] h-[20px]"
-                  />
-              </button>
+                  <button
+                      onClick={() => setSquareView(!squareView)}
+                      style={{
+                          background: 'transparent',
+                          border: 'none',
+                          padding: 0,
+                          margin: 0,
+                          width: 'auto',
+                          height: 'auto',
+                      }}
+                  >
+                      {squareView ? (
+                          <FullScreenIcon color="black" size={24} />
+                      ) : (
+                          <SmallScreenIcon color="black" size={24} />
+                      )}
+                  </button>
+              </div>
+
+
           </div>
 
 
