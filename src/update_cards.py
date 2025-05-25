@@ -52,6 +52,11 @@ def fetch_detail_image(card_url):
         soup = BeautifulSoup(res.content, "html.parser")
         img = soup.select_one(".center img")
 
+        # getway = soup.select_one(".card-getWay")
+        # text = ''.join(getway.stripped_strings)
+        # print(text)
+        # s = input()
+
         if img:
             src = img.get("src", "")
             srcset = img.get("srcset", "")
@@ -145,12 +150,8 @@ for url in urls:
             "star": star,
             "image": card_image,
             "image_small": small_card_image,
-            # "card_color": card_color,
             "card_color_tag": color_tag,
-            # "card_type": card_type,
             "card_type_tag": card_type_tag,
-            # "card_star_icon": card_star_icon,
-            # "detail_url": detail_url
         }) :
             print(f"❌ 卡片 {card_name} 信息不完整，重新爬取... ")
             time.sleep(5)  # 等待一段时间后重试
@@ -162,12 +163,8 @@ for url in urls:
             "star": star,
             "image": card_image.replace("thumb", "").split('.png')[0] + ".png?download",
             "image_small": small_card_image,
-            # "card_color": card_color,
             "card_color_tag": color_tag,
-            # "card_type": card_type,
             "card_type_tag": card_type_tag,
-            # "card_star_icon": card_star_icon.replace("81px", "200px"),
-            # "detail_url": detail_url
         }
 
         all_cards.append(new_card_data)

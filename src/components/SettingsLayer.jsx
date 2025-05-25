@@ -90,7 +90,7 @@ const SettingsLayer = ({
                     <label>第一次加载网页的视频、动画会很卡</label>
                     <label>需要等待一段时间让资源加载完</label>
                     <label>加载完只要不清除浏览器缓存就不卡</label>
-                    <label>已经加速了，再卡真的没招了🥲</label>
+                    <label>5月25日更新了代码，记录可能会消失</label>
                     <div className="flex flex-row">
                         <label>反馈bug或功能需求：</label>
                         <button
