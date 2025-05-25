@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import LeftIcon from "../icons/LeftIcon.jsx";
 import RightIcon from "../icons/RightIcon.jsx";
+import LockIcon from "../icons/LockIcon.jsx";
 
 export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose }) => {
   const card = cards[currentIndex];
@@ -123,6 +124,20 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose 
               alt="底部装饰"
               className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-full h-full opacity-100 z-0" // 设置 z-index 为 0
           />
+
+
+          {!card.owned && (
+              <div
+                  className="absolute left-0 w-full h-full z-5 flex items-center justify-center"
+                  style={{
+                      // maxHeight: squareView ? '25vw' : '48vw',
+                      background: '#00000088',
+                      pointerEvents: 'none', // 保证点击透传到下方
+                  }}
+              >
+                  <LockIcon size={36} color={'lightgray'} />
+              </div>
+          )}
 
 
           {/* 展示卡片内容 */}

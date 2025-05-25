@@ -1,24 +1,61 @@
-import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo, useEffect} from 'react';
 import { FullImageViewer } from './FullImageViewer';
 import FunctionIcon from "../icons/FunctionIcon.jsx";
 import LeftIcon from "../icons/LeftIcon.jsx";
 import FullScreenIcon from "../icons/FullScreenIcon.jsx";
 import SmallScreenIcon from "../icons/SmallScreenIcon.jsx";
 import LockIcon from "../icons/LockIcon.jsx";
+import cardData from '../assets/cards.json';
 
 
 export const GalleryPage = ({ allCards, onClose }) => {
+
+    const [showAllCards, setShowAllCards] = useState(false);
+    const [withLockCards, setWithLockCards] = useState([]);
+
+    useEffect(() => {
+        setWithLockCards(cardData); // 假设你要存到一个状态里
+    }, []);
+
+    const displayedCards = useMemo(() => {
+        if (!withLockCards) return []; // 加载未完成前返回空数组
+
+        const ownedNames = new Set(allCards.map(c => c.name));
+
+        if (showAllCards) {
+            return withLockCards.map(card => ({
+                ...card,
+                owned: ownedNames.has(card.name),
+            }));
+        }
+
+        return allCards.map(card => ({ ...card, owned: true }));
+    }, [showAllCards, withLockCards, allCards]);
+
+
+
+
+
+
+
   const [selectedCharacter, setSelectedCharacter] = useState('全部');
   const [showFullImage, setShowFullImage] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [squareView, setSquareView] = useState(false);
 
-  const filteredCards = useMemo(() => {
-    const sorted = [...allCards].sort((a, b) => b.star - a.star);
+  // const filteredCards = useMemo(() => {
+  //   const sorted = [...allCards].sort((a, b) => b.star - a.star);
+  //   return selectedCharacter === '全部'
+  //     ? sorted
+  //     : sorted.filter((c) => c.character === selectedCharacter);
+  // }, [selectedCharacter, allCards]);
+
+    const filteredCards = useMemo(() => {
+    const sorted = [...displayedCards].sort((a, b) => b.star - a.star);
     return selectedCharacter === '全部'
       ? sorted
       : sorted.filter((c) => c.character === selectedCharacter);
-  }, [selectedCharacter, allCards]);
+  }, [selectedCharacter, displayedCards]);
 
 
 
@@ -135,8 +172,10 @@ export const GalleryPage = ({ allCards, onClose }) => {
                       width: 'auto',
                       height: 'auto',
                   }}
+                  onClick={() => setShowAllCards(prev => !prev)}
               >
-                  <LockIcon size={24} color={'lightgray'} />
+                  {showAllCards ? <LockIcon size={24} color={'lightgray'} /> : <LockIcon size={24} color={'black'} />}
+
               </button>
 
               <label
@@ -352,6 +391,20 @@ export const GalleryPage = ({ allCards, onClose }) => {
                                   pointerEvents: 'none', // 保证点击透传到下方
                                 }}
                               />
+
+
+                              {!card.owned && (
+                                  <div
+                                      className="absolute bottom-[4vw] left-0 w-full h-full z-30 flex items-center justify-center"
+                                      style={{
+                                          maxHeight: squareView ? '25vw' : '48vw',
+                                          background: '#00000088',
+                                          pointerEvents: 'none', // 保证点击透传到下方
+                                      }}
+                                  >
+                                      <LockIcon size={24} color={'lightgray'} />
+                                  </div>
+                              )}
 
                               {/*星级*/}
                               <img
