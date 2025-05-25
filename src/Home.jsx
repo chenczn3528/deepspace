@@ -143,12 +143,21 @@ const Home = () => {
     // 初始化 galleryHistory
     useEffect(() => {
         if (!loading && history.length > 0) {
-            const uniqueHistory = removeDuplicates(history);
+            // 合并精简记录和完整卡牌数据
+            const enriched = history
+                .map((entry) => {
+                    const fullCard = cardData.find((card) => card.name === entry.name);
+                    return fullCard ? { ...fullCard, timestamp: entry.timestamp } : null;
+                })
+                .filter(Boolean); // 移除找不到的
+
+            const uniqueHistory = removeDuplicates(enriched);
             setGalleryHistory(uniqueHistory);
         }
     }, [loading, history]);
 
 
+    console.log("history", history)
 
 
 
@@ -247,16 +256,16 @@ const Home = () => {
 
 
 
-  // ========================================================
-  // 判断当前卡片是不是五星
-  useEffect(() => {
-    const card = drawResultsRef.current[currentCardIndex]?.card;
-    if (card?.star === '5星') {
-      setIsFiveStar(true); // 是五星卡片
-    } else {
-      setIsFiveStar(false); // 不是五星卡片，直接展示卡片
-    }
-  }, [currentCardIndex]);
+    // ========================================================
+    // 判断当前卡片是不是五星
+    useEffect(() => {
+        const card = drawResultsRef.current[currentCardIndex]?.card;
+        if (card?.star === '5星') {
+            setIsFiveStar(true); // 是五星卡片
+        } else {
+            setIsFiveStar(false); // 不是五星卡片，直接展示卡片
+        }
+    }, [currentCardIndex]);
 
 
 
@@ -468,7 +477,6 @@ const Home = () => {
             } else {
                 pool = cardData.filter(card => parseInt(card.star) === 5);
             }
-            console.log(pool)
         } else {
             if (onlySelectedRoleCard && selectedRole !== '随机') {
                 pool = cardData.filter(card =>
@@ -498,7 +506,9 @@ const Home = () => {
 
         // 保存到 IndexedDB 中
         const newEntries = finalResults.map(r => ({
-            ...r.card,
+            name: r.card.name,
+            character: r.card.character,
+            star: r.card.star,
             timestamp: new Date().toISOString(),
         }));
         await appendHistory(newEntries); // 自动维护 100000 条限制

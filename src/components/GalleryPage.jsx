@@ -4,6 +4,7 @@ import FunctionIcon from "../icons/FunctionIcon.jsx";
 import LeftIcon from "../icons/LeftIcon.jsx";
 import FullScreenIcon from "../icons/FullScreenIcon.jsx";
 import SmallScreenIcon from "../icons/SmallScreenIcon.jsx";
+import LockIcon from "../icons/LockIcon.jsx";
 
 
 export const GalleryPage = ({ allCards, onClose }) => {
@@ -122,6 +123,20 @@ export const GalleryPage = ({ allCards, onClose }) => {
                   }}
               >
                   <LeftIcon size={24} color="black"/>
+              </button>
+
+              <button
+                  className="absolute top-[3vw] left-[16vw]"
+                  style={{
+                      background: 'transparent',
+                      border: 'none',
+                      padding: 0,
+                      margin: 0,
+                      width: 'auto',
+                      height: 'auto',
+                  }}
+              >
+                  <LockIcon size={24} color={'lightgray'} />
               </button>
 
               <label

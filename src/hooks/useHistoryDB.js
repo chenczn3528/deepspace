@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { get, set, del } from 'idb-keyval';
 
 const HISTORY_KEY = 'ds_history';
-const MAX_HISTORY = 100000;
+const MAX_HISTORY = 500000;
 
 export function useHistoryDB() {
   const [history, setHistoryState] = useState([]);
