@@ -67,13 +67,6 @@ def fetch_detail_image(card_url):
         return "", ""
 
 
-def load_existing_cards():
-    """读取本地的 cards.json 文件并返回其内容"""
-    if os.path.exists(cards_path):
-        with open(cards_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
-
 
 def is_card_data_complete(card_data):
     """检查卡片数据是否完整"""
@@ -81,15 +74,6 @@ def is_card_data_complete(card_data):
                        "detail_url"]
     return all(card_data.get(field) for field in required_fields)
 
-
-def update_card_in_existing_data(existing_cards, new_card_data):
-    """更新本地已有卡片数据中的卡片信息"""
-    for i, card in enumerate(existing_cards):
-        if card['name'] == new_card_data['name']:
-            existing_cards[i] = new_card_data
-            return existing_cards
-    existing_cards.append(new_card_data)
-    return existing_cards
 
 
 # 获取星谱颜色
@@ -106,7 +90,8 @@ def find_nearest_color_tag(box: Tag) -> str:
     return "未知"
 
 
-all_cards = load_existing_cards()
+all_cards = []
+count = 0
 
 for url in urls:
     res = requests.get(url, headers=headers)
@@ -122,6 +107,9 @@ for url in urls:
 
         card_a = box.select_one("a[title]")
         card_name = card_a["title"] if card_a else "未知"
+
+        print(count + 1, card_name)
+        count += 1
 
         detail_href = card_a["href"] if card_a and "href" in card_a.attrs else ""
         detail_url = urljoin(url, detail_href) if detail_href else ""
@@ -151,7 +139,7 @@ for url in urls:
         elif "月晖" in card_type_decoded:
             card_type_tag = "月晖"
 
-        attempt_count = 0
+        # attempt_count = 0
         while not is_card_data_complete({
             "character": character_name,
             "name": card_name,
@@ -164,11 +152,10 @@ for url in urls:
             "card_type_tag": card_type_tag,
             "card_star_icon": card_star_icon,
             "detail_url": detail_url
-        }) and attempt_count < 3:
-            print(f"❌ 卡片 {card_name} 信息不完整，重新爬取... 失败次数 {attempt_count + 1}")
+        }) :
+            print(f"❌ 卡片 {card_name} 信息不完整，重新爬取... ")
             time.sleep(5)  # 等待一段时间后重试
             small_card_image, card_image = fetch_detail_image(detail_url) if detail_url else ""
-            attempt_count += 1
 
         new_card_data = {
             "character": character_name,
@@ -184,31 +171,9 @@ for url in urls:
             "detail_url": detail_url
         }
 
-        if not is_card_data_complete(new_card_data):
-            print(f"❌ 卡片 {card_name} 信息仍然为空，尝试从本地读取数据")
-            # 如果本地已有数据，但当前数据为空，使用本地数据替代
-            existing_card = next((card for card in all_cards if card["name"] == card_name), None)
-            if existing_card:
-                new_card_data = existing_card
-            else:
-                new_card_data = {
-                    "character": character_name,
-                    "name": card_name,
-                    "star": star,
-                    "image": card_image,
-                    "image_small": small_card_image,
-                    "card_color": card_color,
-                    "card_color_tag": color_tag,
-                    "card_type": card_type,
-                    "card_type_tag": card_type_tag,
-                    "card_star_icon": card_star_icon,
-                    "detail_url": detail_url
-                }
-
-        # 更新或插入新的卡片数据
-        all_cards = update_card_in_existing_data(all_cards, new_card_data)
-
+        all_cards.append(new_card_data)
         time.sleep(0.2)
+
 
 # 保存更新后的 JSON 文件
 with open(cards_path, "w", encoding="utf-8") as f:

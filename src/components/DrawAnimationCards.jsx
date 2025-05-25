@@ -48,7 +48,7 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards, onSkip, isSingl
                 onClick={handleSkip}
                 style={{
                   position: 'absolute',
-                  bottom: '20vmin',
+                  bottom: '40vmin',
                   right: '1rem',
                   color: 'white',
                   backgroundColor: 'rgba(255, 255, 255, 0.2)', // 透明白色背景

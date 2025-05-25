@@ -2,6 +2,7 @@
   {
     "character": "沈星回",
     "name": "逐光破影",
+    "star": "5星",
     "image": "https://patchwiki.biligame.com/images/lysk//0/03/jccmxzwem31sh8f5oru471k4rqvx1y2.png?download",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/0/03/jccmxzwem31sh8f5oru471k4rqvx1y2.png/400px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E9%80%90%E5%85%89%E7%A0%B4%E5%BD%B1.png",
     "card_color": "https://patchwiki.biligame.com/images/lysk/6/6f/4bfah2jqyajgqit4h327gcygs2ywtf0.png",
@@ -361,6 +362,19 @@
     "card_type_tag": "月晖",
     "card_star_icon": "https://patchwiki.biligame.com/images/lysk/thumb/9/9c/13gldbl2xmvprrr091no5xux4fugk8o.png/66px-4%E6%98%9F.png",
     "detail_url": "https://wiki.biligame.com/lysk/%E6%99%B4%E5%86%AC"
+  },
+  {
+    "character": "沈星回",
+    "name": "漫航悸遇",
+    "star": "4星",
+    "image": "https://patchwiki.biligame.com/images/lysk//0/0a/swvfy196qm0s80t4fbolu3ajcitk2tr.png?download",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/0/0a/swvfy196qm0s80t4fbolu3ajcitk2tr.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%BC%AB%E8%88%AA%E6%82%B8%E9%81%87.png",
+    "card_color": "https://patchwiki.biligame.com/images/lysk/6/6f/4bfah2jqyajgqit4h327gcygs2ywtf0.png",
+    "card_color_tag": "绿珥",
+    "card_type": "https://patchwiki.biligame.com/images/lysk/thumb/b/b8/o1m6g9k3t6atafrcqtiuyjjvrp07rp3.png/36px-%E6%9C%88%E6%99%96_%E6%8A%A0%E5%9B%BE.png",
+    "card_type_tag": "月晖",
+    "card_star_icon": "https://patchwiki.biligame.com/images/lysk/thumb/9/9c/13gldbl2xmvprrr091no5xux4fugk8o.png/66px-4%E6%98%9F.png",
+    "detail_url": "https://wiki.biligame.com/lysk/%E6%BC%AB%E8%88%AA%E6%82%B8%E9%81%87"
   },
   {
     "character": "沈星回",
@@ -2470,6 +2484,19 @@
   },
   {
     "character": "祁煜",
+    "name": "宴色如焚",
+    "star": "4星",
+    "image": "https://patchwiki.biligame.com/images/lysk//b/bc/raeob5kqvywxo6a75lm1wx8hcfb16ie.png?download",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/b/bc/raeob5kqvywxo6a75lm1wx8hcfb16ie.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E5%AE%B4%E8%89%B2%E5%A6%82%E7%84%9A.png",
+    "card_color": "https://patchwiki.biligame.com/images/lysk/2/28/mxam1nbmm2ufjll12n4d5r0f9u4wdak.png",
+    "card_color_tag": "蓝弧",
+    "card_type": "https://patchwiki.biligame.com/images/lysk/thumb/b/b8/o1m6g9k3t6atafrcqtiuyjjvrp07rp3.png/36px-%E6%9C%88%E6%99%96_%E6%8A%A0%E5%9B%BE.png",
+    "card_type_tag": "月晖",
+    "card_star_icon": "https://patchwiki.biligame.com/images/lysk/thumb/9/9c/13gldbl2xmvprrr091no5xux4fugk8o.png/66px-4%E6%98%9F.png",
+    "detail_url": "https://wiki.biligame.com/lysk/%E5%AE%B4%E8%89%B2%E5%A6%82%E7%84%9A"
+  },
+  {
+    "character": "祁煜",
     "name": "萦香入梦",
     "star": "4星",
     "image": "https://patchwiki.biligame.com/images/lysk//f/f6/4gg8tw7ehpe1zlopdt90z7c4xhudxqa.png?download",
@@ -3367,6 +3394,19 @@
   },
   {
     "character": "秦彻",
+    "name": "坠空博弈",
+    "star": "4星",
+    "image": "https://patchwiki.biligame.com/images/lysk//e/e6/cawcfijt03mgoi4snkm0cqnctnwoj6b.png?download",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/e/e6/cawcfijt03mgoi4snkm0cqnctnwoj6b.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E5%9D%A0%E7%A9%BA%E5%8D%9A%E5%BC%88.png",
+    "card_color": "https://patchwiki.biligame.com/images/lysk/f/fa/1jm4by52ta5hb9xylp7f5hl6oh60t5x.png",
+    "card_color_tag": "红漪",
+    "card_type": "https://patchwiki.biligame.com/images/lysk/thumb/b/b8/o1m6g9k3t6atafrcqtiuyjjvrp07rp3.png/36px-%E6%9C%88%E6%99%96_%E6%8A%A0%E5%9B%BE.png",
+    "card_type_tag": "月晖",
+    "card_star_icon": "https://patchwiki.biligame.com/images/lysk/thumb/9/9c/13gldbl2xmvprrr091no5xux4fugk8o.png/66px-4%E6%98%9F.png",
+    "detail_url": "https://wiki.biligame.com/lysk/%E5%9D%A0%E7%A9%BA%E5%8D%9A%E5%BC%88"
+  },
+  {
+    "character": "秦彻",
     "name": "人间事",
     "star": "4星",
     "image": "https://patchwiki.biligame.com/images/lysk//5/55/0p5kac9vg774bk738py6lqdc1lm7xqg.png?download",
@@ -3809,19 +3849,6 @@
   },
   {
     "character": "夏以昼",
-    "name": "能量满格",
-    "star": "3星",
-    "image": "https://patchwiki.biligame.com/images/lysk//c/cc/hm9voq89zrn6aved3pht835x7lz9xrn.png?download",
-    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/c/cc/hm9voq89zrn6aved3pht835x7lz9xrn.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E8%83%BD%E9%87%8F%E6%BB%A1%E6%A0%BC.png",
-    "card_color": "https://patchwiki.biligame.com/images/lysk/f/fa/1jm4by52ta5hb9xylp7f5hl6oh60t5x.png",
-    "card_color_tag": "红漪",
-    "card_type": "https://patchwiki.biligame.com/images/lysk/thumb/6/62/gwwn8guh2rzkcnpa4zvzwoqobjqxvva.png/36px-%E6%97%A5%E5%86%95_%E6%8A%A0%E5%9B%BE.png",
-    "card_type_tag": "日冕",
-    "card_star_icon": "https://patchwiki.biligame.com/images/lysk/thumb/e/ec/e9fozio7pax8si916g7p625r5ep7fko.png/51px-3%E6%98%9F.png",
-    "detail_url": "https://wiki.biligame.com/lysk/%E8%83%BD%E9%87%8F%E6%BB%A1%E6%A0%BC"
-  },
-  {
-    "character": "夏以昼",
     "name": "满分苹果",
     "star": "3星",
     "image": "https://patchwiki.biligame.com/images/lysk//b/bf/sulnucag6yggf6ymo4pmpighmktdl8j.png?download",
@@ -3832,6 +3859,19 @@
     "card_type_tag": "日冕",
     "card_star_icon": "https://patchwiki.biligame.com/images/lysk/thumb/e/ec/e9fozio7pax8si916g7p625r5ep7fko.png/51px-3%E6%98%9F.png",
     "detail_url": "https://wiki.biligame.com/lysk/%E6%BB%A1%E5%88%86%E8%8B%B9%E6%9E%9C"
+  },
+  {
+    "character": "夏以昼",
+    "name": "能量满格",
+    "star": "3星",
+    "image": "https://patchwiki.biligame.com/images/lysk//c/cc/hm9voq89zrn6aved3pht835x7lz9xrn.png?download",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/c/cc/hm9voq89zrn6aved3pht835x7lz9xrn.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E8%83%BD%E9%87%8F%E6%BB%A1%E6%A0%BC.png",
+    "card_color": "https://patchwiki.biligame.com/images/lysk/f/fa/1jm4by52ta5hb9xylp7f5hl6oh60t5x.png",
+    "card_color_tag": "红漪",
+    "card_type": "https://patchwiki.biligame.com/images/lysk/thumb/b/b8/o1m6g9k3t6atafrcqtiuyjjvrp07rp3.png/36px-%E6%9C%88%E6%99%96_%E6%8A%A0%E5%9B%BE.png",
+    "card_type_tag": "月晖",
+    "card_star_icon": "https://patchwiki.biligame.com/images/lysk/thumb/e/ec/e9fozio7pax8si916g7p625r5ep7fko.png/51px-3%E6%98%9F.png",
+    "detail_url": "https://wiki.biligame.com/lysk/%E8%83%BD%E9%87%8F%E6%BB%A1%E6%A0%BC"
   },
   {
     "character": "夏以昼",

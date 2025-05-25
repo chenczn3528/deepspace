@@ -130,7 +130,7 @@ const Home = () => {
     }
   }, [history, galleryHistory.length]);
 
-  console.log("galleryHistory:",galleryHistory)
+  // console.log("galleryHistory:",galleryHistory)
 
   // 合并新的抽卡记录
   useEffect(() => {
@@ -478,6 +478,7 @@ const getRandomCard = (
     } else {
       pool = cardData.filter(card => parseInt(card.star) === 5);
     }
+    console.log(pool)
   } else {
     if (onlySelectedRoleCard && selectedRole !== '随机') {
       pool = cardData.filter(card =>
