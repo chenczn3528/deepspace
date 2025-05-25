@@ -45,6 +45,8 @@ const Home = () => {
   // 历史记录
   const [history, setHistory] = useLocalStorageState('ds_history', []);
 
+  console.log(history)
+
 
   // 清除缓存数据
   const keysToClear = [

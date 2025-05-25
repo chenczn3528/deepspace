@@ -1,7 +1,8 @@
 import React, {useState, useMemo} from 'react';
 import { FullImageViewer } from './FullImageViewer';
-import LeftIcon from './LeftIcon.jsx'
-import FunctionIcon from "./FunctionIcon.jsx";
+import FunctionIcon from "../icons/FunctionIcon.jsx";
+import LeftIcon from "../icons/LeftIcon.jsx";
+
 
 export const GalleryPage = ({ allCards, onClose }) => {
   const [selectedCharacter, setSelectedCharacter] = useState('全部');
@@ -64,7 +65,6 @@ export const GalleryPage = ({ allCards, onClose }) => {
     const sortedCards = [...filteredCards].sort((a, b) => {
       // 打印比较的每个卡片信息，查看排序逻辑是否正确
       if (sortOption === "稀有度") {
-        console.log('按稀有度排序');
         return (
           getRarityIndex(a) - getRarityIndex(b) ||
           getRoleIndex(a) - getRoleIndex(b) ||
@@ -74,7 +74,6 @@ export const GalleryPage = ({ allCards, onClose }) => {
       }
 
       if (sortOption === "套装") {
-        console.log('按套装排序');
         return (
           getSuitIndex(a) - getSuitIndex(b) ||
           getRarityIndex(a) - getRarityIndex(b) ||
@@ -84,7 +83,6 @@ export const GalleryPage = ({ allCards, onClose }) => {
       }
 
       if (sortOption === "星谱") {
-        console.log('按星谱排序');
         return (
           getStarMapIndex(a) - getStarMapIndex(b) ||
           getRarityIndex(a) - getRarityIndex(b) ||

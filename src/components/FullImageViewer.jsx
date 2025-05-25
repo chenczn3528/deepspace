@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import LeftIcon from "./LeftIcon.jsx";
-import RightIcon from "./RightIcon.jsx";
 import { LazyLoadImage } from 'react-lazy-load-image-component';
+import LeftIcon from "../icons/LeftIcon.jsx";
+import RightIcon from "../icons/RightIcon.jsx";
 
 export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose }) => {
   const card = cards[currentIndex];
@@ -148,17 +148,17 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose 
               <div className="relative w-full h-full">
                   <div className="absolute bottom-[42vw] left-[8vw] w-full h-[10vw] flex items-center">
                       <img
-                          src={card.card_star_icon}
+                          src={`images/${card?.star}.png`}
                           alt="星级"
                           className="h-[6vw] object-contain"
                       />
                       <img
-                          src={card.card_color}
+                          src={`images/${card?.card_color_tag}.png`}
                           alt="星谱"
                           className="h-[5vw] object-contain ml-[12px]"
                       />
                       <img
-                          src={card.card_type}
+                          src={`images/${card?.card_type_tag}.png`}
                           alt="类型（日卡月卡）"
                           style={{
                               height: `${cardTypeHeight}vw`,

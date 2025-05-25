@@ -143,17 +143,17 @@ const CardOverlay = ({
               <div className="relative w-full h-full">
                 <div className="absolute bottom-[42vw] left-[8vw] w-full h-[10vw] flex items-center">
                   <img
-                    src={drawResultsRef.current[currentCardIndex]?.card?.card_star_icon}
+                    src={`images/${drawResultsRef.current[currentCardIndex]?.card?.star}.png`}
                     alt="星级"
                     className="h-[6vw] object-contain"
                   />
                   <img
-                    src={drawResultsRef.current[currentCardIndex]?.card?.card_color}
+                    src={`images/${drawResultsRef.current[currentCardIndex]?.card?.card_color_tag}.png`}
                     alt="星谱"
                     className="h-[5vw] object-contain ml-[12px]"
                   />
                   <img
-                    src={drawResultsRef.current[currentCardIndex]?.card?.card_type}
+                    src={`images/${drawResultsRef.current[currentCardIndex]?.card?.card_type_tag}.png`}
                     alt="类型（日卡月卡）"
                     style={{
                       height: `${cardTypeHeight}vw`,

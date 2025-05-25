@@ -1,4 +1,6 @@
 import React from 'react';
+import MusicPlayIcon from "../icons/MusicPlayIcon.jsx";
+import MusicMuteIcon from "../icons/MusicMuteIcon.jsx";
 
 const SettingsLayer = ({
     totalDrawCount,
@@ -57,11 +59,11 @@ const SettingsLayer = ({
                     margin: 0
                 }}
             >
-                <img
-                    src={isMusicPlaying ? "images/放音.png" : "images/静音.png"}
-                    alt="music toggle"
-                    className="w-[6vmin] h-[6vmin]"
-                />
+                {isMusicPlaying ? (
+                    <MusicPlayIcon color="gray" size={28} />
+                ) : (
+                    <MusicMuteIcon color="gray" size={28} />
+                )}
             </button>
 
 

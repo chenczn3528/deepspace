@@ -7,7 +7,7 @@ import time
 import os
 
 
-cards_path = 'src/assets/cards.json'
+cards_path = 'assets/cards.json'
 
 urls = [
     "https://wiki.biligame.com/lysk/%E6%B2%88%E6%98%9F%E5%9B%9E:%E6%80%9D%E5%BF%B5",
@@ -146,12 +146,12 @@ for url in urls:
             "star": star,
             "image": card_image,
             "image_small": small_card_image,
-            "card_color": card_color,
+            # "card_color": card_color,
             "card_color_tag": color_tag,
-            "card_type": card_type,
+            # "card_type": card_type,
             "card_type_tag": card_type_tag,
-            "card_star_icon": card_star_icon,
-            "detail_url": detail_url
+            # "card_star_icon": card_star_icon,
+            # "detail_url": detail_url
         }) :
             print(f"❌ 卡片 {card_name} 信息不完整，重新爬取... ")
             time.sleep(5)  # 等待一段时间后重试
@@ -163,12 +163,12 @@ for url in urls:
             "star": star,
             "image": card_image.replace("thumb", "").split('.png')[0] + ".png?download",
             "image_small": small_card_image,
-            "card_color": card_color,
+            # "card_color": card_color,
             "card_color_tag": color_tag,
-            "card_type": card_type,
+            # "card_type": card_type,
             "card_type_tag": card_type_tag,
-            "card_star_icon": card_star_icon.replace("81px", "200px"),
-            "detail_url": detail_url
+            # "card_star_icon": card_star_icon.replace("81px", "200px"),
+            # "detail_url": detail_url
         }
 
         all_cards.append(new_card_data)
