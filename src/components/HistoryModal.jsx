@@ -31,11 +31,12 @@ const HistoryModal = ({ showHistory, setShowHistory, history }) => {
             className="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-90"
           />
           <div className="relative z-10 flex flex-col h-full" style={{ color: 'black' }}>
-            <h2 className="text-xl font-bold mb-4 text-center" style={{ color: 'black' }}>
+            <label className="text-center mt-[2vh]" style={{ color: 'black', fontWeight: 800, fontSize: '24px' }}>
               历史记录
-            </h2>
+            </label>
+            <label className="text-center mb-[2vh]" style={{ color: '#00000080', fontSize: '14px'}}>只显示最新的2000条记录，多了会卡</label>
             <div className="flex-1 overflow-y-auto pr-2">
-              {history.slice().reverse().map((card, idx) => {
+              {history.slice(-2000).reverse().map((card, idx) => {
                 const cardHistoryColors = {
                   "3星": { color: "black" },
                   "4星": { color: "#a855f7" },
