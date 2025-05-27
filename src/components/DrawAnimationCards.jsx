@@ -45,7 +45,7 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, onSkip, isSingleDraw }
       <div className="relative w-full h-full">
         {!isSingleDraw && (
             <button
-                className="absolute bottom-[10%] right-[1rem] z-50"
+                className="absolute bottom-[0] mb-[10vmin] right-[1rem] z-50"
                 onClick={handleSkip}
                 style={{
                   color: 'white',

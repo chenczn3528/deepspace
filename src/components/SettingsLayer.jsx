@@ -247,14 +247,14 @@ const SettingsLayer = ({
                       )}
                     </label>
 
-                  {/* 抽卡历史记录按钮 */}
-                  <button
-                      onClick={() => setShowHistory(!showHistory)}
-                      style={{fontSize: '4vmin'}}
-                      id="history-toggle-button"
-                  >
-                      {showHistory ? '关闭抽卡记录' : '查看抽卡记录'}
-                  </button>
+                    {/* 抽卡历史记录按钮 */}
+                    <button
+                        onClick={() => setShowHistory(!showHistory)}
+                        style={{fontSize: '4vmin'}}
+                        id="history-toggle-button"
+                    >
+                        {showHistory ? '关闭抽卡记录' : '查看抽卡记录'}
+                    </button>
               </div>
 
           </div>
