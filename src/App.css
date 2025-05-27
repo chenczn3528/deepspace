@@ -97,3 +97,8 @@
 }
 
 
+.scrollable {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* 保留滚动惯性 */
+  max-height: 100vh;
+}
