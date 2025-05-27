@@ -9,11 +9,13 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose 
     const [showPicture, setShowPicture] = useState(false);
     const card = cards[currentIndex];
 
-    const handlePrev = () => {
+    const handlePrev = (e) => {
+        e.stopPropagation();
         setCurrentIndex((prev) => (prev - 1 + cards.length) % cards.length);
     };
 
-    const handleNext = () => {
+    const handleNext = (e) => {
+        e.stopPropagation();
         setCurrentIndex((prev) => (prev + 1) % cards.length);
     };
 

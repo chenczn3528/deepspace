@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards, onSkip, isSingleDraw }) => {
+const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, onSkip, isSingleDraw }) => {
   const videoRef = useRef(null);
   const audioRef = useRef(null);
   const [videoDuration, setVideoDuration] = useState(0);
@@ -45,16 +45,13 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, cards, onSkip, isSingl
       <div className="relative w-full h-full">
         {!isSingleDraw && (
             <button
+                className="absolute bottom-[10%] right-[1rem] z-50"
                 onClick={handleSkip}
                 style={{
-                  position: 'absolute',
-                  bottom: '40vmin',
-                  right: '1rem',
                   color: 'white',
                   backgroundColor: 'rgba(255, 255, 255, 0.2)', // 透明白色背景
                   borderRadius: '0.5rem', // 圆角
                   padding: '0.5rem 1rem', // 上下和左右的内边距
-                  zIndex: 50,
                   border: 'none', // 如果你不希望有边框，可以设置为 none
                   fontSize: '1rem', // 设置字体大小
                 }}

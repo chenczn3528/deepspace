@@ -586,7 +586,6 @@ const Home = () => {
                 <DrawAnimationCards
                     isFiveStar={hasFiveStarAnimation}
                     onAnimationEnd={handleDrawCardsAnimationEnd}
-                    cards={drawResultsRef.current.map((r) => r.card)}
                     onSkip={(skipped) => setVideoSkipped(skipped)}
                     isSingleDraw={isSingleDraw}
                     className="fixed inset-0 z-20"

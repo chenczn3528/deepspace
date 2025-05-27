@@ -262,7 +262,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
                             {['秦彻', '夏以昼'].map((char) => (
                                 <button
                                     key={char}
-                                    onClick={() => setSelectedCharacter(char)}
+                                    onClick={() => {setSelectedCharacter(char); setShowLockIcon(true);}}
                                     style={{
                                         flex: 1,
                                         padding: '0',
