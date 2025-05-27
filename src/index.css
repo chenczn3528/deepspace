@@ -3,16 +3,21 @@
 @tailwind utilities;
 
 /*html, body {*/
-/*  overflow: hidden;*/
 /*  height: 100%;*/
+/*  overflow: hidden; !* 禁用页面滚动 *!*/
+/*  overscroll-behavior: none; !* 禁用边界回弹 *!*/
+/*  position: fixed; !* 解决 iOS 仍然能滚动 *!*/
+/*  width: 100%;*/
 /*}*/
+
 
 html, body {
   height: 100%;
-  overflow: hidden; /* 禁用页面滚动 */
-  overscroll-behavior: none; /* 禁用边界回弹 */
-  position: fixed; /* 解决 iOS 仍然能滚动 */
-  width: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background-color: black;
+  padding: 0;
+  margin: 0;
 }
 
 

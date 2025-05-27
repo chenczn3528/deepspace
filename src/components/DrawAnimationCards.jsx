@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, onSkip, isSingleDraw }) => {
+const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, onSkip, isSingleDraw, fontsize }) => {
   const videoRef = useRef(null);
   const audioRef = useRef(null);
   const [videoDuration, setVideoDuration] = useState(0);
@@ -41,19 +41,19 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, onSkip, isSingleDraw }
   }, [videoDuration, onAnimationEnd]);
 
   return (
-    <div className="fixed inset-0 z-50 w-screen h-screen flex items-center justify-center animate-fade-in">
+    <div className="absolute z-50 w-full h-full flex items-center justify-center animate-fade-in">
       <div className="relative w-full h-full">
         {!isSingleDraw && (
             <button
-                className="absolute bottom-[32vw] mb-[10vmin] right-[1rem] z-50"
+                className="absolute z-50"
                 onClick={handleSkip}
                 style={{
                   color: 'white',
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)', // 透明白色背景
-                  borderRadius: '0.5rem', // 圆角
-                  padding: '0.5rem 1rem', // 上下和左右的内边距
-                  border: 'none', // 如果你不希望有边框，可以设置为 none
-                  fontSize: '1rem', // 设置字体大小
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  border: 'none',
+                  fontSize: `${fontsize * 1.2}px`,
+                  bottom: `${fontsize * 1.2}px`,
+                  right: `${fontsize * 1.2}px`,
                 }}
             >
               跳过
@@ -63,7 +63,7 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, onSkip, isSingleDraw }
         <video
             preload="auto"
             ref={videoRef}
-            className="rounded-xl shadow-lg w-full h-full fixed top-0 left-0 object-cover"
+            className="absolute w-full h-full object-cover"
             onLoadedData={handleVideoLoaded}
             onEnded={handleVideoEnded}
             autoPlay

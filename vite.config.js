@@ -36,4 +36,8 @@ export default defineConfig({
       crypto: 'crypto-browserify',  // 配置为 crypto-browserify
     },
   },
+  server: {
+    host: '0.0.0.0', // 允许局域网访问
+    port: 5173,
+  }
 })

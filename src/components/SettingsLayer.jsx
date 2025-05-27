@@ -29,6 +29,7 @@ const SettingsLayer = ({
     setShowGallery,
     showProbability,
     setShowProbability,
+    fontsize,
 }) => {
 
 
@@ -47,44 +48,40 @@ const SettingsLayer = ({
 
 
     return (
-        <div className="fixed inset-0 z-10 flex flex-col w-full h-full justify-between">
+        <div className="absolute w-full h-full">
+
             {/*放音乐按钮*/}
             <button
                 onClick={toggleMusic}
-                className="absolute top-[5vmin] right-[5vmin]"
-                style={{
-                    background: 'transparent',
-                    border: 'none',
-                    padding: 0,
-                    margin: 0
-                }}
+                className="absolute"
+                style={{background: 'transparent', border: 'none', padding: 0, top: `${fontsize * 1.2}px`, right: `${fontsize * 1.2}px`}}
             >
                 {isMusicPlaying ? (
-                    <MusicPlayIcon color="gray" size={28} />
+                    <MusicPlayIcon color="gray" size={fontsize * 2} />
                 ) : (
-                    <MusicMuteIcon color="gray" size={28} />
+                    <MusicMuteIcon color="gray" size={fontsize * 2} />
                 )}
             </button>
 
 
             {/*右上角按钮、文字*/}
-            <div className="flex flex-col mt-[5vmin] ml-[5vmin] mr-[5vmin]">
-                <div className="flex flex-row gap-[2vmin]">
+            <div className="absolute flex flex-col" style={{top: `${fontsize * 1.2}px`, left: `${fontsize * 1.2}px`}}>
+                <div className="flex flex-row gap-[10px]">
                     {/*查看图鉴*/}
-                    <button style={{fontSize: '4vmin'}} onClick={() => setShowGallery(true)}>图鉴</button>
+                    <button style={{fontSize: `${fontsize * 1.2}px`}} onClick={() => setShowGallery(true)}>图鉴</button>
 
                     {/*测试概率*/}
-                    <button style={{fontSize: '4vmin'}} onClick={() => setShowProbability(!showProbability)}>测试概率</button>
+                    <button style={{fontSize: `${fontsize * 1.2}px`}} onClick={() => setShowProbability(!showProbability)}>测试概率</button>
                 </div>
 
                 <div
                     style={{
                         color: 'lightgray',
-                        fontSize: '4vmin',
+                        fontSize: `${fontsize * 1.2}px`,
                         fontWeight: '400',
                         textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)',
                     }}
-                    className="flex flex-col mt-[1vmin]"
+                    className="flex flex-col mt-[5px]"
                 >
                     <span style={{color: 'red', fontWeight: 800}}>重要提示：</span>
                     <label>第一次加载网页的视频、动画会很卡</label>
@@ -98,7 +95,6 @@ const SettingsLayer = ({
                                 background: 'transparent',
                                 border: 'none',
                                 padding: 0,
-                                margin: 0,
                                 color: '#1750eb',
                                 textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)',
                             }}
@@ -108,27 +104,29 @@ const SettingsLayer = ({
                         </button>
                     </div>
                 </div>
-
             </div>
 
 
             <div
-                className="flex flex-col mb-[5vmin] ml-[5vmin] mr-[5vmin]"
+                className="absolute flex flex-col"
                 style={{
                     color: 'white',
-                    fontSize: '4vmin',
+                    fontSize: `${fontsize * 1.4}px`,
                     textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
                     fontWeight: '800',
+                    bottom: `${fontsize * 1.2}px`,
+                    left: `${fontsize * 1.2}px`,
+                    right: `${fontsize * 1.2}px`,
                 }}
             >
                 {/*清除所有记录*/}
                 <div>
-                    <button style={{fontSize: '4vmin'}} onClick={clearLocalData}>清除所有记录</button>
+                    <button style={{fontSize: `${fontsize * 1.2}px`}} onClick={clearLocalData}>清除所有记录</button>
                 </div>
 
 
                 {/*统计抽数*/}
-                <div className="flex flex-row gap-[5vmin] mt-[1vmin]">
+                <div className="flex flex-row" style={{gap: `${fontsize * 2}px`, marginTop: `${fontsize * 0.2}px`}}>
                     <label>总抽卡数: {totalDrawCount}</label>
                     <label>总出金数: {totalFiveStarCount}</label>
                 </div>
@@ -137,10 +135,10 @@ const SettingsLayer = ({
                 </label>
 
                 {/* 角色选择 */}
-                <div className="flex flex-row gap-[2vmin]" id="role-selector">
+                <div className="flex flex-row" style={{gap: `${fontsize * 0.2}px`}} id="role-selector">
                     <label>选择角色：</label>
                     <select
-                        style={{fontSize: '2.5vmin'}}
+                        style={{fontSize: `${fontsize * 1.1}px`}}
                         value={selectedRole}
                         onChange={(e) => setSelectedRole(e.target.value)}
                     >
@@ -152,11 +150,11 @@ const SettingsLayer = ({
                 <div className="flex flex-col">
 
                     {/*是否包括三星卡*/}
-                    <div className="flex flex-row gap-[2vmin] items-center">
+                    <div className="flex flex-row items-center" style={{gap: `${fontsize * 0.5}px`}}>
                         <label htmlFor="includeThree">包括三星卡片</label>
                         <input
                             id="includeThree"
-                            style={{width:'3vmin', height: '3vmin'}}
+                            style={{width:`${fontsize * 1.3}px`, height: `${fontsize * 1.3}px`}}
                             type="checkbox"
                             checked={includeThreeStar}
                             onChange={(e) => setIncludeThreeStar(e.target.checked)}
@@ -165,11 +163,11 @@ const SettingsLayer = ({
 
                     {/*是否开启大小保底*/}
                     {selectedRole !== '随机' && (
-                        <div className="flex flex-row gap-[2vmin] items-center">
+                        <div className="flex flex-row items-center" style={{gap: `${fontsize * 0.5}px`}}>
                             <label htmlFor="softGuarantee">开启大小保底机制</label>
                             <input
                                 id="softGuarantee"
-                                style={{width:'3vmin', height: '3vmin'}}
+                                style={{width:`${fontsize * 1.3}px`, height: `${fontsize * 1.3}px`}}
                                 type="checkbox"
                                 checked={useSoftGuarantee}
                                 onChange={(e) => {
@@ -183,10 +181,10 @@ const SettingsLayer = ({
 
                     {/*是否只抽xx的卡*/}
                     {selectedRole !== '随机' && (
-                        <div className="flex flex-row gap-[2vmin] items-center">
+                        <div className="flex flex-row items-center" style={{gap: `${fontsize * 0.5}px`}}>
                             <label htmlFor="onlyThisRole">只抽 {selectedRole} 的卡</label>
                             <input
-                                style={{width:'3vmin', height: '3vmin'}}
+                                style={{width:`${fontsize * 1.3}px`, height: `${fontsize * 1.3}px`}}
                                 id="onlyThisRole"
                                 type="checkbox"
                                 checked={onlySelectedRoleCard}
@@ -202,14 +200,15 @@ const SettingsLayer = ({
 
 
                 {/* 一抽/十抽按钮 */}
-                <div className="flex flex-row mt-[1vmin] gap-[5vmin] justify-between items-center">
+                <div className="flex flex-row justify-between items-center"
+                style={{marginTop: `${fontsize}px`, marginBottom: `${fontsize * 0.5}px`}}>
                     <button
                         onClick={() => {
                             setHasShownSummary(false);
                             setShowSummary(false);
                             handleDraw(1);
                         }}
-                        style={{fontSize: '4vmin'}}
+                        style={{fontSize: `${fontsize * 1.2}px`}}
                     >
                         许愿一次
                     </button>
@@ -222,14 +221,14 @@ const SettingsLayer = ({
                             handleDraw(10);
                         }}
                         disabled={isDrawing || isAnimatingDrawCards}
-                        style={{fontSize: '4vmin'}}
+                        style={{fontSize: `${fontsize * 1.2}px`}}
                     >
                         {isDrawing ? '抽卡中...' : '许愿十次'}
                     </button>
                 </div>
 
 
-                <div className="flex flex-row gap-[3vmin] mt-[1vmin] items-center justify-between">
+                <div className="flex flex-row items-center justify-between">
                     {/* 保底显示 */}
                     <label>
                         {selectedRole === '随机' || !useSoftGuarantee ? (
@@ -250,7 +249,7 @@ const SettingsLayer = ({
                     {/* 抽卡历史记录按钮 */}
                     <button
                         onClick={() => setShowHistory(!showHistory)}
-                        style={{fontSize: '4vmin'}}
+                        style={{fontSize: `${fontsize * 1.2}px`}}
                         id="history-toggle-button"
                     >
                         {showHistory ? '关闭抽卡记录' : '查看抽卡记录'}

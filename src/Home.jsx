@@ -10,6 +10,7 @@ import useLocalStorageState from './hooks/useLocalStorageState'
 import {GalleryPage} from "./components/GalleryPage.jsx";
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import {useHistoryDB} from "./hooks/useHistoryDB.js";
+import useResponsiveFontSize from "./hooks/useResponsiveFontSize.js";
 
 
 
@@ -64,7 +65,7 @@ const Home = () => {
     // 历史记录
     const { history, loading, appendHistory, clearHistory } = useHistoryDB();
 
-
+    const fontsize = useResponsiveFontSize({scale: 0.9});
 
 
     // 清除缓存数据
@@ -521,7 +522,7 @@ const Home = () => {
     // 返回数据时显示的页面
     return (
         <div
-            className="relative w-screen h-screen cursor-pointer overflow-hidden outline-none focus:outline-none"
+            className="w-full h-full relative overflow-hidden"
             tabIndex={0}
         >
 
@@ -578,6 +579,7 @@ const Home = () => {
                 setShowGallery={setShowGallery}
                 showProbability={showProbability}
                 setShowProbability={setShowProbability}
+                fontsize={fontsize}
             />
 
 
@@ -588,7 +590,7 @@ const Home = () => {
                     onAnimationEnd={handleDrawCardsAnimationEnd}
                     onSkip={(skipped) => setVideoSkipped(skipped)}
                     isSingleDraw={isSingleDraw}
-                    className="fixed inset-0 z-20"
+                    fontsize={fontsize}
                 />
             )}
 
@@ -600,6 +602,7 @@ const Home = () => {
                 videoPlayed={videoPlayed}
                 setVideoPlayed={setVideoPlayed}
                 handleNextCard={handleNextCard}
+                fontsize={fontsize}
             />
 
 
@@ -608,6 +611,7 @@ const Home = () => {
                 <CardSummary
                     drawResults={drawResultsRef.current}  // 传递卡片数据
                     onClose={() => setShowSummary(false)}  // 关闭总结页面的回调
+                    fontsize={fontsize}
                 />
             )}
 
@@ -616,6 +620,7 @@ const Home = () => {
                 showHistory={showHistory}
                 setShowHistory={setShowHistory}
                 history={history}
+                fontsize={fontsize}
             />
 
             {/*查看图鉴*/}
@@ -623,6 +628,7 @@ const Home = () => {
                 <GalleryPage
                     allCards={galleryHistory}
                     onClose={() => setShowGallery(false)}
+                    fontsize={fontsize}
                 />
             )}
 
@@ -630,6 +636,7 @@ const Home = () => {
                 <TestProbability
                     getRandomCard={getRandomCard}
                     setShowProbability={setShowProbability}
+                    fontsize={fontsize}
                 />
             )}
 

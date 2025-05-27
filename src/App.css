@@ -1,50 +1,51 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+html, body, #root, .viewport {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  overflow: hidden;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* 包裹内容，居中旋转 */
+.wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* 横屏内容区域，16:9 显示 */
+.game {
+  background: white;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+/* App.css */
+.game {
+  height: var(--real-vh);
+  width: 100%;
 }
 
 
+.scrollable {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* 保留滚动惯性 */
+  max-height: 100vh;
+}
 
 
-
+button:focus {
+  outline: none;
+  box-shadow: none;
+}
 
 
 /* 可以放在你的全局 CSS 或 component CSS module 中 */
@@ -97,8 +98,4 @@
 }
 
 
-.scrollable {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch; /* 保留滚动惯性 */
-  max-height: 100vh;
-}
+

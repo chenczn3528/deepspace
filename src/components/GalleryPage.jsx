@@ -8,7 +8,7 @@ import LockIcon from "../icons/LockIcon.jsx";
 import cardData from '../assets/cards.json';
 
 
-export const GalleryPage = ({ allCards, onClose }) => {
+export const GalleryPage = ({ allCards, onClose, fontsize }) => {
 
     const [showAllCards, setShowAllCards] = useState(false);
     const [withLockCards, setWithLockCards] = useState([]);
@@ -134,259 +134,242 @@ export const GalleryPage = ({ allCards, onClose }) => {
 
     return (
         <div
-            className="h-screen w-screen z-60 relative flex flex-col overflow-hidden"
+            className="absolute w-full h-full z-20"
             style={{backgroundImage: "url('images/结算背景.jpg')"}}
         >
             {/* 顶部操作栏 */}
-            <div className="flex justify-between items-center mb-4 ml-[3vw] mr-[3vw]">
-                {/*返回按钮*/}
-                <button
-                    onClick={onClose}
-                    className="fixed top-[3vw] left-[3vw]"
-                    style={{background: 'transparent', border: 'none', padding: 0}}
-                >
-                    <LeftIcon size={24} color="black"/>
-                </button>
-
-                {/*解锁卡片按钮*/}
-                {showLockIcon && (
+            <div className="absolute flex flex-col"
+                 style={{top: 0, height: `${fontsize * 10}px`, left: `${fontsize}px`, right: `${fontsize}px`}}>
+                {/*第一行 返回按钮 锁定图标 图鉴 稀有度 缩放图标*/}
+                <div className="flex flex-row items-center w-full h-[40%]">
+                    {/*返回按钮*/}
                     <button
-                        className="absolute top-[3vw] left-[16vw]"
-                        style={{background: 'transparent', border: 'none', padding: 0}}
-                        onClick={() => {
-                            if (selectedCharacter !== "全部") setShowAllCards(prev => !prev);
-                        }}
-                    >
-                        {showAllCards ? <LockIcon size={24} color={'lightgray'}/> :
-                            <LockIcon size={24} color={'black'}/>}
-                    </button>
-                )}
-
-
-                {/*图鉴标题*/}
-                <label className="flex-1 text-center mt-[2vw] mb-[2vw]"
-                       style={{fontSize: '1.5rem', fontWeight: '800', color: 'black'}}>
-                    图鉴
-                </label>
-
-
-                <div className="absolute flex flex-row top-[3vw] right-[3vw] gap-[3vw]">
-                    {/*排序*/}
-                    <select
-                        id="sortOption"
-                        value={sortOption}
-                        onChange={(e) => setSortOption(e.target.value)}
-                        style={{background: 'transparent', padding: 0, color: 'black'}}
-                    >
-                        <option value="稀有度">稀有度</option>
-                        <option value="套装">套装</option>
-                        <option value="星谱">星谱</option>
-                    </select>
-
-                    {/*图片大小*/}
-                    <button
-                        onClick={() => setSquareView(!squareView)}
+                        className="flex items-center z-20"
+                        onClick={onClose}
                         style={{background: 'transparent', border: 'none', padding: 0,}}
                     >
-                        {squareView ? (
-                            <FullScreenIcon color="black" size={24} />
-                        ) : (
-                            <SmallScreenIcon color="black" size={24} />
-                        )}
+                        <LeftIcon size={fontsize * 2} color="black"/>
                     </button>
+
+                    {/*图鉴标题*/}
+                    <label className="absolute left-0 w-full text-center"
+                           style={{fontSize: `${fontsize * 2}px`, fontWeight: '800', color: 'black'}}>
+                        图鉴
+                    </label>
+
+                    {/*解锁卡片按钮*/}
+                    {showLockIcon && (
+                        <button
+                            className="flex items-center ml-[20px] z-20"
+                            style={{background: 'transparent', border: 'none', padding: 0}}
+                            onClick={() => {
+                                if (selectedCharacter !== "全部") setShowAllCards(prev => !prev);
+                            }}
+                        >
+                            {showAllCards ? <LockIcon size={fontsize * 2} color={'lightgray'}/> :
+                                <LockIcon size={fontsize * 2} color={'black'}/>}
+                        </button>
+                    )}
+
+                    <div className="absolute flex flex-row right-[0] items-center" style={{gap: `${fontsize}px`}}>
+                        {/*排序*/}
+                        <select
+                            id="sortOption"
+                            value={sortOption}
+                            onChange={(e) => setSortOption(e.target.value)}
+                            style={{
+                                background: 'transparent',
+                                padding: 0,
+                                color: 'black',
+                                fontSize: `${fontsize * 1.1}px`
+                            }}
+                        >
+                            <option value="稀有度">稀有度</option>
+                            <option value="套装">套装</option>
+                            <option value="星谱">星谱</option>
+                        </select>
+
+                        {/*图片大小*/}
+                        <button
+                            className="flex items-center"
+                            onClick={() => setSquareView(!squareView)}
+                            style={{background: 'transparent', border: 'none', padding: 0,}}
+                        >
+                            {squareView ? (
+                                <FullScreenIcon color="black" size={fontsize * 2}/>
+                            ) : (
+                                <SmallScreenIcon color="black" size={fontsize * 2}/>
+                            )}
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-
-            {/*选择角色*/}
-            <div className="ml-[3vw] mr-[3vw] mt-[0.5rem]">
-                <div style={{display: 'flex', width: '100%'}}>
-                    {/* 左侧“全部”按钮 */}
+                {/*第二行 选择角色*/}
+                <div className="flex flex-row h-[60%]">
+                    {/*全部*/}
                     <button
-                        onClick={() => {setSelectedCharacter('全部'); setShowLockIcon(false);}}
+                        className="flex w-[30%] h-full items-center justify-center"
+                        onClick={() => {
+                            setSelectedCharacter('全部');
+                            setShowLockIcon(false);
+                        }}
                         style={{
-                            width: '30%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding: '1rem',
-                            borderRadius: '0.25rem',
                             backgroundColor: selectedCharacter === '全部' ? 'black' : 'transparent',
                             color: selectedCharacter === '全部' ? 'white' : 'black',
-                            fontWeight: '600',
-                            fontSize: '1.125rem', // 增大字体
                             transition: 'all 0.3s',
                             cursor: 'pointer',
+                            borderRadius: 0,
                         }}
                     >
-                        <FunctionIcon color={selectedCharacter === '全部' ? 'white' : 'black'} size={16}/>
-                        <span className="ml-[4px]">全部</span>
+                        <FunctionIcon color={selectedCharacter === '全部' ? 'white' : 'black'} size={fontsize * 1.5}/>
+                        <span
+                            style={{fontSize: `${fontsize * 1.6}px`, fontWeight: '600', marginLeft: "3px"}}>全部</span>
                     </button>
 
-                    {/* 右侧角色按钮区域 */}
-                    <div style={{
-                        width: '75%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between'
-                    }}>
-                        {/* 上面三个 */}
-                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                            {['沈星回', '黎深', '祁煜'].map((char) => (
+                    {/*上下两行*/}
+                    <div className="w-[70%] grid grid-cols-3">
+                        {/* 在第3个按钮后插入一条横线 */}
+                        <div className="absolute top-[70%] w-[70%]"
+                             style={{height: '1px', backgroundColor: 'lightgray'}}
+                        />
+                        {['沈星回', '黎深', '祁煜', '秦彻', '夏以昼'].map((char) => (
+                            <div key={char} className="flex items-center justify-center">
                                 <button
                                     key={char}
-                                    onClick={() => {setSelectedCharacter(char); setShowLockIcon(true);}}
+                                    onClick={() => {
+                                        setSelectedCharacter(char);
+                                        setShowLockIcon(true);
+                                    }}
+                                    className="flex items-center justify-center w-full h-full"
                                     style={{
-                                        flex: 1,
-                                        padding: '0',
-                                        height: '2rem',
-                                        borderRadius: '0.25rem',
-                                        fontSize: '1rem', // 增大字体
+                                        outline: 'none',
+                                        boxShadow: 'none',
+                                        padding: 0,
+                                        borderRadius: 0,
+                                        fontSize: `${fontsize * 1.3}px`,
                                         backgroundColor: selectedCharacter === char ? 'black' : 'transparent',
                                         color: selectedCharacter === char ? 'white' : 'black',
                                         transition: 'all 0.3s',
                                         cursor: 'pointer',
-                                        margin: 0, // 删除按钮之间的间距
                                     }}
                                 >
                                     {char}
                                 </button>
-                            ))}
-                        </div>
-
-                        {/* 分隔线 */}
-                        <div style={{width: '100%', height: '1px', backgroundColor: '#ccc'}}/>
-
-                        {/* 下面两个 */}
-                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                            {['秦彻', '夏以昼'].map((char) => (
-                                <button
-                                    key={char}
-                                    onClick={() => {setSelectedCharacter(char); setShowLockIcon(true);}}
-                                    style={{
-                                        flex: 1,
-                                        padding: '0',
-                                        height: '2rem',
-                                        borderRadius: '0.25rem',
-                                        fontSize: '1rem', // 增大字体
-                                        backgroundColor: selectedCharacter === char ? 'black' : 'transparent',
-                                        color: selectedCharacter === char ? 'white' : 'black',
-                                        transition: 'all 0.3s',
-                                        cursor: 'pointer',
-                                        margin: 0, // 删除按钮之间的间距
-                                    }}
-                                >
-                                    {char}
-                                </button>
-                            ))}
-                        </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
 
-            {/* 横线 + 阴影 */}
+            {/*横线 + 阴影*/}
             <div
+                className="absolute w-full h-[5px]"
                 style={{
-                    marginTop: '0.5rem',
-                    marginBottom: '0.8rem',
-                    borderBottom: '2px solid #888', // 灰色线条
-                    boxShadow: '0 4px 10px rgba(0, 0, 0, 1)', // 让阴影向下扩散
+                    top: `${fontsize * 10}px`,
+                    borderBottom: '2px solid #999',
+                    boxShadow: '0 4px 6px -2px rgba(0, 0, 0, 0.4)',
                 }}
             />
 
 
-            {/* 卡片网格展示 */}
-            <div className="h-screen overflow-y-auto">
-                <div className="grid grid-cols-3 gap-[3vw] p-4 ml-[3vw] mr-[3vw] mt-[2vw] mb-[6vw]">
+            {/*卡片网格展示*/}
+            <div className="absolute w-full h-full overflow-y-auto z-30" style={{top: `${fontsize * 11.5}px`}}>
+                <div className="grid grid-cols-3"
+                     style={{gap: `${fontsize * 1.2}px`, margin: `${fontsize}px`}}>
                     {sortedCards.map((card, index) => {
-                        // const cardTypeHeight = '20px'
-                        const cardTypeHeight = card.card_type_tag === "日冕" ? '5vw' :
-                            card.card_type_tag === "月晖" ? '4vw' : '5vw';
-
                         return (
                             <div
                                 key={card.name}
                                 className="relative w-full"
-                                style={{paddingBottom: squareView ? '99%' : '177.2%'}}
+                                style={{height: squareView ? `${fontsize * 12}px` : `${fontsize * 18}px`}}
                             >
-                                {/*星谱*/}
-                                <img
-                                    src={`images/${card.card_color_tag}.png`}
-                                    className="absolute top-[1.5vw] left-[1.5vw] w-[4vw] z-10"
-                                />
-
-                                <div className="absolute bottom-0 left-0 w-full h-[20px] bg-gray-400 z-10"/>
-
-                                {/*日卡月卡*/}
-                                <img
-                                    src={`images/${card.card_type_tag}.png`}
-                                    className={`absolute bottom-[5.5vw] left-[1vw] z-10`}
-                                    style={{ width: cardTypeHeight }}
-                                />
-
                                 {/*主图*/}
                                 <img
                                     src={card.image_small}
                                     alt={card.name}
                                     className={`absolute inset-0 w-full h-full rounded ${squareView ? 'object-cover object-top' : 'object-cover'}`}
-                                    style={{maxHeight: squareView ? '25vw' : '48vw'}}//{{maxHeight: squareView ? 'auto' : 'calc(100% - 24px)'}}
+                                    style={{height: squareView ? `${fontsize * 10}px` : `${fontsize * 16}px`}}
                                     onClick={() => {
                                         setCurrentIndex(index);
                                         setShowFullImage(true);
                                     }}
                                 />
 
-                                {/* 渐变灰色覆盖层 */}
-                                <div
-                                    className="absolute bottom-[4vw] left-0 w-full"
-                                    style={{
-                                    height: '7vw',
-                                    background: 'linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4))',
-                                    pointerEvents: 'none', // 保证点击透传到下方
-                                    }}
+                                {/*星谱*/}
+                                <img
+                                    src={`images/${card.card_color_tag}.png`}
+                                    className="absolute"
+                                    style={{top: `${fontsize * 0.3}px`, left: `${fontsize * 0.3}px`, width: `${fontsize * 1.5}px`}}
                                 />
 
-
-                                {!card.owned && (
-                                    <div
-                                        className="absolute bottom-[4vw] left-0 w-full h-full z-30 flex items-center justify-center"
-                                        style={{
-                                            maxHeight: squareView ? '25vw' : '48vw',
-                                            background: '#00000088',
-                                            pointerEvents: 'none', // 保证点击透传到下方
-                                        }}
-                                    >
-                                        <LockIcon size={24} color={'lightgray'} />
-                                    </div>
-                                )}
+                                {/*日卡月卡*/}
+                                <img
+                                    src={`images/${card.card_type_tag}.png`}
+                                    className="absolute z-10"
+                                    style={{
+                                        bottom: card.card_type_tag === "月晖" ? `${fontsize * 2.3}px`: `${fontsize * 2.1}px`,
+                                        left: `${fontsize * 0.3}px`,
+                                        width: card.card_type_tag === "月晖" ? `${fontsize * 1.5}px` : `${fontsize * 1.8}px`
+                                    }}
+                                />
 
                                 {/*星级*/}
                                 <img
                                     src={`images/${card.star}.png`}
-                                    alt="icon"
-                                    className="absolute bottom-[5vw] right-[1vw] h-[4vw] z-10"
+                                    className="absolute z-10"
+                                    style={{bottom: `${fontsize * 2.3}px`, right: 0, height: `${fontsize * 1.3}px`}}
                                 />
+
+                                {/* 渐变灰色覆盖层 */}
+                                <div
+                                    className="absolute w-full"
+                                    style={{
+                                        bottom: `${fontsize * 2}px`,
+                                        height: squareView ? `${fontsize * 3}px` : `${fontsize * 2.5}px`,
+                                        background: 'linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.5))',
+                                        pointerEvents: 'none',
+                                    }}
+                                />
+
+
+
+
+                                {!card.owned && (
+                                    <div
+                                        className="absolute w-full h-full z-30 flex items-center justify-center"
+                                        style={{
+                                            height: squareView ? `${fontsize * 10}px` : `${fontsize * 16}px`,
+                                            background: '#00000088',
+                                            pointerEvents: 'none', // 保证点击透传到下方
+                                        }}
+                                    >
+                                        <LockIcon size={fontsize * 2} color={'lightgray'} />
+                                    </div>
+                                )}
+
+
 
                                 {/*名称*/}
                                 <div
-                                    className="absolute bottom-[-0.5vw] w-full text-center text-white"
+                                    className="absolute w-full flex items-center justify-center"
                                     style={{
-                                        textAlign: 'center',
-                                        fontSize: '3vw',         // 设置字体大小
-                                        whiteSpace: 'nowrap',     // 禁止换行
-                                        overflow: 'hidden',       // 超出隐藏
-                                        color: 'black'
+                                        fontSize: `${fontsize}px`,
+                                        color: 'black',
+                                        bottom: 0,
+                                        top: squareView ? `${fontsize * 10}px` : `${fontsize * 16}px`,
                                     }}
                                 >
-                                  {card.character}·{card.name}
+                                    <label>
+                                        {card.character}·{card.name}
+                                    </label>
                                 </div>
                             </div>
                         );
                     })}
                 </div>
+                {/*能够滑到最下面看到完整的图*/}
+                <div style={{height: `${fontsize * 16}px`}}/>
             </div>
-
-            <div className="h-[20px] bg-transparent"/>
 
 
             {/* 全屏大图预览 */}
@@ -396,6 +379,7 @@ export const GalleryPage = ({ allCards, onClose }) => {
                     currentIndex={currentIndex}
                     onClose={() => setShowFullImage(false)}
                     setCurrentIndex={setCurrentIndex}
+                    fontsize={fontsize}
                 />
             )}
         </div>

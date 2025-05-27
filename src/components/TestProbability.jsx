@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const TestProbability = ({ getRandomCard, setShowProbability }) => {
+const TestProbability = ({ getRandomCard, setShowProbability, fontsize }) => {
 
   const [testCount, setTestCount] = useState(100000);
   const [result, setResult] = useState(null);
@@ -50,41 +50,47 @@ const TestProbability = ({ getRandomCard, setShowProbability }) => {
 
   return (
       <div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-start w-screen h-screen"
+          className="absolute w-full h-full flex justify-center items-center z-50"
           onClick={()=>setShowProbability(false)}
       >
         <div
-            className="relative flex flex-col px-5 py-5 mt-[100px]"
-            style={{backgroundImage: "url('images/结算背景.jpg')"}}
+            className="absolute flex flex-col"
+            style={{
+              backgroundImage: "url('images/结算背景.jpg')",
+              width: `${fontsize * 26}px`,
+              height: `${fontsize * 32}px`,
+              color: 'black',
+              marginLeft: `${fontsize * 2}px`,
+              marginRight: `${fontsize * 2}px`,
+            }}
             onClick={(e) => e.stopPropagation()}
         >
 
-          <div className="flex flex-col ml-[20px] mr-[20px] mt-[20px] mb-[20px]" style={{fontSize: '14px'}}>
+          <div className="flex flex-col"
+               style={{fontSize: `${fontsize * 1.2}px`, margin: `${fontsize * 2}px`}}>
             <label>（测试概率有没有出bug）</label>
             <label>（仅测试基础版，即常驻池概率）</label>
           </div>
 
-          <div className="flex flex-row mb-[20px] ml-[20px] mr-[20px]">
-            <label style={{"fontWeight": 800}}>测试次数：</label>
+          <div className="flex flex-row justify-center items-center" style={{marginBottom: `${fontsize * 2}px`}}>
+            <label style={{"fontWeight": 800, fontSize: `${fontsize * 1.2}px`}}>测试次数：</label>
             <input
                 type="number"
                 value={testCount}
                 onChange={(e) => setTestCount(parseInt(e.target.value))}
-                className="text-black px-2"
+                style={{height: `${fontsize * 2}px`, fontSize: `${fontsize * 1.2}px`}}
             />
           </div>
 
           <button
               onClick={runTest}
-              className={`ml-[20px] mr-[20px] px-4 py-2 font-semibold rounded ${
-                loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
-              } text-white`}
+              style={{marginLeft: `${fontsize * 2}px`, marginRight: `${fontsize * 2}px`, fontSize: `${fontsize * 1.2}px`}}
               disabled={loading}
           >
             开始测试
           </button>
 
-          <div className="flex flex-col mt-[20px] mb-[20px] ml-[20px] mr-[20px]">
+          <div className="flex flex-col" style={{margin: `${fontsize * 2}px`, fontSize: `${fontsize * 1.5}px`}}>
             <div className="flex-row">
               <label style={{"fontWeight": 800}}>抽卡总数：</label>
               <label>{result ? result.total : ''}</label>
