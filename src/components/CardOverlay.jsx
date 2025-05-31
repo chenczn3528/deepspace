@@ -57,7 +57,18 @@ const CardOverlay = ({
     }, [currentCardIndex, showCardOverlay]);
 
 
+    // 预加载小图，等大图加载完以后跳出来
+    const [loaded, setLoaded] = useState(false);
 
+    useEffect(() => {
+        if (!drawResultsRef.current[currentCardIndex]?.card?.image) return;
+
+        const img = new Image();
+        img.src = drawResultsRef.current[currentCardIndex]?.card?.image;
+        img.onload = () => {
+            setLoaded(true);
+        };
+    }, [drawResultsRef.current[currentCardIndex]?.card?.image]);
 
 
     return (
@@ -97,22 +108,35 @@ const CardOverlay = ({
                 {(isCurrentFiveStar && videoPlayed) || !isCurrentFiveStar ? (
                     <>
                         <div className="relative w-full h-full flex z-10">
-                            {/* 设置卡片展示层的 z-index 为 0 */}
-                            <LazyLoadImage
-                                className="w-full h-full object-cover z-20"
-                                src={drawResultsRef.current[currentCardIndex]?.card?.image}
-                                placeholderSrc={drawResultsRef.current[currentCardIndex]?.card?.image_small}
-                                effect="blur"
-                                alt="抽到的卡片"
-                                crossOrigin="anonymous"
-                                key={currentCardIndex}
+                            <div
+                                className="absolute w-full h-full transition-opacity duration-300"
+                                style={{
+                                    backgroundImage: `url(${drawResultsRef.current[currentCardIndex]?.card?.image_small || drawResultsRef.current[currentCardIndex]?.card?.image})`,
+                                    backgroundSize: "cover",
+                                    backgroundPosition: "center",
+                                    filter: "blur(20px)",
+                                    opacity: loaded ? 0 : 1,
+                                }}
                             />
+
+                            {/* 高清图：加载完后显示并播放动画 */}
+                            {loaded && (
+                                <div
+                                    className="absolute w-full h-full animate-fadeZoomIn"
+                                    style={{
+                                        backgroundImage: `url(${drawResultsRef.current[currentCardIndex]?.card?.image})`,
+                                        backgroundSize: "cover",
+                                        backgroundPosition: "center",
+                                    }}
+                                />
+                            )}
                         </div>
 
-                        <div className="absolute flex items-center z-20" style={{bottom: `${fontsize * 6}px`, left: `${fontsize * 2}px`}}>
+                        <div className="absolute flex items-center z-20"
+                             style={{bottom: `${fontsize * 6}px`, left: `${fontsize * 2}px`}}>
                             <img
                                 src={`images/${drawResultsRef.current[currentCardIndex]?.card?.star}.png`}
-                                style={{marginRight:`${fontsize * 0.6}px`, height: `${fontsize * 2.5}px`}}
+                                style={{marginRight: `${fontsize * 0.6}px`, height: `${fontsize * 2.5}px`}}
                             />
                             <img
                                 src={`images/${drawResultsRef.current[currentCardIndex]?.card?.card_color_tag}.png`}

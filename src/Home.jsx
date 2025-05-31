@@ -596,6 +596,7 @@ const Home = () => {
 
             {/* 卡片结果层（最顶层） */}
             <CardOverlay
+                key={currentCardIndex}
                 showCardOverlay={showCardOverlay}
                 currentCardIndex={currentCardIndex}
                 drawResultsRef={displayResultsRef}

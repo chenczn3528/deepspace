@@ -375,6 +375,7 @@ export const GalleryPage = ({ allCards, onClose, fontsize }) => {
             {/* 全屏大图预览 */}
             {showFullImage && (
                 <FullImageViewer
+                    key={currentIndex}
                     cards={sortedCards}
                     currentIndex={currentIndex}
                     onClose={() => setShowFullImage(false)}

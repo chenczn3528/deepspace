@@ -40,6 +40,21 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose,
     },[card])
 
 
+    // 预加载小图，等大图加载完以后跳出来
+    const [loaded, setLoaded] = useState(false);
+
+    useEffect(() => {
+        if (!card?.image) return;
+
+        const img = new Image();
+        img.src = card.image;
+        img.onload = () => {
+            setLoaded(true);
+        };
+    }, [card?.image]);
+
+
+
     return (
         <div className="absolute w-full h-full z-30"
              onClick={() => {
@@ -118,13 +133,29 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose,
 
             {/* 展示卡片内容 */}
             <div className="relative w-full h-full flex z-10">
-                <LazyLoadImage
-                    className="w-full h-full object-cover z-20"
-                    src={card?.image}
-                    placeholderSrc={card?.image_small}
-                    effect="blur"
-                    crossOrigin="anonymous"
+                {/* 低清图：模糊背景 */}
+                <div
+                    className="absolute w-full h-full transition-opacity duration-300"
+                    style={{
+                        backgroundImage: `url(${card?.image_lowres || card?.image})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        filter: "blur(20px)",
+                        opacity: loaded ? 0 : 1,
+                    }}
                 />
+
+                {/* 高清图：加载完后显示并播放动画 */}
+                {loaded && (
+                    <div
+                        className="absolute w-full h-full animate-fadeZoomIn"
+                        style={{
+                            backgroundImage: `url(${card?.image})`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                        }}
+                    />
+                )}
             </div>
 
             {!showPicture && (
