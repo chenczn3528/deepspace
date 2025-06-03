@@ -28,6 +28,7 @@ const FILES_TO_CACHE = [
 //       .catch(err => console.error('[SW] Cache failed:', err))
 //   );
 // });
+
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
@@ -35,12 +36,10 @@ self.addEventListener('install', (event) => {
       const cache = await caches.open(CACHE_NAME);
       for (const file of FILES_TO_CACHE) {
         try {
-          const response = await fetch(file);
-          if (!response.ok) throw new Error(`HTTP status ${response.status}`);
-          await cache.put(file, response.clone());
-          console.log('[SW] ✅ Cached:', file);
+          await cache.add(file);
+          console.log(`[SW] Cached: ${file}`);
         } catch (err) {
-          console.error('[SW] ❌ Failed to cache:', file, err);
+          console.warn(`[SW] Failed to cache ${file}:`, err);
         }
       }
     })()
