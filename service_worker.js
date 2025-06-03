@@ -1,4 +1,4 @@
-const CACHE_NAME = 'deepspace-cache-v4';
+const CACHE_NAME = 'deepspace-cache-v5';
 const FILES_TO_CACHE = [
   '/deepspace/videos/gold_card.MP4',
   '/deepspace/videos/no_gold_card.mp4',
@@ -17,15 +17,33 @@ const FILES_TO_CACHE = [
 ];
 
 // 安装阶段：缓存资源，跳过等待
+// self.addEventListener('install', (event) => {
+//   self.skipWaiting();
+//   event.waitUntil(
+//     caches.open(CACHE_NAME)
+//       .then(cache => {
+//         console.log('[SW] Caching files:', FILES_TO_CACHE);
+//         return cache.addAll(FILES_TO_CACHE);
+//       })
+//       .catch(err => console.error('[SW] Cache failed:', err))
+//   );
+// });
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('[SW] Caching files:', FILES_TO_CACHE);
-        return cache.addAll(FILES_TO_CACHE);
-      })
-      .catch(err => console.error('[SW] Cache failed:', err))
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      for (const file of FILES_TO_CACHE) {
+        try {
+          const response = await fetch(file);
+          if (!response.ok) throw new Error(`HTTP status ${response.status}`);
+          await cache.put(file, response.clone());
+          console.log('[SW] ✅ Cached:', file);
+        } catch (err) {
+          console.error('[SW] ❌ Failed to cache:', file, err);
+        }
+      }
+    })()
   );
 });
 
