@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import MusicPlayIcon from "../icons/MusicPlayIcon.jsx";
 import MusicMuteIcon from "../icons/MusicMuteIcon.jsx";
 
@@ -24,15 +24,62 @@ const SettingsLayer = ({
     setHasShownSummary,
     setShowSummary,
     clearLocalData,
-    toggleMusic,
-    isMusicPlaying,
     setShowGallery,
     showProbability,
     setShowProbability,
     fontsize,
+    toggleMusic,
+    isMusicPlaying,
 }) => {
 
 
+
+
+    // // ========================================================
+    // // 背景音乐设置
+    // const audioRef = useRef(null);
+    // const [volume, setVolume] = useState(0.1);
+    // const [showSlider, setShowSlider] = useState(false);
+    // const hideTimeoutRef = useRef(null);
+    //
+    // useEffect(() => {
+    //     const audio = audioRef.current;
+    //     if (audio) {
+    //         audio.volume = volume;
+    //         audio.loop = true;
+    //         audio.play().catch((err) => {
+    //             console.warn('自动播放失败', err);
+    //         });
+    //     }
+    // }, []);
+    //
+    // useEffect(() => {
+    //     if (audioRef.current) {
+    //         audioRef.current.volume = volume;
+    //         if (audioRef.current.paused && volume > 0) {
+    //             audioRef.current.play().catch(() => {});
+    //         }
+    //     }
+    // }, [volume]);
+    //
+    // // 每次显示音量条后自动在 2 秒后隐藏
+    // useEffect(() => {
+    //     if (showSlider) {
+    //         clearTimeout(hideTimeoutRef.current);
+    //         hideTimeoutRef.current = setTimeout(() => {
+    //             setShowSlider(false);
+    //         }, 2000);
+    //     }
+    //     return () => clearTimeout(hideTimeoutRef.current);
+    // }, [showSlider]);
+    //
+    // const toggleSlider = () => {
+    //     setShowSlider(true);
+    // };
+    //
+    //
+    // const [musicID, setMusicID] = useState("2660222366");
+    // const [showPlayer, setShowPlayer] = useState(true);
 
     const handleCopy = async () => {
         try {
@@ -46,6 +93,8 @@ const SettingsLayer = ({
 
 
 
+
+    // 音乐用iframe，出金音效用滑动条，新写一个页面调试这个东西
 
     return (
         <div className="absolute w-full h-full">
@@ -63,6 +112,62 @@ const SettingsLayer = ({
                 )}
             </button>
 
+            {/*/!*音频*!/*/}
+            {/*/!*<audio ref={audioRef} loop src="audios/时空引力.mp3"/>*!/*/}
+            {/*<button onClick={() => {*/}
+            {/*    setShowPlayer(!showPlayer);*/}
+            {/*    setMusicID("2660222377");*/}
+            {/*}} className="absolute top-[60%] right-[0]">*/}
+            {/*    {showPlayer ? "隐藏音乐播放器" : "显示音乐播放器"}*/}
+            {/*</button>*/}
+
+            {/*<div style={{display: showPlayer ? 'block' : 'none'}} className="absolute w-full top-[40%]">*/}
+            {/*    <iframe*/}
+            {/*        src={`https://music.163.com/outchain/player?type=2&id=${musicID}&auto=1&height=66`}*/}
+            {/*        width="330"*/}
+            {/*        height="86"*/}
+            {/*        frameBorder="no"*/}
+            {/*        allow="autoplay"*/}
+            {/*        style={{background: "transparent"}}*/}
+            {/*    ></iframe>*/}
+            {/*</div>*/}
+
+
+            {/*/!*放音乐按钮*!/*/}
+            {/*<button*/}
+            {/*    onClick={toggleSlider}*/}
+            {/*    className="absolute"*/}
+            {/*    style={{*/}
+            {/*        background: 'transparent',*/}
+            {/*        border: 'none',*/}
+            {/*        padding: 0,*/}
+            {/*        top: `${fontsize * 1.2}px`,*/}
+            {/*        right: `${fontsize * 1.2}px`*/}
+            {/*    }}*/}
+            {/*>*/}
+            {/*    {volume !== 0 ? (*/}
+            {/*        <MusicPlayIcon color="gray" size={fontsize * 2}/>*/}
+            {/*    ) : (*/}
+            {/*        <MusicMuteIcon color="gray" size={fontsize * 2}/>*/}
+            {/*    )}*/}
+            {/*</button>*/}
+            {/*{showSlider && (*/}
+            {/*    <input*/}
+            {/*        type="range"*/}
+            {/*        min={0}*/}
+            {/*        max={1}*/}
+            {/*        step={0.01}*/}
+            {/*        value={volume}*/}
+            {/*        onChange={(e) => setVolume(parseFloat(e.target.value))}*/}
+            {/*        style={{*/}
+            {/*            position: 'absolute',*/}
+            {/*            top: `${fontsize * 2}px`,*/}
+            {/*            right: '0',*/}
+            {/*            height: `${fontsize * 4}px`*/}
+            {/*        }}*/}
+            {/*    />*/}
+            {/*)}*/}
+
 
             {/*右上角按钮、文字*/}
             <div className="absolute flex flex-col" style={{top: `${fontsize * 1.2}px`, left: `${fontsize * 1.2}px`}}>
@@ -71,7 +176,9 @@ const SettingsLayer = ({
                     <button style={{fontSize: `${fontsize * 1.2}px`}} onClick={() => setShowGallery(true)}>图鉴</button>
 
                     {/*测试概率*/}
-                    <button style={{fontSize: `${fontsize * 1.2}px`}} onClick={() => setShowProbability(!showProbability)}>测试概率</button>
+                    <button style={{fontSize: `${fontsize * 1.2}px`}}
+                            onClick={() => setShowProbability(!showProbability)}>测试概率
+                    </button>
                 </div>
 
                 <div
@@ -102,7 +209,10 @@ const SettingsLayer = ({
                         >
                             点击复制小红书号
                         </button>
+
                     </div>
+                    <label style={{color: "yellow"}}>可以的话 希望宝宝们去我主页</label>
+                    <label style={{color: "yellow"}}>投票看看想要哪种背景音乐❤</label>
                 </div>
             </div>
 
@@ -154,7 +264,7 @@ const SettingsLayer = ({
                         <label htmlFor="includeThree">包括三星卡片</label>
                         <input
                             id="includeThree"
-                            style={{width:`${fontsize * 1.3}px`, height: `${fontsize * 1.3}px`}}
+                            style={{width: `${fontsize * 1.3}px`, height: `${fontsize * 1.3}px`}}
                             type="checkbox"
                             checked={includeThreeStar}
                             onChange={(e) => setIncludeThreeStar(e.target.checked)}
@@ -167,7 +277,7 @@ const SettingsLayer = ({
                             <label htmlFor="softGuarantee">开启大小保底机制</label>
                             <input
                                 id="softGuarantee"
-                                style={{width:`${fontsize * 1.3}px`, height: `${fontsize * 1.3}px`}}
+                                style={{width: `${fontsize * 1.3}px`, height: `${fontsize * 1.3}px`}}
                                 type="checkbox"
                                 checked={useSoftGuarantee}
                                 onChange={(e) => {
@@ -184,7 +294,7 @@ const SettingsLayer = ({
                         <div className="flex flex-row items-center" style={{gap: `${fontsize * 0.5}px`}}>
                             <label htmlFor="onlyThisRole">只抽 {selectedRole} 的卡</label>
                             <input
-                                style={{width:`${fontsize * 1.3}px`, height: `${fontsize * 1.3}px`}}
+                                style={{width: `${fontsize * 1.3}px`, height: `${fontsize * 1.3}px`}}
                                 id="onlyThisRole"
                                 type="checkbox"
                                 checked={onlySelectedRoleCard}
@@ -195,13 +305,13 @@ const SettingsLayer = ({
                                 }}
                             />
                         </div>
-                        )}
+                    )}
                 </div>
 
 
                 {/* 一抽/十抽按钮 */}
                 <div className="flex flex-row justify-between items-center"
-                style={{marginTop: `${fontsize}px`, marginBottom: `${fontsize * 0.5}px`}}>
+                     style={{marginTop: `${fontsize}px`, marginBottom: `${fontsize * 0.5}px`}}>
                     <button
                         onClick={() => {
                             setHasShownSummary(false);
@@ -232,18 +342,18 @@ const SettingsLayer = ({
                     {/* 保底显示 */}
                     <label>
                         {selectedRole === '随机' || !useSoftGuarantee ? (
-                          <>
-                              还剩 {70 - pityCount} 抽 必得五星
-                          </>
-                      ) : softPityFailed ? (
-                          <>
-                              还剩 {70 - pityCount} 抽 大保底
-                          </>
-                      ) : (
-                          <>
-                              还剩 {70 - pityCount} 抽 小保底
-                          </>
-                      )}
+                            <>
+                                还剩 {70 - pityCount} 抽 必得五星
+                            </>
+                        ) : softPityFailed ? (
+                            <>
+                                还剩 {70 - pityCount} 抽 大保底
+                            </>
+                        ) : (
+                            <>
+                                还剩 {70 - pityCount} 抽 小保底
+                            </>
+                        )}
                     </label>
 
                     {/* 抽卡历史记录按钮 */}
@@ -254,10 +364,10 @@ const SettingsLayer = ({
                     >
                         {showHistory ? '关闭抽卡记录' : '查看抽卡记录'}
                     </button>
-              </div>
+                </div>
 
-          </div>
-      </div>
+            </div>
+        </div>
     );
 };
 
