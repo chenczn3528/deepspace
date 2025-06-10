@@ -193,8 +193,7 @@ const SettingsLayer = ({
                     <span style={{color: 'red', fontWeight: 800}}>重要提示：</span>
                     <label>第一次加载网页的视频、动画会很卡</label>
                     <label>需要等待一段时间让资源加载完</label>
-                    <label>加载完只要不清除浏览器缓存就不卡</label>
-                    <label>5月25日有更新，以前的记录可能会消失</label>
+                    <label>数据来源：恋与深空WIKI</label>
                     <div className="flex flex-row">
                         <label>反馈bug或功能需求：</label>
                         <button
