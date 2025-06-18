@@ -99,19 +99,27 @@ def get_songs(id, album):
 
 
 
-final_results = {}
-albums = get_albums("59642824")
-print(f"共找到 {len(albums)} 张专辑：")
-for album_id, album_title in albums:
-    print(f"\n{album_id} : {album_title}")
-    songs = get_songs(album_id, album_title)
-    final_results[album_id] = {
-        "name": album_title,
-        "songs": songs
-    }
+def ensure_id_exists(data_list, target_id, default_obj):
+    # 判断是否已有目标 id
+    if not any(item.get("id") == target_id for item in data_list):
+        data_list.append(default_obj)
+    return data_list
 
-with open("assets/songs.json", "w", encoding="utf-8") as f:
-    json.dump(final_results, f, ensure_ascii=False, indent=4)
+
+
+# final_results = {}
+# albums = get_albums("59642824")
+# print(f"共找到 {len(albums)} 张专辑：")
+# for album_id, album_title in albums:
+#     print(f"\n{album_id} : {album_title}")
+#     songs = get_songs(album_id, album_title)
+#     final_results[album_id] = {
+#         "name": album_title,
+#         "songs": songs
+#     }
+#
+# with open("assets/songs.json", "w", encoding="utf-8") as f:
+#     json.dump(final_results, f, ensure_ascii=False, indent=4)
 
 
 songs_list = []
@@ -120,6 +128,15 @@ with open("assets/songs.json", "r", encoding="utf-8") as f:
     for key, value in final_results.items():
         for song in value["songs"]:
             songs_list.append(song)
+
+
+
+ensure_id_exists(songs_list, "26996410931750205807385", {
+    "id": "26996410931750205807385",
+    "title": "春天对花所做的事",
+    "duration": "03:57",
+    "singers": ""
+})
 
 print(len(songs_list))
 for i in songs_list:
