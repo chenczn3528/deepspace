@@ -1,5 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import cardData from './assets/cards.json';
+import songsList from './assets/songs_list.json'
 import DrawAnimationCards from './components/DrawAnimationCards.jsx';
 import HistoryModal from './components/HistoryModal';
 import TestProbability from "./components/TestProbability.jsx";
@@ -11,6 +12,7 @@ import {GalleryPage} from "./components/GalleryPage.jsx";
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import {useHistoryDB} from "./hooks/useHistoryDB.js";
 import useResponsiveFontSize from "./hooks/useResponsiveFontSize.js";
+import MusicPage from "./components/MusicPage.jsx";
 
 
 
@@ -67,6 +69,8 @@ const Home = () => {
 
     const fontsize = useResponsiveFontSize({scale: 0.9});
 
+    const [musicID, setMusicID] = useLocalStorageState("ds_musicID", songsList[0]["id"].slice(0,10))
+
 
     // 清除缓存数据
     const clearLocalData = () => {
@@ -79,6 +83,7 @@ const Home = () => {
             'ds_selectedRole',
             'ds_includeThreeStar',
             'ds_onlySelectedRoleCard',
+            'ds_musicID',
         ];
         keysToClear.forEach(key => localStorage.removeItem(key));
         clearHistory();
@@ -159,82 +164,82 @@ const Home = () => {
 
 
 
-    // ========================================================
-    // 背景音乐设置
-    const audioRef = useRef(null);
-    const [isMusicPlaying, setIsMusicPlaying] = useState(false); // 默认播放
-
-    useEffect(() => {
-        const audio = audioRef.current;
-        if (audio) {
-            audio.volume = 0.3;
-
-            // 尝试自动播放音乐，只会在组件挂载时自动播放一次
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise
-                    .catch((err) => {
-                        console.warn("自动播放失败：", err);
-                    })
-                    .then(() => {
-                        console.log("音频自动播放成功");
-                    });
-            }
-        }
-        // 清理：组件卸载时不需要做额外处理
-        return () => {};
-    }, []);
-
-    const toggleMusic = () => {
-        const audio = audioRef.current;
-        if (!audio) return;
-
-        // 如果音频正在播放，点击暂停；如果音频暂停，点击播放
-        if (isMusicPlaying) {
-            audio.pause();  // 暂停音频
-        } else {
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise
-                    .then(() => {
-                        console.log("音频播放成功");
-                    })
-                    .catch((err) => {
-                        console.warn("播放失败：", err);
-                    });
-            }
-        }
-        // 更新播放状态
-        setIsMusicPlaying(!isMusicPlaying);
-    };
-
-    useEffect(() => {
-        // 如果其他音频或视频播放器引起了音频暂停，我们尝试恢复播放
-        const audio = audioRef.current;
-        if (!audio) return;
-
-        const forcePlay = () => {
-            setTimeout(() => {
-                if (audio.paused && isMusicPlaying) {
-                    const playPromise = audio.play();
-                    if (playPromise !== undefined) {
-                        playPromise
-                            .catch((err) => {
-                                console.warn("尝试恢复音频失败", err);
-                            })
-                            .then(() => {
-                                console.log("音频恢复播放");
-                            });
-                    }
-                }
-            }, 100); // 等待 100ms 后再恢复，避免系统冲突
-        };
-        audio.addEventListener("pause", forcePlay);
-        // 清理：移除事件监听器
-        return () => {
-            audio.removeEventListener("pause", forcePlay);
-        };
-    }, [isMusicPlaying]);
+    // // ========================================================
+    // // 背景音乐设置
+    // const audioRef = useRef(null);
+    // const [isMusicPlaying, setIsMusicPlaying] = useState(false); // 默认播放
+    //
+    // useEffect(() => {
+    //     const audio = audioRef.current;
+    //     if (audio) {
+    //         audio.volume = 0.3;
+    //
+    //         // 尝试自动播放音乐，只会在组件挂载时自动播放一次
+    //         const playPromise = audio.play();
+    //         if (playPromise !== undefined) {
+    //             playPromise
+    //                 .catch((err) => {
+    //                     console.warn("自动播放失败：", err);
+    //                 })
+    //                 .then(() => {
+    //                     console.log("音频自动播放成功");
+    //                 });
+    //         }
+    //     }
+    //     // 清理：组件卸载时不需要做额外处理
+    //     return () => {};
+    // }, []);
+    //
+    // const toggleMusic = () => {
+    //     const audio = audioRef.current;
+    //     if (!audio) return;
+    //
+    //     // 如果音频正在播放，点击暂停；如果音频暂停，点击播放
+    //     if (isMusicPlaying) {
+    //         audio.pause();  // 暂停音频
+    //     } else {
+    //         const playPromise = audio.play();
+    //         if (playPromise !== undefined) {
+    //             playPromise
+    //                 .then(() => {
+    //                     console.log("音频播放成功");
+    //                 })
+    //                 .catch((err) => {
+    //                     console.warn("播放失败：", err);
+    //                 });
+    //         }
+    //     }
+    //     // 更新播放状态
+    //     setIsMusicPlaying(!isMusicPlaying);
+    // };
+    //
+    // useEffect(() => {
+    //     // 如果其他音频或视频播放器引起了音频暂停，我们尝试恢复播放
+    //     const audio = audioRef.current;
+    //     if (!audio) return;
+    //
+    //     const forcePlay = () => {
+    //         setTimeout(() => {
+    //             if (audio.paused && isMusicPlaying) {
+    //                 const playPromise = audio.play();
+    //                 if (playPromise !== undefined) {
+    //                     playPromise
+    //                         .catch((err) => {
+    //                             console.warn("尝试恢复音频失败", err);
+    //                         })
+    //                         .then(() => {
+    //                             console.log("音频恢复播放");
+    //                         });
+    //                 }
+    //             }
+    //         }, 100); // 等待 100ms 后再恢复，避免系统冲突
+    //     };
+    //     audio.addEventListener("pause", forcePlay);
+    //     // 清理：移除事件监听器
+    //     return () => {
+    //         audio.removeEventListener("pause", forcePlay);
+    //     };
+    // }, [isMusicPlaying]);
 
 
 
@@ -518,20 +523,70 @@ const Home = () => {
 
 
 
+
+    // ======================================= 获取容器尺寸（16:9下）
+    const [baseSize, setBaseSize] = useState(1);
+    const divRef = useRef(null); // 获取当前绑定的容器的尺寸
+
+    useEffect(() => {
+        const updateSize = () => {
+            if (divRef.current) {
+                const width = divRef.current.clientWidth;
+                const height = divRef.current.clientHeight;
+
+                if (height > 0) {
+                    const newBaseSize = width / 375;
+                    setBaseSize(newBaseSize);
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        // 初始化时轮询直到能获取有效高度
+        const tryInitSize = () => {
+            const success = updateSize();
+            if (!success) {
+                // 如果失败，延迟一帧继续尝试
+                requestAnimationFrame(tryInitSize);
+            }
+        };
+        tryInitSize(); // 启动初始化
+        window.addEventListener('resize', updateSize); // 响应窗口变化
+
+        return () => {window.removeEventListener('resize', updateSize);};
+    }, []);
+
+
+
+    const [showMusicPageZIndex, setShowMusicPageZIndex] = useState(-1);
+
     // ========================================================
     // 返回数据时显示的页面
     return (
         <div
+            ref={divRef}
             className="w-full h-full relative overflow-hidden"
             tabIndex={0}
         >
 
             {/*/!*音频*!/*/}
-            <audio
-                ref={audioRef}
-                loop
-                src="audios/时空引力.mp3"
+            {/*<audio*/}
+            {/*    ref={audioRef}*/}
+            {/*    loop*/}
+            {/*    src="audios/时空引力.mp3"*/}
+            {/*/>*/}
+
+
+            <MusicPage
+                baseSize={baseSize}
+                songsList={songsList}
+                showMusicPageZIndex={showMusicPageZIndex}
+                setShowMusicPageZIndex={setShowMusicPageZIndex}
+                musicID={musicID}
+                setMusicID={setMusicID}
             />
+
 
             {/* 视频层（最底层） */}
             <video
@@ -574,12 +629,14 @@ const Home = () => {
                 setHasShownSummary={setHasShownSummary}
                 setShowSummary={setShowSummary}
                 clearLocalData={clearLocalData}
-                toggleMusic={toggleMusic}
-                isMusicPlaying={isMusicPlaying}
                 setShowGallery={setShowGallery}
                 showProbability={showProbability}
                 setShowProbability={setShowProbability}
                 fontsize={fontsize}
+                musicID={musicID}
+                setMusicID={setMusicID}
+                showMusicPageZIndex={showMusicPageZIndex}
+                setShowMusicPageZIndex={setShowMusicPageZIndex}
             />
 
 

@@ -60,37 +60,48 @@ def fetch_detail_image(card_url):
 
 # 用wiki API获取其他详细信息
 def wiki_detailed_info(card_name):
-    # 连接到 BWIKI
-    site = mwclient.Site('wiki.biligame.com', path='/lysk/')
 
-    # 指定页面名
-    page = site.pages[card_name]  # 页面标题不需要编码（会自动处理）
+    max_tries = 5
 
-    # 获取文本内容
-    text = page.text()
+    for i in range(max_tries):
+        try:
+            # 连接到 BWIKI
+            site = mwclient.Site('wiki.biligame.com', path='/lysk/')
 
-    info_dict = {}
+            # 指定页面名
+            page = site.pages[card_name]  # 页面标题不需要编码（会自动处理）
 
-    field_map = {
-        "思念角色": "character",
-        "思念名称": "name",
-        "思念位置": "card_type_tag",
-        "思念星谱": "card_color_tag",
-        "思念星级": "star",
-        "思念天赋": "talent",
-        "思念获取途径": "get",
-        "常驻": "permanent",
-        "思念上线时间": "time"
-    }
+            # 获取文本内容
+            text = page.text()
 
-    for line in text.split("\n"):
-        for key, var in field_map.items():
-            if key in line:
-                value = line.split("=", 1)[-1].strip()
-                if key == "思念星级":
-                    value += "星"
-                info_dict[var] = value
-    return info_dict
+            info_dict = {}
+
+            field_map = {
+                "思念角色": "character",
+                "思念名称": "name",
+                "思念位置": "card_type_tag",
+                "思念星谱": "card_color_tag",
+                "思念星级": "star",
+                "思念天赋": "talent",
+                "思念获取途径": "get",
+                "常驻": "permanent",
+                "思念上线时间": "time"
+            }
+
+            for line in text.split("\n"):
+                for key, var in field_map.items():
+                    if key in line:
+                        value = line.split("=", 1)[-1].strip()
+                        if key == "思念星级":
+                            value += "星"
+                        info_dict[var] = value
+            return info_dict
+        except Exception as e:
+            print(e)
+            time.sleep(5)
+            if i == max_tries - 1:
+                print(card_name)
+                return None
 
 
 

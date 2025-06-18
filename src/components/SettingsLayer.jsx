@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import MusicPlayIcon from "../icons/MusicPlayIcon.jsx";
 import MusicMuteIcon from "../icons/MusicMuteIcon.jsx";
+import MusicIcon from "../icons/MusicIcon.jsx";
 
 const SettingsLayer = ({
     totalDrawCount,
@@ -28,8 +29,12 @@ const SettingsLayer = ({
     showProbability,
     setShowProbability,
     fontsize,
-    toggleMusic,
-    isMusicPlaying,
+    // toggleMusic,
+    // isMusicPlaying,
+    showMusicPageZIndex,
+    setShowMusicPageZIndex,
+    musicID,
+    setMusicID,
 }) => {
 
 
@@ -101,15 +106,11 @@ const SettingsLayer = ({
 
             {/*放音乐按钮*/}
             <button
-                onClick={toggleMusic}
+                onClick={()=>setShowMusicPageZIndex(10)}
                 className="absolute"
                 style={{background: 'transparent', border: 'none', padding: 0, top: `${fontsize * 1.2}px`, right: `${fontsize * 1.2}px`}}
             >
-                {isMusicPlaying ? (
-                    <MusicPlayIcon color="gray" size={fontsize * 2} />
-                ) : (
-                    <MusicMuteIcon color="gray" size={fontsize * 2} />
-                )}
+                <MusicIcon color="gray" size={fontsize * 2} />
             </button>
 
             {/*/!*音频*!/*/}
@@ -120,17 +121,6 @@ const SettingsLayer = ({
             {/*}} className="absolute top-[60%] right-[0]">*/}
             {/*    {showPlayer ? "隐藏音乐播放器" : "显示音乐播放器"}*/}
             {/*</button>*/}
-
-            {/*<div style={{display: showPlayer ? 'block' : 'none'}} className="absolute w-full top-[40%]">*/}
-            {/*    <iframe*/}
-            {/*        src={`https://music.163.com/outchain/player?type=2&id=${musicID}&auto=1&height=66`}*/}
-            {/*        width="330"*/}
-            {/*        height="86"*/}
-            {/*        frameBorder="no"*/}
-            {/*        allow="autoplay"*/}
-            {/*        style={{background: "transparent"}}*/}
-            {/*    ></iframe>*/}
-            {/*</div>*/}
 
 
             {/*/!*放音乐按钮*!/*/}
