@@ -2263,6 +2263,32 @@
   },
   {
     "character": "祁煜",
+    "name": "雾海神临",
+    "card_type_tag": "日冕",
+    "card_color_tag": "黄璃",
+    "star": "5星",
+    "talent": "防御",
+    "get": "限时许愿[[「当海湮没于海」]]",
+    "permanent": "",
+    "time": "2025/6/17",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/a/aa/m8w8ixiea2vhptpqwl9gzgq2boreyif.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E9%9B%BE%E6%B5%B7%E7%A5%9E%E4%B8%B4.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//a/aa/m8w8ixiea2vhptpqwl9gzgq2boreyif.png?download"
+  },
+  {
+    "character": "祁煜",
+    "name": "雾海离歌",
+    "card_type_tag": "日冕",
+    "card_color_tag": "黄璃",
+    "star": "5星",
+    "talent": "防御",
+    "get": "限时许愿[[「当海湮没于海」]]",
+    "permanent": "",
+    "time": "2025/6/17",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/0/0c/tao1y1m7v61s9bauxorg4unuuaklmdc.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E9%9B%BE%E6%B5%B7%E7%A6%BB%E6%AD%8C.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//0/0c/tao1y1m7v61s9bauxorg4unuuaklmdc.png?download"
+  },
+  {
+    "character": "祁煜",
     "name": "此生奇遇",
     "card_type_tag": "月晖",
     "card_color_tag": "黄璃",
@@ -2601,6 +2627,32 @@
   },
   {
     "character": "祁煜",
+    "name": "坠浪盈波",
+    "card_type_tag": "日冕",
+    "card_color_tag": "绿珥",
+    "star": "4星",
+    "talent": "生命",
+    "get": "「幻海汐誓」搭档预演",
+    "permanent": "",
+    "time": "2025/6/17",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/a/a7/qpr5zuc752adumddfaws1sqv789h60v.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E5%9D%A0%E6%B5%AA%E7%9B%88%E6%B3%A2.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//a/a7/qpr5zuc752adumddfaws1sqv789h60v.png?download"
+  },
+  {
+    "character": "祁煜",
+    "name": "坠浪神威",
+    "card_type_tag": "日冕",
+    "card_color_tag": "绿珥",
+    "star": "4星",
+    "talent": "生命",
+    "get": "「幻海汐誓」遗城寻迹",
+    "permanent": "",
+    "time": "2025/6/17",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/f/f3/d2baylbh8lztbp7734z0fizn6ivgsa6.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E5%9D%A0%E6%B5%AA%E7%A5%9E%E5%A8%81.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//f/f3/d2baylbh8lztbp7734z0fizn6ivgsa6.png?download"
+  },
+  {
+    "character": "祁煜",
     "name": "海底灵犀",
     "card_type_tag": "月晖",
     "card_color_tag": "绿珥",
@@ -2936,6 +2988,19 @@
     "time": "2024/1/18",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/5/52/trgkxgj3dzhwf99zi88sq0irknc2vxt.png/400px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%A0%87%E5%87%86%E5%BE%AE%E7%AC%91.png",
     "image": "https://patchwiki.biligame.com/images/lysk//5/52/trgkxgj3dzhwf99zi88sq0irknc2vxt.png?download"
+  },
+  {
+    "character": "祁煜",
+    "name": "遥祈",
+    "card_type_tag": "月晖",
+    "card_color_tag": "绿珥",
+    "star": "3星",
+    "talent": "攻击",
+    "get": "[[「幻海汐誓」]]港口雾市兑换获得",
+    "permanent": "",
+    "time": "2025/6/17",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/8/8a/32ixbpz0msnqzx3avx75rkpyq2w6hyc.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E9%81%A5%E7%A5%88.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//8/8a/32ixbpz0msnqzx3avx75rkpyq2w6hyc.png?download"
   },
   {
     "character": "祁煜",
