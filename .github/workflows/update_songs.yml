@@ -1,0 +1,44 @@
+name: Update Songs JSON
+
+on:
+  schedule:
+    - cron: '0 1 * * *'  # 每天 UTC 时间 1:00 运行
+  workflow_dispatch:      # 也可以手动触发
+
+jobs:
+  run-crawler:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get -f install -y
+      
+      
+
+      - name: Run the crawler
+        run: python src/update_songs.py
+
+      # 检查是否有文件变动
+      - name: Check for changes
+        run: |
+          git diff --exit-code src/assets/songs_list.json src/assets/songs.json || echo "Changes detected"
+
+      # 提交变更
+      - name: Commit updated files
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add src/assets/songs_list.json src/assets/songs.json
+          git status
+          git diff --exit-code src/assets/songs_list.json src/assets/songs.json || (git commit -m "Update songs data" && git push)

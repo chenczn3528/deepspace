@@ -48,10 +48,10 @@ export const GalleryPage = ({ allCards, onClose, fontsize }) => {
     const [squareView, setSquareView] = useState(false);
 
     const filteredCards = useMemo(() => {
-    const sorted = [...displayedCards].sort((a, b) => b.star - a.star);
-    return selectedCharacter === '全部'
-        ? sorted
-        : sorted.filter((c) => c.character === selectedCharacter);
+        const sorted = [...displayedCards].sort((a, b) => b.star - a.star);
+        return selectedCharacter === '全部'
+            ? sorted
+            : sorted.filter((c) => c.character === selectedCharacter);
     }, [selectedCharacter, displayedCards]);
 
 
