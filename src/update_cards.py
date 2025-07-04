@@ -57,17 +57,13 @@ def fetch_detail_image(card_url):
         return "", ""
 
 
-
+# 连接到 BWIKI
+site = mwclient.Site('wiki.biligame.com', path='/lysk/')
 # 用wiki API获取其他详细信息
 def wiki_detailed_info(card_name):
-
     max_tries = 5
-
     for i in range(max_tries):
         try:
-            # 连接到 BWIKI
-            site = mwclient.Site('wiki.biligame.com', path='/lysk/')
-
             # 指定页面名
             page = site.pages[card_name]  # 页面标题不需要编码（会自动处理）
 

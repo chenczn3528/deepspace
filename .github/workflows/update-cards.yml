@@ -29,20 +29,43 @@ jobs:
       # 运行 Python 脚本
       - name: Run update script
         run: |
-          python src/update_cards.py  # 替换为你的脚本名称
+          python src/update_cards.py  # 使用新的脚本名称
 
-      # 确认是否有文件变动
-      - name: Check for changes
+      # 检查文件行数并提交
+      - name: Check file line count and commit changes
         run: |
-          git diff --exit-code src/assets/cards.json || echo "Changes detected"
+          # 获取旧文件的行数
+          git fetch origin main
+          old_line_count=$(git show origin/main:src/assets/cards.json | wc -l)
+          
+          # 获取新文件的行数
+          new_line_count=$(wc -l < src/assets/cards.json)
 
-      # 将更新后的 cards.json 文件提交到 GitHub
-      - name: Commit updated cards.json
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git add src/assets/cards.json
-          git status # 查看是否有变更
-          git diff --exit-code src/assets/cards.json || (git commit -m "Update cards.json" && git push)
+          echo "Old file line count: $old_line_count"
+          echo "New file line count: $new_line_count"
+          
+          # 如果新文件的行数多于旧文件，才执行提交
+          if [ "$new_line_count" -gt "$old_line_count" ]; then
+            echo "Changes detected, proceeding with commit and push."
 
+            # 设置 Git 配置信息
+            git config --global user.name "GitHub Actions"
+            git config --global user.email "actions@github.com"
 
+            # 检查当前 Git 状态
+            git status
+
+            # 添加文件并提交
+            git add src/assets/cards.json
+            git commit -m "Update cards.json with more lines"
+
+            # 查看 commit 日志
+            git log -n 1
+
+            # 推送更改到远程
+            echo "Pushing changes to remote..."
+            git push https://github.com/${{ github.repository }}.git HEAD:main --verbose
+            sleep 60
+          else
+            echo "No new lines in the file, skipping commit and push."
+          fi
