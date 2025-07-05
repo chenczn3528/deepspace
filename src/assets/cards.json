@@ -40,6 +40,19 @@
   },
   {
     "character": "沈星回",
+    "name": "星泊地",
+    "card_type_tag": "月晖",
+    "card_color_tag": "绿珥",
+    "star": "5星",
+    "talent": "攻击",
+    "get": "限时许愿[[「于深空见证的」]]",
+    "permanent": "",
+    "time": "2025/7/3",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/a/a4/jsbblf0tasdf818iqs5qyq298ihyxwf.jpg/600px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E6%98%9F%E6%B3%8A%E5%9C%B0.jpg",
+    "image": "https://patchwiki.biligame.com/images/lysk/a/a4/jsbblf0tasdf818iqs5qyq298ihyxwf.jpg.png?download"
+  },
+  {
+    "character": "沈星回",
     "name": "毛绒陷阱",
     "card_type_tag": "月晖",
     "card_color_tag": "绿珥",
@@ -427,6 +440,19 @@
     "time": "2024/1/18",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/6/61/ngx8ix0bvtm91os8rj6xmnpqdrcsojz.png/400px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E5%BC%A6%E5%85%89%E8%BD%A8%E8%BF%B9.png",
     "image": "https://patchwiki.biligame.com/images/lysk//6/61/ngx8ix0bvtm91os8rj6xmnpqdrcsojz.png?download"
+  },
+  {
+    "character": "沈星回",
+    "name": "猎夜",
+    "card_type_tag": "月晖",
+    "card_color_tag": "黄璃",
+    "star": "4星",
+    "talent": "攻击",
+    "get": "特别密约<br>活动-[[「升级密约」10期]]",
+    "permanent": "",
+    "time": "2025/7/3",
+    "image": "",
+    "image_small": ""
   },
   {
     "character": "沈星回",
@@ -1080,6 +1106,19 @@
   },
   {
     "character": "黎深",
+    "name": "渡雪境",
+    "card_type_tag": "月晖",
+    "card_color_tag": "蓝弧",
+    "star": "5星",
+    "talent": "防御",
+    "get": "限时许愿[[「于深空见证的」]]",
+    "permanent": "",
+    "time": "2025/7/3",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/d/dc/fj5xn61w8cpbhzk12hgxsnxtg2v6wnk.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%B8%A1%E9%9B%AA%E5%A2%83.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//d/dc/fj5xn61w8cpbhzk12hgxsnxtg2v6wnk.png?download"
+  },
+  {
+    "character": "黎深",
     "name": "耳尖沉溺",
     "card_type_tag": "月晖",
     "card_color_tag": "蓝弧",
@@ -1405,6 +1444,19 @@
   },
   {
     "character": "黎深",
+    "name": "过晨风",
+    "card_type_tag": "月晖",
+    "card_color_tag": "蓝弧",
+    "star": "4星",
+    "talent": "生命",
+    "get": "特别密约<br>活动-[[「升级密约」10期]]",
+    "permanent": "",
+    "time": "2025/7/3",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/2/22/6iozbb4mv5ql0bkqyn2kmqazgym36jt.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E8%BF%87%E6%99%A8%E9%A3%8E.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//2/22/6iozbb4mv5ql0bkqyn2kmqazgym36jt.png?download"
+  },
+  {
+    "character": "黎深",
     "name": "夜色繁星",
     "card_type_tag": "日冕",
     "card_color_tag": "红漪",
@@ -1636,6 +1688,19 @@
     "time": "2024/2/5",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/9/94/26w10or13pcspy095rqchq0op4s950z.png/400px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E8%96%84%E6%99%93%E5%8D%B1%E5%BD%B1.png",
     "image": "https://patchwiki.biligame.com/images/lysk//9/94/26w10or13pcspy095rqchq0op4s950z.png?download"
+  },
+  {
+    "character": "黎深",
+    "name": "第五肋间",
+    "card_type_tag": "月晖",
+    "card_color_tag": "绿珥",
+    "star": "4星",
+    "talent": "生命",
+    "get": "[[「十日与你」11期]]活动中获取",
+    "permanent": "",
+    "time": "2025/6/24",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/1/12/9asouvhyupt2yukb7h4at986i4gfgws.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%AC%AC%E4%BA%94%E8%82%8B%E9%97%B4.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//1/12/9asouvhyupt2yukb7h4at986i4gfgws.png?download"
   },
   {
     "character": "黎深",
@@ -2039,6 +2104,19 @@
     "time": "2024/3/11",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/5/54/nl9ku7gdd8fozd3tkgnb8rld1lblvrn.png/400px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E5%94%87%E7%95%94%E7%B5%AE%E8%AF%AD.png",
     "image": "https://patchwiki.biligame.com/images/lysk//5/54/nl9ku7gdd8fozd3tkgnb8rld1lblvrn.png?download"
+  },
+  {
+    "character": "祁煜",
+    "name": "朝汐屿",
+    "card_type_tag": "月晖",
+    "card_color_tag": "紫辉",
+    "star": "5星",
+    "talent": "攻击",
+    "get": "限时许愿[[「于深空见证的」]]",
+    "permanent": "",
+    "time": "2025/7/3",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/a/ae/0i75cmuis0ob3pa32ryihi4ibt1lepo.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%9C%9D%E6%B1%90%E5%B1%BF.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//a/ae/0i75cmuis0ob3pa32ryihi4ibt1lepo.png?download"
   },
   {
     "character": "祁煜",
@@ -3134,6 +3212,19 @@
   },
   {
     "character": "秦彻",
+    "name": "明暗界",
+    "card_type_tag": "月晖",
+    "card_color_tag": "粉珀",
+    "star": "5星",
+    "talent": "防御",
+    "get": "限时许愿[[「于深空见证的」]]",
+    "permanent": "",
+    "time": "2025/7/3",
+    "image": "",
+    "image_small": ""
+  },
+  {
+    "character": "秦彻",
     "name": "潜入夜",
     "card_type_tag": "月晖",
     "card_color_tag": "粉珀",
@@ -3677,6 +3768,19 @@
     "time": "2025/1/22",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/c/cf/tvdjpkyazljcvgork035kahuj0nhi9w.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E8%BF%9C%E7%A9%BA%E8%BF%B7%E8%88%AA.png",
     "image": "https://patchwiki.biligame.com/images/lysk//c/cf/tvdjpkyazljcvgork035kahuj0nhi9w.png?download"
+  },
+  {
+    "character": "夏以昼",
+    "name": "永无岛",
+    "card_type_tag": "月晖",
+    "card_color_tag": "红漪",
+    "star": "5星",
+    "talent": "攻击",
+    "get": "限时许愿[[「于深空见证的」]]",
+    "permanent": "",
+    "time": "2025/7/3",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/2/21/rhb0qsgns5m4mvu04ivw7kzink7dbdq.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%B0%B8%E6%97%A0%E5%B2%9B.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//2/21/rhb0qsgns5m4mvu04ivw7kzink7dbdq.png?download"
   },
   {
     "character": "夏以昼",
