@@ -65,11 +65,10 @@ jobs:
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: Cards JSON Updated
+          subject: Deepspace Cards Updated
           to: chenczn3528@163.com
           from: ${{ secrets.EMAIL_USERNAME }}
-          content_type: text/html
-          body: |
+          html_body: |
             <h3>cards.json 已更新</h3>
             <p>以下是更新内容：</p>
             <pre style="background:#f6f8fa;padding:16px;border-radius:6px;overflow:auto;font-family:monospace;">${{ steps.diff.outputs.diff_html }}
