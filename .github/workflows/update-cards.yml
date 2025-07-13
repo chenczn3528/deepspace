@@ -2,47 +2,72 @@ name: Update Cards JSON
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 每天的00:00执行，使用Cron语法
-  workflow_dispatch:  # 允许手动触发
+    - cron: '0 0 * * *'  # 每天00:00执行
+  workflow_dispatch:
 
 jobs:
   update_cards:
-    runs-on: ubuntu-latest  # 使用Ubuntu最新版本的运行环境
+    runs-on: ubuntu-latest
 
     steps:
-      # Checkout 项目代码
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # 设置 Python 环境
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'  # 使用Python 3.x
+          python-version: '3.x'
 
-      # 安装依赖（假设你有一个 requirements.txt 文件）
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 运行 Python 脚本
       - name: Run update script
         run: |
-          python src/update_cards.py  # 替换为你的脚本名称
+          python src/update_cards.py
 
-      # 确认是否有文件变动
       - name: Check for changes
+        id: check
         run: |
-          git diff --exit-code src/assets/cards.json || echo "Changes detected"
+          git diff --quiet src/assets/cards.json
+          echo "changes_detected=$([[ $? -ne 0 ]] && echo true || echo false)" >> "$GITHUB_OUTPUT"
 
-      # 将更新后的 cards.json 文件提交到 GitHub
+      - name: Extract and highlight diff of cards.json
+        if: steps.check.outputs.changes_detected == 'true'
+        id: diff
+        run: |
+          echo "diff_html<<EOF" >> "$GITHUB_OUTPUT"
+          git diff src/assets/cards.json \
+          | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' \
+          | sed -e 's/^+/<span style="color:#22863a;">&<\/span>/g' \
+                -e 's/^-/<span style="color:#b31d28;">&<\/span>/g' \
+          >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
       - name: Commit updated cards.json
+        if: steps.check.outputs.changes_detected == 'true'
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add src/assets/cards.json
-          git status # 查看是否有变更
-          git diff --exit-code src/assets/cards.json || (git commit -m "Update cards.json" && git push)
+          git commit -m "Update cards.json"
+          git push
 
-
+      - name: Send email if cards.json changed
+        if: steps.check.outputs.changes_detected == 'true'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.qq.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Cards JSON Updated
+          to: chenczn3528@163.com
+          from: ${{ secrets.EMAIL_USERNAME }}
+          content_type: text/html
+          body: |
+            <h3>cards.json 已更新</h3>
+            <p>以下是更新内容：</p>
+            <pre style="background:#f6f8fa;padding:16px;border-radius:6px;overflow:auto;font-family:monospace;">${{ steps.diff.outputs.diff_html }}
+            </pre>

@@ -8,6 +8,7 @@ on:
 jobs:
   run-crawler:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
 
@@ -23,22 +24,56 @@ jobs:
           sudo apt-get install -y wget unzip
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get -f install -y
-      
-      
 
       - name: Run the crawler
         run: python src/update_songs.py
 
       # 检查是否有文件变动
       - name: Check for changes
+        id: check
         run: |
-          git diff --exit-code src/assets/songs_list.json src/assets/songs.json || echo "Changes detected"
+          git diff --quiet src/assets/songs_list.json src/assets/songs.json
+          echo "changes_detected=$([[ $? -ne 0 ]] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      # 提取文件差异并高亮显示
+      - name: Extract and highlight diff of songs.json and songs_list.json
+        if: steps.check.outputs.changes_detected == 'true'
+        id: diff
+        run: |
+          echo "diff_html<<EOF" >> "$GITHUB_OUTPUT"
+          git diff src/assets/songs_list.json src/assets/songs.json \
+          | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' \
+          | sed -e 's/^+/<span style="color:#22863a;">&<\/span>/g' \
+                -e 's/^-/<span style="color:#b31d28;">&<\/span>/g' \
+          >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
       # 提交变更
       - name: Commit updated files
+        if: steps.check.outputs.changes_detected == 'true'
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add src/assets/songs_list.json src/assets/songs.json
-          git status
-          git diff --exit-code src/assets/songs_list.json src/assets/songs.json || (git commit -m "Update songs data" && git push)
+          git commit -m "Update songs data"
+          git push
+
+      # 发送邮件通知（文件有变动时）
+      - name: Send email if songs.json or songs_list.json changed
+        if: steps.check.outputs.changes_detected == 'true'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.qq.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Songs JSON Updated
+          to: chenczn3528@163.com
+          from: ${{ secrets.EMAIL_USERNAME }}
+          content_type: text/html
+          body: |
+            <h3>songs.json 和 songs_list.json 已更新</h3>
+            <p>以下是更新内容：</p>
+            <pre style="background:#f6f8fa;padding:16px;border-radius:6px;overflow:auto;font-family:monospace;">
+            ${{ steps.diff.outputs.diff_html }}
+            </pre>
