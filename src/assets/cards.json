@@ -5,7 +5,7 @@
     "card_type_tag": "日冕",
     "card_color_tag": "绿珥",
     "star": "5星",
-    "talent": "攻击test",
+    "talent": "攻击",
     "get": "许愿",
     "permanent": "常驻",
     "time": "2024/1/18",
@@ -3716,6 +3716,19 @@
     "time": "2024/7/15",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/c/ce/c5yu8xyfzr3pk4sv5g3i4yd7mnahka2.png/400px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E5%BA%95%E7%89%8C.png",
     "image": "https://patchwiki.biligame.com/images/lysk//c/ce/c5yu8xyfzr3pk4sv5g3i4yd7mnahka2.png?download"
+  },
+  {
+    "character": "夏以昼",
+    "name": "槐序",
+    "card_type_tag": "月晖",
+    "card_color_tag": "绿珥",
+    "star": "5星",
+    "talent": "攻击",
+    "get": "[[「心动挚礼」5期]]",
+    "permanent": "",
+    "time": "2025/7/12",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/0/04/kzs8kmcly7ntuvxrkthqoruqi4r62xn.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%A7%90%E5%BA%8F.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//0/04/kzs8kmcly7ntuvxrkthqoruqi4r62xn.png?download"
   },
   {
     "character": "夏以昼",
