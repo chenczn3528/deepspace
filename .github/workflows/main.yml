@@ -1,0 +1,20 @@
+name: Test Email
+
+on:
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  test_mail:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send test email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.qq.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Test email from GitHub Actions
+          to: chenczn3528@163.com
+          from: GitHub Action <${{ secrets.EMAIL_USERNAME }}>
+          body: This is a test email to verify that your SMTP setup works.
