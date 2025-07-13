@@ -50,10 +50,10 @@ def fetch_detail_image(card_url):
                 biggest_srcset = src
             return src, biggest_srcset
         else:
-            print(card_url)
+            print(card_url, flush=True)
             return "", ""
     except Exception as e:
-        print(f"❌ 获取详情页失败：{card_url}，错误：{e}")
+        print(f"❌ 获取详情页失败：{card_url}，错误：{e}", flush=True)
         return "", ""
 
 
@@ -97,10 +97,10 @@ def wiki_detailed_info(card_name):
                         info_dict[var] = value
             return info_dict
         except Exception as e:
-            print(e)
+            print(e, flush=True)
             time.sleep(5)
             if i == max_tries - 1:
-                print(card_name)
+                print(card_name, flush=True)
                 return None
 
 
@@ -128,7 +128,7 @@ for url in urls:
 
         new_card_data = wiki_detailed_info(card_name)
 
-        print(count + 1, card_name)
+        print(count + 1, card_name, flush=True)
         count += 1
 
         detail_href = card_a["href"] if card_a and "href" in card_a.attrs else ""
@@ -151,7 +151,7 @@ for url in urls:
                 small_card_image, card_image = fetch_detail_image(detail_url) if detail_url else ""
                 break
             else:
-                print(f"❌ 卡片 {card_name} 信息不完整，重新爬取... ")
+                print(f"❌ 卡片 {card_name} 信息不完整，重新爬取... ", flush=True)
                 time.sleep(5)  # 等待一段时间后重试
                 new_card_data = wiki_detailed_info(card_name)
                 small_card_image, card_image = fetch_detail_image(detail_url) if detail_url else ""
@@ -171,4 +171,4 @@ for url in urls:
 with open(cards_path, "w", encoding="utf-8") as f:
     json.dump(all_cards, f, ensure_ascii=False, indent=2)
 
-print(f"✅ 共提取 {len(all_cards)} 张卡片信息，已保存为 {cards_path}")
+print(f"✅ 共提取 {len(all_cards)} 张卡片信息，已保存为 {cards_path}", flush=True)

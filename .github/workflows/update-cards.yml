@@ -30,8 +30,11 @@ jobs:
       - name: Check for changes
         id: check
         run: |
-          git diff --quiet src/assets/cards.json
-          echo "changes_detected=$([[ $? -ne 0 ]] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          if git diff --quiet src/assets/cards.json; then
+            echo "changes_detected=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changes_detected=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Extract and highlight diff of cards.json
         if: steps.check.outputs.changes_detected == 'true'

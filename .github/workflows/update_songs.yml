@@ -32,8 +32,11 @@ jobs:
       - name: Check for changes
         id: check
         run: |
-          git diff --quiet src/assets/songs_list.json src/assets/songs.json
-          echo "changes_detected=$([[ $? -ne 0 ]] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          if git diff --quiet src/assets/songs_list.json src/assets/songs.json; then
+            echo "changes_detected=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changes_detected=true" >> "$GITHUB_OUTPUT"
+          fi
 
       # 提取文件差异并高亮显示
       - name: Extract and highlight diff of songs.json and songs_list.json
