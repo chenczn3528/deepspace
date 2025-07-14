@@ -2,7 +2,7 @@ name: Update Cards JSON
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 每天00:00执行
+    - cron: '30 6 * * *'  # 每天00:00执行
   workflow_dispatch:
 
 jobs:
@@ -33,7 +33,17 @@ jobs:
           if git diff --quiet src/assets/cards.json; then
             echo "changes_detected=false" >> "$GITHUB_OUTPUT"
           else
-            echo "changes_detected=true" >> "$GITHUB_OUTPUT"
+            ADDED=$(git diff --numstat src/assets/cards.json | awk '{print $1}')
+            REMOVED=$(git diff --numstat src/assets/cards.json | awk '{print $2}')
+            echo "ADDED=$ADDED, REMOVED=$REMOVED"
+
+            if [ "$ADDED" -gt "$REMOVED" ]; then
+              echo "Meaningful change detected: +$ADDED > -$REMOVED"
+              echo "changes_detected=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "Change rejected: +$ADDED <= -$REMOVED"
+              echo "changes_detected=false" >> "$GITHUB_OUTPUT"
+            fi
           fi
 
       - name: Extract and highlight diff of cards.json
@@ -41,11 +51,14 @@ jobs:
         id: diff
         run: |
           echo "diff_html<<EOF" >> "$GITHUB_OUTPUT"
-          git diff src/assets/cards.json \
-          | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' \
-          | sed -e 's/^+/<span style="color:#22863a;">&<\/span>/g' \
-                -e 's/^-/<span style="color:#b31d28;">&<\/span>/g' \
-          >> "$GITHUB_OUTPUT"
+          git diff src/assets/cards.json | \
+          sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' | \
+          sed -E \
+            -e '/^\+/ s|^+|<div style="background-color:#e6ffed;color:#22863a;"><code>+|' \
+            -e '/^-/ s|^-|<div style="background-color:#ffeef0;color:#b31d28;"><code>-|' \
+            -e '/^ / s|^ |<div><code> |' \
+            -e 's|$|</code></div>|' \
+            >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Commit updated cards.json
@@ -54,7 +67,8 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add src/assets/cards.json
-          git commit -m "Update cards.json"
+          DATE=$(date +'%Y-%m-%d')
+          git commit -m "chore: update cards data on $DATE"
           git push
 
       - name: Send email if cards.json changed

@@ -2,7 +2,7 @@ name: Update Songs JSON
 
 on:
   schedule:
-    - cron: '0 1 * * *'  # 每天 UTC 时间 1:00 运行
+    - cron: '0 6 * * *'  # 每天 UTC 时间 1:00 运行
   workflow_dispatch:      # 也可以手动触发
 
 jobs:
@@ -29,13 +29,23 @@ jobs:
         run: python src/update_songs.py
 
       # 检查是否有文件变动
-      - name: Check for changes
+      - name: Check for meaningful changes in songs files
         id: check
         run: |
           if git diff --quiet src/assets/songs_list.json src/assets/songs.json; then
             echo "changes_detected=false" >> "$GITHUB_OUTPUT"
           else
-            echo "changes_detected=true" >> "$GITHUB_OUTPUT"
+            ADDED=$(git diff --numstat src/assets/songs_list.json src/assets/songs.json | awk '{added+=$1} END {print added}')
+            REMOVED=$(git diff --numstat src/assets/songs_list.json src/assets/songs.json | awk '{removed+=$2} END {print removed}')
+            echo "ADDED=$ADDED, REMOVED=$REMOVED"  # 可选调试输出
+
+            if [ "$ADDED" -gt "$REMOVED" ]; then
+              echo "Meaningful change detected: +$ADDED > -$REMOVED"
+              echo "changes_detected=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "Change rejected: +$ADDED <= -$REMOVED"
+              echo "changes_detected=false" >> "$GITHUB_OUTPUT"
+            fi
           fi
 
       # 提取文件差异并高亮显示
@@ -44,11 +54,14 @@ jobs:
         id: diff
         run: |
           echo "diff_html<<EOF" >> "$GITHUB_OUTPUT"
-          git diff src/assets/songs_list.json src/assets/songs.json \
-          | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' \
-          | sed -e 's/^+/<span style="color:#22863a;">&<\/span>/g' \
-                -e 's/^-/<span style="color:#b31d28;">&<\/span>/g' \
-          >> "$GITHUB_OUTPUT"
+          git diff src/assets/songs_list.json src/assets/songs.json | \
+          sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' | \
+          sed -E \
+            -e '/^\+/ s|^+|<div style="background-color:#e6ffed;color:#22863a;"><code>+|' \
+            -e '/^-/ s|^-|<div style="background-color:#ffeef0;color:#b31d28;"><code>-|' \
+            -e '/^ / s|^ |<div><code> |' \
+            -e 's|$|</code></div>|' \
+            >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       # 提交变更
@@ -58,7 +71,8 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add src/assets/songs_list.json src/assets/songs.json
-          git commit -m "Update songs data"
+          DATE=$(date +'%Y-%m-%d')
+          git commit -m "chore: update songs data on $DATE"
           git push
 
       # 发送邮件通知（文件有变动时）

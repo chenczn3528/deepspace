@@ -200,8 +200,6 @@ const SettingsLayer = ({
                         </button>
 
                     </div>
-                    <label style={{color: "yellow"}}>可以的话 希望宝宝们去我主页</label>
-                    <label style={{color: "yellow"}}>投票看看想要哪种背景音乐❤</label>
                 </div>
             </div>
 
