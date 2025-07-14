@@ -1,6 +1,19 @@
 [
   {
     "character": "沈星回",
+    "name": "逐光破影",
+    "card_type_tag": "日冕",
+    "card_color_tag": "绿珥",
+    "star": "5星",
+    "talent": "攻击",
+    "get": "许愿",
+    "permanent": "常驻",
+    "time": "2024/1/18",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/0/03/jccmxzwem31sh8f5oru471k4rqvx1y2.png/400px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E9%80%90%E5%85%89%E7%A0%B4%E5%BD%B1.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//0/03/jccmxzwem31sh8f5oru471k4rqvx1y2.png?download"
+  },
+  {
+    "character": "沈星回",
     "name": "逐光迷心",
     "card_type_tag": "日冕",
     "card_color_tag": "绿珥",
