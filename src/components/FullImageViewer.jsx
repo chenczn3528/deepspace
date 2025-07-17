@@ -1,10 +1,20 @@
-import React, {useEffect, useState} from 'react';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
+import React, {useEffect, useRef, useState} from 'react';
 import LeftIcon from "../icons/LeftIcon.jsx";
 import RightIcon from "../icons/RightIcon.jsx";
 import LockIcon from "../icons/LockIcon.jsx";
+import ShortVideoIcon from "../icons/ShortVideoIcon.jsx";
 
-export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose, fontsize }) => {
+const FullImageViewer = ({
+     videoUrl,
+     setVideoUrl,
+     showPageZIndex,
+     setShowPageZIndex,
+     cards,
+     currentIndex,
+     setCurrentIndex,
+     onClose,
+     fontsize
+}) => {
 
     const [showPicture, setShowPicture] = useState(false);
     const card = cards[currentIndex];
@@ -37,6 +47,7 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose,
 
     useEffect(()=>{
         if(!card.owned) setShowPicture(false);
+        setVideoUrl(card?.video_url);
     },[card])
 
 
@@ -54,12 +65,13 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose,
     }, [card?.image]);
 
 
-
     return (
         <div className="absolute w-full h-full z-30"
              onClick={() => {
                  if (card.owned) setShowPicture(!showPicture)
              }}>
+
+
 
             {!showPicture && (
                 <div>
@@ -88,6 +100,29 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose,
                         <LeftIcon size={fontsize * 2.5} color="white"/>
                     </button>
 
+                    {/*视频按钮*/}
+                    {card.video_url && (
+                        <button
+                            className="absolute"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowPageZIndex(100);
+                            }}
+                            style={{
+                                background: 'transparent',
+                                border: 'none',
+                                padding: 0,
+                                right: `${fontsize * 1.2}px`,
+                                top: `${fontsize * 1.2}px`,
+                                zIndex: card.owned ? 40 : 20,
+                            }}
+                        >
+                            <ShortVideoIcon size={fontsize * 2} color="white"/>
+                        </button>
+                    )}
+
+
+
                     {/*上一个*/}
                     <div
                         className="absolute z-30 h-full flex justify-center items-center"
@@ -115,7 +150,8 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose,
                         className="absolute left-0 w-full h-full z-20 flex items-center justify-center"
                         style={{background: '#00000088', pointerEvents: 'none',}}
                     />
-                    <div className="absolute w-full h-full flex justify-center items-center z-25" style={{pointerEvents: 'none'}}>
+                    <div className="absolute w-full h-full flex justify-center items-center z-25"
+                         style={{pointerEvents: 'none'}}>
                         <LockIcon size={fontsize * 3} color={'lightgray'}/>
                     </div>
                 </div>
@@ -209,6 +245,12 @@ export const FullImageViewer = ({ cards, currentIndex, setCurrentIndex, onClose,
                 </div>
             )}
 
+
+
+
         </div>
     );
 };
+
+
+export default FullImageViewer;

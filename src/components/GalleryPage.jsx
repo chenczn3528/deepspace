@@ -1,14 +1,23 @@
 import React, {useState, useMemo, useEffect} from 'react';
-import { FullImageViewer } from './FullImageViewer';
+import FullImageViewer from './FullImageViewer';
 import FunctionIcon from "../icons/FunctionIcon.jsx";
 import LeftIcon from "../icons/LeftIcon.jsx";
 import FullScreenIcon from "../icons/FullScreenIcon.jsx";
 import SmallScreenIcon from "../icons/SmallScreenIcon.jsx";
 import LockIcon from "../icons/LockIcon.jsx";
 import cardData from '../assets/cards.json';
+import Home from "../Home.jsx";
 
 
-export const GalleryPage = ({ allCards, onClose, fontsize }) => {
+const GalleryPage = ({
+     allCards,
+     onClose,
+     fontsize,
+     videoUrl,
+     setVideoUrl,
+     showPageZIndex,
+     setShowPageZIndex,
+}) => {
 
     const [showAllCards, setShowAllCards] = useState(false);
     const [withLockCards, setWithLockCards] = useState([]);
@@ -381,8 +390,15 @@ export const GalleryPage = ({ allCards, onClose, fontsize }) => {
                     onClose={() => setShowFullImage(false)}
                     setCurrentIndex={setCurrentIndex}
                     fontsize={fontsize}
+                    videoUrl={videoUrl}
+                    setVideoUrl={setVideoUrl}
+                    showPageZIndex={showPageZIndex}
+                    setShowPageZIndex={setShowPageZIndex}
                 />
             )}
         </div>
     );
 };
+
+
+export default GalleryPage;

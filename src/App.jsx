@@ -53,7 +53,7 @@ function App() {
     const updateRealVh = () => {
       const realHeight = window.visualViewport?.height || window.innerHeight;
       document.documentElement.style.setProperty('--real-vh', `${realHeight}px`);
-      console.log(realHeight, window.innerHeight)
+      // console.log(realHeight, window.innerHeight)
     };
 
     updateRealVh();
@@ -71,7 +71,7 @@ function App() {
     <div className="viewport">
       <div className="wrapper" ref={wrapperRef}>
         <div className="game relative" ref={gameRef}>
-          <Home />
+          <Home isPortrait={isPortrait}/>
         </div>
       </div>
     </div>

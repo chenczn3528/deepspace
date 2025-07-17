@@ -8,15 +8,16 @@ import CardOverlay from './components/CardOverlay';
 import SettingsLayer from "./components/SettingsLayer.jsx";
 import CardSummary from "./components/CardSummary.jsx";
 import useLocalStorageState from './hooks/useLocalStorageState'
-import {GalleryPage} from "./components/GalleryPage.jsx";
+import GalleryPage from "./components/GalleryPage.jsx";
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import {useHistoryDB} from "./hooks/useHistoryDB.js";
 import useResponsiveFontSize from "./hooks/useResponsiveFontSize.js";
 import MusicPage from "./components/MusicPage.jsx";
+import VideoPage from "./components/VideoPage.jsx";
 
 
 
-const Home = () => {
+const Home = ({isPortrait}) => {
 
     // 加载serviceWorker
     if ('serviceWorker' in navigator) {
@@ -560,6 +561,8 @@ const Home = () => {
 
 
     const [showMusicPageZIndex, setShowMusicPageZIndex] = useState(-1);
+    const [showVideoPageZIndex, setShowVideoPageZIndex] = useState(-1);
+    const [videoUrl, setVideoUrl] = useState('');
 
     // ========================================================
     // 返回数据时显示的页面
@@ -586,6 +589,17 @@ const Home = () => {
                 musicID={musicID}
                 setMusicID={setMusicID}
             />
+
+            {showVideoPageZIndex > 0 && (
+                <VideoPage
+                    fontsize={fontsize}
+                    showPageZIndex={showVideoPageZIndex}
+                    setShowPageZIndex={setShowVideoPageZIndex}
+                    video_url={videoUrl}
+                    isPortrait={isPortrait}
+                />
+            )}
+
 
 
             {/* 视频层（最底层） */}
@@ -684,9 +698,14 @@ const Home = () => {
             {/*查看图鉴*/}
             {showGallery && (
                 <GalleryPage
+                    isPortrait={isPortrait}
                     allCards={galleryHistory}
                     onClose={() => setShowGallery(false)}
                     fontsize={fontsize}
+                    videoUrl={videoUrl}
+                    setVideoUrl={setVideoUrl}
+                    showPageZIndex={showVideoPageZIndex}
+                    setShowPageZIndex={setShowVideoPageZIndex}
                 />
             )}
 
