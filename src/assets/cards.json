@@ -225,6 +225,34 @@
   },
   {
     "character": "沈星回",
+    "name": "夜誓烬歌",
+    "card_type_tag": "日冕",
+    "card_color_tag": "红漪",
+    "star": "5星",
+    "talent": "生命",
+    "get": "限时许愿[[「沉坠的冠冕」]]",
+    "permanent": "",
+    "time": "2025/7/25",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/2/20/0ekimtm5joftxgto7kxckrlx39hblk8.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E5%A4%9C%E8%AA%93%E7%83%AC%E6%AD%8C.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//2/20/0ekimtm5joftxgto7kxckrlx39hblk8.png?download",
+    "video_url": "https://player.bilibili.com/player.html?isOutside=true&bvid=BV19m42137BV&p=25&autoplay=auto&preload=auto&quality=1080p"
+  },
+  {
+    "character": "沈星回",
+    "name": "夜誓迷月",
+    "card_type_tag": "日冕",
+    "card_color_tag": "红漪",
+    "star": "5星",
+    "talent": "生命",
+    "get": "限时许愿[[「沉坠的冠冕」]]",
+    "permanent": "",
+    "time": "2025/7/25",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/c/c8/smn5pydwaqwmcl3k3cyh4ke0scisyq0.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E5%A4%9C%E8%AA%93%E8%BF%B7%E6%9C%88.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//c/c8/smn5pydwaqwmcl3k3cyh4ke0scisyq0.png?download",
+    "video_url": "https://player.bilibili.com/player.html?isOutside=true&bvid=BV19m42137BV&p=26&autoplay=auto&preload=auto&quality=1080p"
+  },
+  {
+    "character": "沈星回",
     "name": "味蕾突袭",
     "card_type_tag": "月晖",
     "card_color_tag": "红漪",
@@ -543,6 +571,34 @@
     "time": "2024/12/31",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/f/fe/1w0to1q3y54vp8ehfnom943easesq01.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E9%A2%84%E8%B0%8B%E5%BF%83%E5%8A%A8.png",
     "image": "https://patchwiki.biligame.com/images/lysk//f/fe/1w0to1q3y54vp8ehfnom943easesq01.png?download",
+    "video_url": ""
+  },
+  {
+    "character": "沈星回",
+    "name": "鎏光碎梦",
+    "card_type_tag": "日冕",
+    "card_color_tag": "蓝弧",
+    "star": "4星",
+    "talent": "防御",
+    "get": "「时墟回轮」朝圣之旅",
+    "permanent": "",
+    "time": "2025/7/25",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/a/a0/ae6h9ukdqcnjxd3sxxg4x1gykyl70fm.png/900px-%E6%80%9D%E5%BF%B5%E6%A8%AA%E5%9B%BE-%E9%8E%8F%E5%85%89%E7%A2%8E%E6%A2%A6.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//a/a0/ae6h9ukdqcnjxd3sxxg4x1gykyl70fm.png?download",
+    "video_url": ""
+  },
+  {
+    "character": "沈星回",
+    "name": "鎏光蜃影",
+    "card_type_tag": "日冕",
+    "card_color_tag": "蓝弧",
+    "star": "4星",
+    "talent": "防御",
+    "get": "「时墟回轮」搭档预演",
+    "permanent": "",
+    "time": "2025/7/25",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/6/61/d3fb0hqeezmjip901fk3bsa57k0rb0n.png/900px-%E6%80%9D%E5%BF%B5%E6%A8%AA%E5%9B%BE-%E9%8E%8F%E5%85%89%E8%9C%83%E5%BD%B1.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//6/61/d3fb0hqeezmjip901fk3bsa57k0rb0n.png?download",
     "video_url": ""
   },
   {
@@ -1103,6 +1159,20 @@
     "time": "2024/1/18",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/9/97/sp6vlucz88v68gurfdbj9ikpv5s8lk3.png/400px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E5%A4%87%E6%88%98.png",
     "image": "https://patchwiki.biligame.com/images/lysk//9/97/sp6vlucz88v68gurfdbj9ikpv5s8lk3.png?download",
+    "video_url": ""
+  },
+  {
+    "character": "沈星回",
+    "name": "拭痕",
+    "card_type_tag": "月晖",
+    "card_color_tag": "粉珀",
+    "star": "3星",
+    "talent": "攻击",
+    "get": "[[「时墟回轮」]]河岸工坊兑换获得",
+    "permanent": "",
+    "time": "2025/7/25",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/c/c5/kfg58988sdvg4w7hcx9k0mfxrlbdqqd.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%8B%AD%E7%97%95.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//c/c5/kfg58988sdvg4w7hcx9k0mfxrlbdqqd.png?download",
     "video_url": ""
   },
   {
