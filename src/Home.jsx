@@ -385,7 +385,10 @@ const Home = ({isPortrait}) => {
                 }
             } else {
                 // 启用或关闭大小保底逻辑
-                const mustBeTarget = useSoftGuarantee && selectedRole !== '随机' && localSoftPityFailed;
+                const mustBeTarget = (
+                    (useSoftGuarantee && selectedRole !== '随机' && localSoftPityFailed)
+                    || (selectedRole !== '随机' && !useSoftGuarantee)
+                );
 
                 do {
                     result = getRandomCard(

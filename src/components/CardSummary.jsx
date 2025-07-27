@@ -1,5 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';  // 确保你有安装这个库
+import CardSummaryImageViewer from './CardSummaryImageViewer.jsx';
 
 const CardSummary = ({ drawResults, onClose, fontsize }) => {
 
@@ -17,6 +18,8 @@ const CardSummary = ({ drawResults, onClose, fontsize }) => {
             .catch((err) => console.warn("播放十抽总结音效失败：", err));
     }, []); // 组件加载时播放一次
 
+    const [showImageViewer, setShowImageViewer] = React.useState(false);
+    const [viewerIndex, setViewerIndex] = React.useState(0);
 
 
     return (
@@ -62,14 +65,21 @@ const CardSummary = ({ drawResults, onClose, fontsize }) => {
                             placeholderSrc={item.card.image_small}
                             effect="blur"
                             alt={`Card ${index}`}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover cursor-pointer"
                             style={glowStyle}
+                            onClick={e => {e.stopPropagation(); setViewerIndex(index); setShowImageViewer(true);}}
                         />
                     );
                 })}
             </div>
 
-
+            {showImageViewer && (
+                <CardSummaryImageViewer
+                    card={drawResults[viewerIndex].card}
+                    onClose={() => setShowImageViewer(false)}
+                    fontsize={fontsize}
+                />
+            )}
         </div>
     );
 };
