@@ -2759,6 +2759,20 @@
   },
   {
     "character": "祁煜",
+    "name": "透明洋",
+    "card_type_tag": "月晖",
+    "card_color_tag": "紫辉",
+    "star": "4星",
+    "talent": "生命",
+    "get": "[[「十日与你」12期]]活动中获取",
+    "permanent": "",
+    "time": "2025/8/5",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/9/97/nwvw63x9ozz4xlzi17k78oojdw4qbos.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E9%80%8F%E6%98%8E%E6%B4%8B.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//9/97/nwvw63x9ozz4xlzi17k78oojdw4qbos.png?download",
+    "video_url": ""
+  },
+  {
+    "character": "祁煜",
     "name": "点染晨曦",
     "card_type_tag": "日冕",
     "card_color_tag": "粉珀",
