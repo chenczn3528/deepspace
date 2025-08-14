@@ -8,11 +8,17 @@ import re
 
 cards_path = 'src/assets/cards.json'
 
+urls = [
+    "https://wiki.biligame.com/lysk/%E6%B2%88%E6%98%9F%E5%9B%9E:%E6%80%9D%E5%BF%B5",
+    "https://wiki.biligame.com/lysk/%E9%BB%8E%E6%B7%B1:%E6%80%9D%E5%BF%B5",
+    "https://wiki.biligame.com/lysk/%E7%A5%81%E7%85%9C:%E6%80%9D%E5%BF%B5",
+    "https://wiki.biligame.com/lysk/%E7%A7%A6%E5%BD%BB:%E6%80%9D%E5%BF%B5",
+    "https://wiki.biligame.com/lysk/%E5%A4%8F%E4%BB%A5%E6%98%BC:%E6%80%9D%E5%BF%B5"
+]
+
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
 }
-
-url = "https://wiki.biligame.com/lysk/%E6%80%9D%E5%BF%B5:%E7%AD%9B%E9%80%89"
 
 def extract_iframes(html) -> list:
     """
@@ -178,63 +184,59 @@ def is_card_data_complete(card_data):
 all_cards = []
 count = 0
 
+for url in urls:
+    res = requests.get(url, headers=headers)
+    soup = BeautifulSoup(res.content, "html.parser")
 
-res = requests.get(url, headers=headers)
-soup = BeautifulSoup(res.content, "html.parser")
+    card_boxes = soup.select("div.card-Item-box")
 
-card_boxes = soup.select("div.divsort")
+    for box in card_boxes:
 
-print(len(card_boxes))
+        # 获取卡名
+        card_a = box.select_one("a[title]")
+        card_name = card_a["title"] if card_a else "未知"
 
-for box in card_boxes:
-    # 获取卡名
-    card_name = box.select_one(".card-name").text.strip()
+        new_card_data = wiki_detailed_info(card_name)
 
-    new_card_data = wiki_detailed_info(card_name)
+        print(count + 1, card_name, flush=True)
+        count += 1
 
-    print(count + 1, card_name, flush=True)
-    count += 1
+        detail_href = card_a["href"] if card_a and "href" in card_a.attrs else ""
+        detail_url = urljoin(url, detail_href) if detail_href else ""
 
-    detail_a = box.select_one(".card-img a")
-    if detail_a:
-        detail_href = detail_a.get("href")
-        detail_url = "https://wiki.biligame.com/" + detail_href
-    else:
-        detail_url = None
+        for icon in box.select("a.image"):
+            img_tag = icon.find("img")
+            if not img_tag:
+                continue
+            img_url = extract_biggest_img_from_srcset(img_tag.get("srcset", ""))
 
-    for icon in box.select("a.image"):
-        img_tag = icon.find("img")
-        if not img_tag:
-            continue
-        img_url = extract_biggest_img_from_srcset(img_tag.get("srcset", ""))
+        small_card_image, card_image, video_url = fetch_detail_image(detail_url, card_name) if detail_url else ""
 
-    small_card_image, card_image, video_url = fetch_detail_image(detail_url, card_name) if detail_url else ""
+        attempt_count = 0
+        while not is_card_data_complete(new_card_data) or not (small_card_image or card_image):
+            if attempt_count > 5:
+                break
+            if card_name.startswith("文件:思念图标"):
+                new_card_data = wiki_detailed_info(card_name.split("文件:思念图标-")[-1].replace(".png", ""))
+                small_card_image, card_image, video_url = fetch_detail_image(detail_url, card_name) if detail_url else ""
+                break
+            else:
+                print(f"❌ 卡片 {card_name} 信息不完整，重新爬取... ", flush=True)
+                time.sleep(5)  # 等待一段时间后重试
+                new_card_data = wiki_detailed_info(card_name)
+                small_card_image, card_image, video_url = fetch_detail_image(detail_url, card_name) if detail_url else ""
 
-    attempt_count = 0
-    while not is_card_data_complete(new_card_data) or not (small_card_image or card_image):
-        if attempt_count > 5:
-            break
         if card_name.startswith("文件:思念图标"):
-            new_card_data = wiki_detailed_info(card_name.split("文件:思念图标-")[-1].replace(".png", ""))
-            small_card_image, card_image, video_url = fetch_detail_image(detail_url, card_name) if detail_url else ""
-            break
+            new_card_data["image"] = ""
+            new_card_data["image_small"] = ""
+            new_card_data["video_url"] = ""
         else:
-            print(f"❌ 卡片 {card_name} 信息不完整，重新爬取... ", flush=True)
-            time.sleep(5)  # 等待一段时间后重试
-            new_card_data = wiki_detailed_info(card_name)
-            small_card_image, card_image, video_url = fetch_detail_image(detail_url, card_name) if detail_url else ""
+            new_card_data["image_small"] = small_card_image
+            new_card_data["image"] = card_image.replace("thumb", "").split('.png')[0] + ".png?download"
+            new_card_data["video_url"] = video_url
 
-    if card_name.startswith("文件:思念图标"):
-        new_card_data["image"] = ""
-        new_card_data["image_small"] = ""
-        new_card_data["video_url"] = ""
-    else:
-        new_card_data["image_small"] = small_card_image
-        new_card_data["image"] = card_image.replace("thumb", "").split('.png')[0] + ".png?download"
-        new_card_data["video_url"] = video_url
-
-    all_cards.append(new_card_data)
-    time.sleep(0.2)
+        all_cards.append(new_card_data)
+        time.sleep(0.2)
 
 
 # 保存更新后的 JSON 文件
