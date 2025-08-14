@@ -2563,6 +2563,20 @@
   },
   {
     "character": "祁煜",
+    "name": "失重热浪",
+    "card_type_tag": "月晖",
+    "card_color_tag": "绿珥",
+    "star": "5星",
+    "talent": "攻击",
+    "get": "限时许愿[[「盛夏与你与海风」]]",
+    "permanent": "",
+    "time": "2025/8/12",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/6/63/3mu2eedibhg9jd32oaaxkeiwmce8ivy.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E5%A4%B1%E9%87%8D%E7%83%AD%E6%B5%AA.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//6/63/3mu2eedibhg9jd32oaaxkeiwmce8ivy.png?download",
+    "video_url": "https://player.bilibili.com/player.html?isOutside=true&bvid=BV1W6421Z7NZ&p=26&autoplay=auto&preload=auto&quality=1080p"
+  },
+  {
+    "character": "祁煜",
     "name": "潮间带",
     "card_type_tag": "月晖",
     "card_color_tag": "绿珥",
@@ -4268,6 +4282,20 @@
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/e/ee/av1gs2fxn6iohy6am6n118wivrcbm0m.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E9%99%84%E9%AA%A8%E4%B9%8B%E7%97%95.png",
     "image": "https://patchwiki.biligame.com/images/lysk//e/ee/av1gs2fxn6iohy6am6n118wivrcbm0m.png?download",
     "video_url": "https://player.bilibili.com/player.html?isOutside=true&bvid=BV1emcgeyEsh&p=5&autoplay=auto&preload=auto&quality=1080p"
+  },
+  {
+    "character": "夏以昼",
+    "name": "澄风掠海",
+    "card_type_tag": "月晖",
+    "card_color_tag": "紫辉",
+    "star": "5星",
+    "talent": "生命",
+    "get": "限时许愿[[「盛夏与你与海风」]]",
+    "permanent": "",
+    "time": "2025/8/12",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/1/1d/a7lk2twpcgicpj98cuhxjncdhie7abm.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%BE%84%E9%A3%8E%E6%8E%A0%E6%B5%B7.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//1/1d/a7lk2twpcgicpj98cuhxjncdhie7abm.png?download",
+    "video_url": "https://player.bilibili.com/player.html?isOutside=true&bvid=BV1emcgeyEsh&p=12&autoplay=auto&preload=auto&quality=1080p"
   },
   {
     "character": "夏以昼",
