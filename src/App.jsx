@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import Home from './Home.jsx';
+import AssetManager from './components/AssetManager.jsx';
+import AssetTest from './components/AssetTest.jsx'; // 添加这行
 
 function App() {
   const wrapperRef = useRef();
@@ -71,10 +73,13 @@ function App() {
     <div className="viewport">
       <div className="wrapper" ref={wrapperRef}>
         <div className="game relative" ref={gameRef}>
-          <Home isPortrait={isPortrait}/>
+          {/* <Home isPortrait={isPortrait}/> */}
+          {/* <AssetManager/> */}
+          <AssetTest />
         </div>
       </div>
     </div>
+    // <AssetTest />
   );
 }
 

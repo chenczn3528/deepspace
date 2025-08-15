@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Asset } from './Asset';
 
 const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, onSkip, isSingleDraw, fontsize }) => {
   const videoRef = useRef(null);
@@ -60,23 +61,25 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, onSkip, isSingleDraw, 
             </button>
         )}
 
-        <video
-            preload="auto"
-            ref={videoRef}
-            className="absolute w-full h-full object-cover"
-            onLoadedData={handleVideoLoaded}
-            onEnded={handleVideoEnded}
-            autoPlay
-            playsInline
+        {isFiveStar ? (
+          <Asset 
+            src="gold_card.mp4" 
+            type="video" 
+            autoPlay 
             muted
-            controls={false}
-        >
-          <source
-              src={isFiveStar ? 'videos/gold_card.mp4' : 'videos/no_gold_card.mp4'}
-              type="video/mp4"
+            onEnded={handleVideoEnded}
+            style={{ width: '100%', height: '100%' }}
           />
-          Your browser does not support the video tag.
-        </video>
+        ) : (
+          <Asset 
+            src="no_gold_card.mp4" 
+            type="video" 
+            autoPlay 
+            muted
+            onEnded={handleVideoEnded}
+            style={{ width: '100%', height: '100%' }}
+          />
+        )}
 
         <audio
             ref={audioRef}
