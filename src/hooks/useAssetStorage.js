@@ -408,10 +408,18 @@ export function useAssetStorage() {
       setError(null);
       setProgress(0);
       
+      // 动态导入配置文件
+      const assetsConfig = await import('../assets/assets_config.js');
+      const config = assetsConfig.assetsConfig;
+      
+      console.log('Loaded assets config:', config);
+      
+      // 从配置文件中获取文件列表
       const assets = [
-        { type: 'video', files: ['gold_card.mp4', 'no_gold_card.mp4', '夏以昼金卡.mp4', '开屏动画.mp4', '沈星回金卡.mp4', '祁煜金卡.mp4', '秦彻金卡.mp4', '黎深金卡.mp4'] },
-        { type: 'audio', files: ['不出金.mp3', '出金.mp3', '切换音效.mp3', '展示结算.mp3', '时空引力.mp3'] },
-        { type: 'image', files: ['结算背景.jpg'] }
+        { type: 'video', files: config.assets.video.map(file => file.path) },
+        { type: 'audio', files: config.assets.audio.map(file => file.path) },
+        { type: 'image', files: config.assets.image.map(file => file.path) },
+        { type: 'sign', files: config.assets.sign.map(file => file.path) }
       ];
       
       let totalCount = 0;
@@ -422,18 +430,18 @@ export function useAssetStorage() {
       }
       setTotalAssets(totalCount);
       
-      console.log(`Starting to store ${totalCount} assets...`);
+      console.log(`Starting to store ${totalCount} assets from config...`);
+      console.log('Assets to store:', assets);
       
       // 逐个存储
       for (const assetType of assets) {
-        for (const fileName of assetType.files) {
+        for (const filePath of assetType.files) {
           try {
-            const filePath = `/${assetType.type === 'image' ? 'images' : assetType.type + 's'}/${fileName}`;
             console.log(`Fetching ${filePath}...`);
             
             // 测试文件是否可访问
             const response = await fetch(filePath);
-            console.log(`Response for ${fileName}:`, {
+            console.log(`Response for ${filePath}:`, {
               ok: response.ok,
               status: response.status,
               statusText: response.statusText,
@@ -442,11 +450,13 @@ export function useAssetStorage() {
             
             if (response.ok) {
               const blob = await response.blob();
-              console.log(`Blob for ${fileName}:`, {
+              console.log(`Blob for ${filePath}:`, {
                 size: blob.size,
                 type: blob.type
               });
               
+              // 从文件路径中提取文件名
+              const fileName = filePath.split('/').pop();
               const file = new File([blob], fileName, { type: response.headers.get('content-type') });
               console.log(`File created for ${fileName}:`, {
                 name: file.name,
@@ -468,10 +478,10 @@ export function useAssetStorage() {
               
               console.log(`Stored ${fileName}, progress: ${overallProgress}%`);
             } else {
-              console.warn(`Failed to fetch ${fileName}: ${response.status} ${response.statusText}`);
+              console.warn(`Failed to fetch ${filePath}: ${response.status} ${response.statusText}`);
             }
           } catch (error) {
-            console.error(`Failed to store ${fileName}:`, error);
+            console.error(`Failed to store ${filePath}:`, error);
           }
         }
       }

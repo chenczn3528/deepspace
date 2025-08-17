@@ -6,12 +6,17 @@ const AssetTest = () => {
   const { storeAllAssets, getStorageStats, clearStorage, status, progress, currentAsset } = useAssetStorage();
   const [stats, setStats] = useState(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [fileSizeInfo, setFileSizeInfo] = useState(null);
 
   // 加载统计信息 - 使用 useCallback 避免无限循环
   const loadStats = useCallback(async () => {
     try {
       const storageStats = await getStorageStats();
       setStats(storageStats);
+      
+      // 获取文件大小信息
+      const assetsConfig = await import('../assets/assets_config.js');
+      setFileSizeInfo(assetsConfig.assetsConfig);
     } catch (error) {
       console.error('Failed to load stats:', error);
     }
@@ -91,6 +96,72 @@ const AssetTest = () => {
             当前: {currentAsset.name} ({(currentAsset.size / 1024 / 1024).toFixed(2)} MB)
           </p>
         )}
+      </div>
+    );
+  };
+
+  // 渲染文件大小信息
+  const renderFileSizeInfo = () => {
+    if (!fileSizeInfo) return null;
+    
+    const formatSize = (bytes) => {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
+    
+    return (
+      <div style={{ 
+        marginBottom: '16px', 
+        padding: '16px', 
+        backgroundColor: '#1f2937', 
+        borderRadius: '8px'
+      }}>
+        <label style={{ 
+          display: 'block',
+          fontSize: '18px', 
+          fontWeight: '500', 
+          marginBottom: '12px'
+        }}>
+          文件大小信息
+        </label>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+          gap: '16px',
+          fontSize: '14px'
+        }}>
+          <div>
+            <p style={{ margin: '4px 0', color: '#9ca3af' }}>视频文件</p>
+            <p style={{ margin: '4px 0' }}>数量: {fileSizeInfo.assets.video.length}</p>
+            <p style={{ margin: '4px 0' }}>总大小: {formatSize(
+              fileSizeInfo.assets.video.reduce((sum, file) => sum + (file.size || 0), 0)
+            )}</p>
+          </div>
+          <div>
+            <p style={{ margin: '4px 0', color: '#9ca3af' }}>音频文件</p>
+            <p style={{ margin: '4px 0' }}>数量: {fileSizeInfo.assets.audio.length}</p>
+            <p style={{ margin: '4px 0' }}>总大小: {formatSize(
+              fileSizeInfo.assets.audio.reduce((sum, file) => sum + (file.size || 0), 0)
+            )}</p>
+          </div>
+          <div>
+            <p style={{ margin: '4px 0', color: '#9ca3af' }}>图片文件</p>
+            <p style={{ margin: '4px 0' }}>数量: {fileSizeInfo.assets.image.length}</p>
+            <p style={{ margin: '4px 0' }}>总大小: {formatSize(
+              fileSizeInfo.assets.image.reduce((sum, file) => sum + (file.size || 0), 0)
+            )}</p>
+          </div>
+          <div>
+            <p style={{ margin: '4px 0', color: '#9ca3af' }}>头像文件</p>
+            <p style={{ margin: '4px 0' }}>数量: {fileSizeInfo.assets.sign.length}</p>
+            <p style={{ margin: '4px 0' }}>总大小: {formatSize(
+              fileSizeInfo.assets.sign.reduce((sum, file) => sum + (file.size || 0), 0)
+            )}</p>
+          </div>
+        </div>
       </div>
     );
   };
@@ -214,6 +285,9 @@ const AssetTest = () => {
         
         {/* 进度条 */}
         {renderProgressBar()}
+        
+        {/* 文件大小信息 */}
+        {renderFileSizeInfo()}
         
         {/* 统计信息 */}
         {stats && (
