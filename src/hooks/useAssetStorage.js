@@ -455,11 +455,14 @@ export function useAssetStorage() {
               });
               
               console.log(`Storing ${fileName}...`);
+              
+              // 存储单个文件，并监听其进度
               await storeAsset(file, assetType.type);
               
               storedCount++;
               setStoredAssets(storedCount);
               
+              // 更新总体进度
               const overallProgress = Math.round((storedCount / totalCount) * 100);
               setProgress(overallProgress);
               

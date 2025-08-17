@@ -3,9 +3,9 @@ import { Asset } from './Asset';
 import { useAssetStorage } from '../hooks/useAssetStorage';
 
 const AssetTest = () => {
-  const { storeAllAssets, getStorageStats, clearStorage, status, progress } = useAssetStorage();
+  const { storeAllAssets, getStorageStats, clearStorage, status, progress, currentAsset } = useAssetStorage();
   const [stats, setStats] = useState(null);
-  const [currentAsset, setCurrentAsset] = useState(null);
+  const [autoRefresh, setAutoRefresh] = useState(true);
 
   // 加载统计信息 - 使用 useCallback 避免无限循环
   const loadStats = useCallback(async () => {
@@ -21,11 +21,14 @@ const AssetTest = () => {
   const handleStoreAll = useCallback(async () => {
     try {
       await storeAllAssets();
-      await loadStats();
+      // 存储完成后自动刷新统计信息
+      if (autoRefresh) {
+        await loadStats();
+      }
     } catch (error) {
       console.error('Failed to store assets:', error);
     }
-  }, [storeAllAssets, loadStats]);
+  }, [storeAllAssets, loadStats, autoRefresh]);
 
   // 清空存储
   const handleClear = useCallback(async () => {
@@ -37,10 +40,60 @@ const AssetTest = () => {
     }
   }, [clearStorage]);
 
+  // 监听状态变化，自动刷新统计信息
+  useEffect(() => {
+    if (status === 'completed' && autoRefresh) {
+      loadStats();
+    }
+  }, [status, autoRefresh, loadStats]);
+
   // 只在组件挂载时加载一次统计信息
   useEffect(() => {
     loadStats();
   }, [loadStats]);
+
+  // 渲染进度条
+  const renderProgressBar = () => {
+    if (status !== 'storing') return null;
+    
+    return (
+      <div style={{ marginBottom: '16px' }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          marginBottom: '8px',
+          fontSize: '14px'
+        }}>
+          <span>存储进度</span>
+          <span>{progress}%</span>
+        </div>
+        <div style={{ 
+          width: '100%', 
+          height: '20px', 
+          backgroundColor: '#374151', 
+          borderRadius: '10px',
+          overflow: 'hidden'
+        }}>
+          <div style={{ 
+            width: `${progress}%`, 
+            height: '100%', 
+            backgroundColor: '#2563eb',
+            transition: 'width 0.3s ease',
+            borderRadius: '10px'
+          }} />
+        </div>
+        {currentAsset && (
+          <p style={{ 
+            margin: '8px 0 0 0', 
+            fontSize: '14px', 
+            color: '#9ca3af' 
+          }}>
+            当前: {currentAsset.name} ({(currentAsset.size / 1024 / 1024).toFixed(2)} MB)
+          </p>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div style={{ 
@@ -75,6 +128,26 @@ const AssetTest = () => {
         }}>
           控制面板
         </label>
+        
+        {/* 自动刷新开关 */}
+        <div style={{ 
+          marginBottom: '16px', 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '8px' 
+        }}>
+          <input
+            type="checkbox"
+            id="autoRefresh"
+            checked={autoRefresh}
+            onChange={(e) => setAutoRefresh(e.target.checked)}
+            style={{ width: '16px', height: '16px' }}
+          />
+          <label htmlFor="autoRefresh" style={{ fontSize: '14px' }}>
+            自动刷新统计信息
+          </label>
+        </div>
+        
         <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
           <button
             onClick={handleStoreAll}
@@ -137,17 +210,10 @@ const AssetTest = () => {
         {/* 状态显示 */}
         <div style={{ marginBottom: '16px' }}>
           <p style={{ margin: '4px 0' }}>状态: {status}</p>
-          {status === 'storing' && (
-            <div>
-              <p style={{ margin: '4px 0' }}>进度: {progress}%</p>
-              {currentAsset && (
-                <p style={{ margin: '4px 0' }}>
-                  当前: {currentAsset.name} ({(currentAsset.size / 1024 / 1024).toFixed(2)} MB)
-                </p>
-              )}
-            </div>
-          )}
         </div>
+        
+        {/* 进度条 */}
+        {renderProgressBar()}
         
         {/* 统计信息 */}
         {stats && (
