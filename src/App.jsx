@@ -8,6 +8,7 @@ function App() {
   const wrapperRef = useRef();
   const gameRef = useRef();
   const [isPortrait, setIsPortrait] = useState(window.innerHeight >= window.innerWidth);
+  const [showAssetTest, setShowAssetTest] = useState(true);
 
   const resize = () => {
     const w = window.innerWidth;
@@ -73,9 +74,12 @@ function App() {
     <div className="viewport">
       <div className="wrapper" ref={wrapperRef}>
         <div className="game relative" ref={gameRef}>
-          {/* <Home isPortrait={isPortrait}/> */}
+          {showAssetTest ? (
+            <AssetTest onClose={() => setShowAssetTest(false)} />
+          ) : (
+            <Home isPortrait={isPortrait}/>
+          )}
           {/* <AssetManager/> */}
-          <AssetTest />
         </div>
       </div>
     </div>

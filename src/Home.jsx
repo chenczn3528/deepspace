@@ -14,7 +14,7 @@ import {useHistoryDB} from "./hooks/useHistoryDB.js";
 import useResponsiveFontSize from "./hooks/useResponsiveFontSize.js";
 import MusicPage from "./components/MusicPage.jsx";
 import VideoPage from "./components/VideoPage.jsx";
-
+import { Asset } from './components/Asset.jsx';
 
 
 const Home = ({isPortrait}) => {
@@ -606,7 +606,21 @@ const Home = ({isPortrait}) => {
 
 
             {/* 视频层（最底层） */}
-            <video
+            <Asset
+                src="开屏动画.mp4"
+                type="video"
+                autoPlay
+                muted
+                playsInline
+                onEnded={() => {
+                    const validDrawId = drawSessionIdRef.current;
+                    if (!validDrawId) return;
+                    setisAnimatingDrawCards(false);
+                    drawSessionIdRef.current = 0; // 重置流程 ID，防止后续重复触发
+                }}
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center', zIndex: 0, pointerEvents: 'none' }}
+            />
+            {/* <video
                 preload="auto"
                 autoPlay
                 loop
@@ -621,7 +635,7 @@ const Home = ({isPortrait}) => {
                 }}
                 className="fixed top-0 left-0 w-full h-full object-cover z-0">
                 <source src="videos/开屏动画.mp4" type="video/mp4"/>
-            </video>
+            </video> */}
 
             {/* 控件层（中间层） */}
             <SettingsLayer

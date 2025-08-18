@@ -43,7 +43,7 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, onSkip, isSingleDraw, 
 
   return (
     <div className="absolute z-50 w-full h-full flex items-center justify-center animate-fade-in">
-      <div className="relative w-full h-full">
+      <div className="relative w-full h-full" style={{ overflow: 'hidden' }}>
         {!isSingleDraw && (
             <button
                 className="absolute z-50"
@@ -62,22 +62,24 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, onSkip, isSingleDraw, 
         )}
 
         {isFiveStar ? (
-          <Asset 
-            src="gold_card.mp4" 
-            type="video" 
-            autoPlay 
+          <Asset
+            src="gold_card.mp4"
+            type="video"
+            autoPlay
             muted
+            playsInline
             onEnded={handleVideoEnded}
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center' }}
           />
         ) : (
-          <Asset 
-            src="no_gold_card.mp4" 
-            type="video" 
-            autoPlay 
+          <Asset
+            src="no_gold_card.mp4"
+            type="video"
+            autoPlay
             muted
+            playsInline
             onEnded={handleVideoEnded}
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center' }}
           />
         )}
 

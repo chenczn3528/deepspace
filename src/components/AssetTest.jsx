@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Asset } from './Asset';
 import { useAssetStorage } from '../hooks/useAssetStorage';
+import LeftIcon from '../icons/LeftIcon';
+import useResponsiveFontSize from '../hooks/useResponsiveFontSize';
 
-const AssetTest = () => {
+const AssetTest = ({ onClose }) => {
   const { storeAllAssets, getStorageStats, clearStorage, status, progress, currentAsset } = useAssetStorage();
   const [stats, setStats] = useState(null);
   // 自动刷新：移除开关，始终自动刷新
   const [fileSizeInfo, setFileSizeInfo] = useState(null);
+
+  const fontsize = useResponsiveFontSize({scale: 0.9});
 
   // 加载统计信息 - 使用 useCallback 避免无限循环
   const loadStats = useCallback(async () => {
@@ -57,6 +61,15 @@ const AssetTest = () => {
 
   // 渲染进度条
   const renderProgressBar = () => {
+    // 非存储状态：按本地已完成/配置总数计算百分比，保证刷新后仍显示本地进度
+    const expectedTotal = (fileSizeInfo?.assets?.video?.length || 0)
+      + (fileSizeInfo?.assets?.audio?.length || 0)
+      + (fileSizeInfo?.assets?.image?.length || 0)
+      + (fileSizeInfo?.assets?.sign?.length || 0);
+    const completed = stats?.completedAssets || 0;
+    const localProgress = expectedTotal > 0 ? Math.round((completed / expectedTotal) * 100) : 0;
+    const displayProgress = status === 'storing' ? progress : localProgress;
+
     return (
       <div style={{ marginBottom: '16px' }}>
         <div style={{ 
@@ -66,7 +79,7 @@ const AssetTest = () => {
           fontSize: '14px'
         }}>
           <span>存储进度</span>
-          <span>{progress}%</span>
+          <span>{displayProgress}%</span>
         </div>
         <div style={{ 
           width: '100%', 
@@ -76,14 +89,14 @@ const AssetTest = () => {
           overflow: 'hidden'
         }}>
           <div style={{ 
-            width: `${progress}%`, 
+            width: `${displayProgress}%`, 
             height: '100%', 
             backgroundColor: '#2563eb',
             transition: 'width 0.3s ease',
             borderRadius: '10px'
           }} />
         </div>
-        {currentAsset && (
+        {status === 'storing' && currentAsset && (
           <p style={{ 
             margin: '8px 0 0 0', 
             fontSize: '14px', 
@@ -131,31 +144,35 @@ const AssetTest = () => {
         }}>
           <div>
             <p style={{ margin: '4px 0', color: '#9ca3af' }}>视频文件</p>
-            <p style={{ margin: '4px 0' }}>数量: {fileSizeInfo.assets.video.length}</p>
-            <p style={{ margin: '4px 0' }}>总大小: {formatSize(
-              fileSizeInfo.assets.video.reduce((sum, file) => sum + (file.size || 0), 0)
-            )}</p>
+            <p style={{ margin: '4px 0' }}>
+              数量: {fileSizeInfo.assets.video.length}，总大小: {formatSize(
+                fileSizeInfo.assets.video.reduce((sum, file) => sum + (file.size || 0), 0)
+              )}
+            </p>
           </div>
           <div>
             <p style={{ margin: '4px 0', color: '#9ca3af' }}>音频文件</p>
-            <p style={{ margin: '4px 0' }}>数量: {fileSizeInfo.assets.audio.length}</p>
-            <p style={{ margin: '4px 0' }}>总大小: {formatSize(
-              fileSizeInfo.assets.audio.reduce((sum, file) => sum + (file.size || 0), 0)
-            )}</p>
+            <p style={{ margin: '4px 0' }}>
+              数量: {fileSizeInfo.assets.audio.length}，总大小: {formatSize(
+                fileSizeInfo.assets.audio.reduce((sum, file) => sum + (file.size || 0), 0)
+              )}
+            </p>
           </div>
           <div>
             <p style={{ margin: '4px 0', color: '#9ca3af' }}>图片文件</p>
-            <p style={{ margin: '4px 0' }}>数量: {fileSizeInfo.assets.image.length}</p>
-            <p style={{ margin: '4px 0' }}>总大小: {formatSize(
-              fileSizeInfo.assets.image.reduce((sum, file) => sum + (file.size || 0), 0)
-            )}</p>
+            <p style={{ margin: '4px 0' }}>
+              数量: {fileSizeInfo.assets.image.length}，总大小: {formatSize(
+                fileSizeInfo.assets.image.reduce((sum, file) => sum + (file.size || 0), 0)
+              )}
+            </p>
           </div>
           <div>
             <p style={{ margin: '4px 0', color: '#9ca3af' }}>头像文件</p>
-            <p style={{ margin: '4px 0' }}>数量: {fileSizeInfo.assets.sign.length}</p>
-            <p style={{ margin: '4px 0' }}>总大小: {formatSize(
-              fileSizeInfo.assets.sign.reduce((sum, file) => sum + (file.size || 0), 0)
-            )}</p>
+            <p style={{ margin: '4px 0' }}>
+              数量: {fileSizeInfo.assets.sign.length}，总大小: {formatSize(
+                fileSizeInfo.assets.sign.reduce((sum, file) => sum + (file.size || 0), 0)
+              )}
+            </p>
           </div>
         </div>
       </div>
@@ -168,12 +185,23 @@ const AssetTest = () => {
       backgroundColor: '#111827', 
       color: 'white',
       minHeight: '100vh',
-      overflowY: 'auto'
+      overflowY: 'auto',
+      position: 'relative'
     }}>
+
+      <button
+          className="absolute items-center z-20"
+          onClick={onClose}
+          style={{background: 'transparent', border: 'none', padding: 0, marginTop: `${fontsize * 2}px`, marginLeft: `${fontsize}px`}}
+      >
+          <LeftIcon size={fontsize * 2} color="white"/>
+      </button>
+
       <label style={{ 
         display: 'block',
         fontSize: '30px', 
         fontWeight: 'bold', 
+        marginTop: `${fontsize * 1.2}px`,
         marginBottom: '24px',
         textAlign: 'center'
       }}>
@@ -198,7 +226,7 @@ const AssetTest = () => {
         
         {/* 自动刷新：已移除开关，默认自动刷新 */}
         
-        <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', flexWrap: 'wrap' }}>
           <button
             onClick={handleStoreAll}
             disabled={status === 'storing'}
@@ -223,9 +251,9 @@ const AssetTest = () => {
           >
             {status === 'storing' ? '存储中...' : '存储所有素材'}
           </button>
-          
+
           <button
-            onClick={loadStats}
+            onClick={() => window.location.reload()}
             style={{
               padding: '8px 16px',
               backgroundColor: '#059669',
@@ -237,8 +265,10 @@ const AssetTest = () => {
             onMouseEnter={(e) => e.target.style.backgroundColor = '#047857'}
             onMouseLeave={(e) => e.target.style.backgroundColor = '#059669'}
           >
-            刷新统计
+            刷新网页
           </button>
+          
+          
           
           <button
             onClick={handleClear}
@@ -255,6 +285,8 @@ const AssetTest = () => {
           >
             清空存储
           </button>
+
+          
         </div>
         
         {/* 进度条 */}
@@ -340,6 +372,74 @@ const AssetTest = () => {
             </label>
             <Asset 
               src="开屏动画.mp4" 
+              type="video" 
+              controls
+              style={{ width: '100%', height: 'auto' }}
+            />
+          </div>
+
+          <div style={{ backgroundColor: '#1f2937', padding: '16px', borderRadius: '8px' }}>
+            <label style={{ 
+              display: 'block',
+              fontSize: '18px', 
+              fontWeight: '500', 
+              marginBottom: '8px'
+            }}>
+              沈星回金卡
+            </label>
+            <Asset 
+              src="沈星回金卡.mp4" 
+              type="video" 
+              controls
+              style={{ width: '100%', height: 'auto' }}
+            />
+          </div>
+
+          <div style={{ backgroundColor: '#1f2937', padding: '16px', borderRadius: '8px' }}>
+            <label style={{ 
+              display: 'block',
+              fontSize: '18px', 
+              fontWeight: '500', 
+              marginBottom: '8px'
+            }}>
+              黎深金卡
+            </label>
+            <Asset 
+              src="黎深金卡.mp4" 
+              type="video" 
+              controls
+              style={{ width: '100%', height: 'auto' }}
+            />
+          </div>
+
+          <div style={{ backgroundColor: '#1f2937', padding: '16px', borderRadius: '8px' }}>
+            <label style={{ 
+              display: 'block',
+              fontSize: '18px', 
+              fontWeight: '500', 
+              marginBottom: '8px'
+            }}>
+              祁煜金卡
+            </label>
+            <Asset 
+              src="祁煜金卡.mp4" 
+              type="video" 
+              controls
+              style={{ width: '100%', height: 'auto' }}
+            />
+          </div>
+
+          <div style={{ backgroundColor: '#1f2937', padding: '16px', borderRadius: '8px' }}>
+            <label style={{ 
+              display: 'block',
+              fontSize: '18px', 
+              fontWeight: '500', 
+              marginBottom: '8px'
+            }}>
+              秦彻金卡
+            </label>
+            <Asset 
+              src="秦彻金卡.mp4" 
               type="video" 
               controls
               style={{ width: '100%', height: 'auto' }}
@@ -442,6 +542,23 @@ const AssetTest = () => {
             </label>
             <Asset 
               src="展示结算.mp3" 
+              type="audio" 
+              controls
+              style={{ width: '100%' }}
+            />
+          </div>
+
+          <div style={{ backgroundColor: '#1f2937', padding: '16px', borderRadius: '8px' }}>
+            <label style={{ 
+              display: 'block',
+              fontSize: '18px', 
+              fontWeight: '500', 
+              marginBottom: '8px'
+            }}>
+              出现金卡音效
+            </label>
+            <Asset 
+              src="金卡展示.mp3" 
               type="audio" 
               controls
               style={{ width: '100%' }}
