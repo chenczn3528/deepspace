@@ -464,100 +464,10 @@ const AssetTest = () => {
               style={{ width: '100%' }}
             />
           </div>
-          
-          <div style={{ backgroundColor: '#1f2937', padding: '16px', borderRadius: '8px' }}>
-            <label style={{ 
-              display: 'block',
-              fontSize: '18px', 
-              fontWeight: '500', 
-              marginBottom: '8px'
-            }}>
-              时空引力
-            </label>
-            <Asset 
-              src="时空引力.mp3" 
-              type="audio" 
-              controls
-              style={{ width: '100%' }}
-            />
-          </div>
         </div>
       </div>
 
-      {/* 图片测试 */}
-      <div style={{ marginBottom: '32px' }}>
-        <label style={{ 
-          display: 'block',
-          fontSize: '24px', 
-          fontWeight: '600', 
-          marginBottom: '16px'
-        }}>
-          图片测试
-        </label>
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-          gap: '24px'
-        }}>
-          <div style={{ backgroundColor: '#1f2937', padding: '16px', borderRadius: '8px' }}>
-            <label style={{ 
-              display: 'block',
-              fontSize: '18px', 
-              fontWeight: '500', 
-              marginBottom: '8px'
-            }}>
-              结算背景
-            </label>
-            <Asset 
-              src="结算背景.jpg" 
-              type="image" 
-              alt="结算背景"
-              style={{ width: '100%', height: 'auto', maxHeight: '300px' }}
-            />
-          </div>
-          
-          <div style={{ backgroundColor: '#1f2937', padding: '16px', borderRadius: '8px' }}>
-            <label style={{ 
-              display: 'block',
-              fontSize: '18px', 
-              fontWeight: '500', 
-              marginBottom: '8px'
-            }}>
-              角色头像
-            </label>
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(2, 1fr)', 
-              gap: '8px'
-            }}>
-              <Asset 
-                src="夏以昼.png" 
-                type="image" 
-                alt="夏以昼"
-                style={{ width: '100%', height: 'auto' }}
-              />
-              <Asset 
-                src="沈星回.png" 
-                type="image" 
-                alt="沈星回"
-                style={{ width: '100%', height: 'auto' }}
-              />
-              <Asset 
-                src="祁煜.png" 
-                type="image" 
-                alt="祁煜"
-                style={{ width: '100%', height: 'auto' }}
-              />
-              <Asset 
-                src="秦彻.png" 
-                type="image" 
-                alt="秦彻"
-                style={{ width: '100%', height: 'auto' }}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+      
 
       {/* 调试信息 */}
       <div style={{ 

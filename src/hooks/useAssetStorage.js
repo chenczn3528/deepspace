@@ -134,6 +134,25 @@ export function useAssetStorage() {
     }
   }, [initDB]);
 
+  // 通过 URL 获取已存储的资产
+  const getAssetByUrl = useCallback(async (url) => {
+    try {
+      const db = await initDB();
+      const transaction = db.transaction(['assets'], 'readonly');
+      const assetStore = transaction.objectStore('assets');
+      const urlIndex = assetStore.index('url');
+
+      return await new Promise((resolve, reject) => {
+        const request = urlIndex.get(url);
+        request.onsuccess = () => resolve(request.result || null);
+        request.onerror = () => reject(request.error);
+      });
+    } catch (err) {
+      console.error('Failed to get asset by url:', err);
+      return null;
+    }
+  }, [initDB]);
+
   // 验证资产完整性
   const verifyAsset = useCallback(async (assetId) => {
     try {
@@ -725,6 +744,7 @@ export function useAssetStorage() {
     pauseStorage,
     getStorageStats,
     cleanupIncompleteAssets,
-    STORAGE_STATUS
+    STORAGE_STATUS,
+    getAssetByUrl
   };
 }

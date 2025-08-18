@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useAssetStorage } from './useAssetStorage';
 
 export function useAssetLoader() {
-  const { getAsset, getAssetData } = useAssetStorage();
+  const { getAsset, getAssetData, getAssetByUrl } = useAssetStorage();
   const [loadedAssets, setLoadedAssets] = useState(new Map());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -10,34 +10,48 @@ export function useAssetLoader() {
   // 自动获取素材大小并加载
   const loadAsset = useCallback(async (type, fileName) => {
     try {
-      // 先尝试从网络获取文件信息来确定大小
       const networkPath = `/${type === 'image' ? 'images' : type + 's'}/${fileName}`;
-      const response = await fetch(networkPath, { method: 'HEAD' });
-      
-      if (response.ok) {
-        const size = parseInt(response.headers.get('content-length') || '0');
+
+      // 1) 先用 URL 索引尝试命中本地缓存
+      const byUrl = await getAssetByUrl(networkPath);
+      if (byUrl && byUrl.status === 'completed') {
+        const blob = await getAssetData(byUrl.id);
+        if (blob) {
+          const url = URL.createObjectURL(blob);
+          setLoadedAssets(prev => new Map(prev).set(byUrl.id, url));
+          return url;
+        }
+      }
+
+      // 2) 再尝试 HEAD 拿 content-length，按 “名称+大小” 的 id 命中
+      let size = 0;
+      try {
+        const headResp = await fetch(networkPath, { method: 'HEAD' });
+        if (headResp.ok) {
+          size = parseInt(headResp.headers.get('content-length') || '0', 10) || 0;
+        }
+      } catch {}
+
+      if (size > 0) {
         const assetId = `${type}_${fileName}_${size}`;
-        
-        // 尝试从 IndexedDB 获取
-        const asset = await getAsset(assetId);
-        if (asset && asset.status === 'completed') {
-          const assetData = await getAssetData(assetId);
-          if (assetData) {
-            const url = URL.createObjectURL(assetData);
+        const byId = await getAsset(assetId);
+        if (byId && byId.status === 'completed') {
+          const blob = await getAssetData(assetId);
+          if (blob) {
+            const url = URL.createObjectURL(blob);
             setLoadedAssets(prev => new Map(prev).set(assetId, url));
             return url;
           }
         }
       }
-      
-      // 如果本地没有或获取失败，返回原始路径
+
+      // 3) 全部未命中则回退网络
       return networkPath;
     } catch (error) {
       console.error(`Failed to load asset ${fileName}:`, error);
-      // 返回原始路径作为后备
       return `/${type === 'image' ? 'images' : type + 's'}/${fileName}`;
     }
-  }, [getAsset, getAssetData]);
+  }, [getAsset, getAssetData, getAssetByUrl]);
 
   // 批量加载素材
   const loadAssets = useCallback(async (assetsList) => {
