@@ -144,8 +144,13 @@ const GalleryPage = ({
     return (
         <div
             className="absolute w-full h-full z-20"
-            style={{backgroundImage: "url('images/结算背景.jpg')"}}
         >
+            <Asset
+                src="结算背景.jpg"
+                type="image"
+                className="absolute w-full h-full object-cover"
+                style={{ pointerEvents: 'none', zIndex: 0 }}
+            />
             {/* 顶部操作栏 */}
             <div className="absolute flex flex-col"
                  style={{top: 0, height: `${fontsize * 10}px`, left: `${fontsize}px`, right: `${fontsize}px`}}>
