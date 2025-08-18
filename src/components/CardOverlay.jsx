@@ -1,7 +1,7 @@
 // CardOverlay.jsx
-import React, {useEffect, useRef, useState} from 'react';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { Asset } from './Asset';
+import React, {useEffect, useState} from 'react';
+import { Asset } from './Asset.jsx';
+
 
 const CardOverlay = ({
     showCardOverlay,
@@ -32,30 +32,8 @@ const CardOverlay = ({
 
 
     // ========================================================
-    // 设置音效
-    const cardSoundRef = useRef(null);
-
-    useEffect(() => {
-        if (!showCardOverlay) return;
-
-        const card = drawResultsRef.current[currentCardIndex]?.card;
-        if (!card) return;
-
-        const isCurrentFiveStar = card.star === '5星';
-
-        const soundEffect = isCurrentFiveStar ? 'audios/金卡展示.mp3' : 'audios/切换音效.mp3';
-
-        // 只有当背景音乐已经播放并且卡片音效存在时，才播放卡片音效
-        cardSoundRef.current = new Audio(soundEffect);
-        cardSoundRef.current.volume = 1;
-        cardSoundRef.current.currentTime = 0;
-
-        cardSoundRef.current
-            .play()
-            .catch((err) => console.warn('卡片展示音效播放失败:', err));
-
-        // 这里的音效播放不会影响背景音乐
-    }, [currentCardIndex, showCardOverlay]);
+    // 使用 Asset 播放音效（自动播放，随索引/显示状态变化重新挂载触发播放）
+    const audioKey = `${showCardOverlay ? 1 : 0}-${currentCardIndex}`;
 
 
     // 预加载小图，等大图加载完以后跳出来
@@ -78,16 +56,17 @@ const CardOverlay = ({
                onClick={() => {if (!isCurrentFiveStar || videoPlayed) {handleNextCard();}}}// 只有视频播放完了，才能允许切换
             >
                 {/* 底部图片（绝对定位） */}
-                <Asset  
-                    src="结算背景.jpg"
-                    type="image"
-                    className="absolute w-full h-full flex z-0"
-                />
+                
                 {/* <img
                     src="images/结算背景.jpg"
                     alt="底部装饰"
                     className="absolute w-full h-full flex z-0"
                 /> */}
+                <Asset  
+                    src="结算背景.jpg"
+                    type="image"
+                    className="absolute w-full h-full flex z-0"
+                />
 
                 {isCurrentFiveStar && !videoPlayed && (
                     // 视频播放层
@@ -201,6 +180,15 @@ const CardOverlay = ({
                                 {drawResultsRef.current[currentCardIndex]?.card?.name}
                             </label>
                         </div>
+
+                        {/* 音效：使用 Asset 自动播放，避免手动 new Audio 造成缓存不走 */}
+                        <Asset
+                            key={audioKey}
+                            src={isCurrentFiveStar ? '金卡展示.mp3' : '切换音效.mp3'}
+                            type="audio"
+                            autoPlay
+                            style={{ display: 'none' }}
+                        />
                     </>
                 ) : null}
             </div>

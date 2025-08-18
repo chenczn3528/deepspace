@@ -6,7 +6,7 @@ import FullScreenIcon from "../icons/FullScreenIcon.jsx";
 import SmallScreenIcon from "../icons/SmallScreenIcon.jsx";
 import LockIcon from "../icons/LockIcon.jsx";
 import cardData from '../assets/cards.json';
-import Home from "../Home.jsx";
+import { Asset } from './Asset.jsx';
 
 
 const GalleryPage = ({

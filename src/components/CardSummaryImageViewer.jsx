@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import LeftIcon from "../icons/LeftIcon.jsx";
+import { Asset } from './Asset.jsx';
 
 const CardSummaryImageViewer = ({ card, onClose, fontsize }) => {
     const [showPicture, setShowPicture] = useState(false);

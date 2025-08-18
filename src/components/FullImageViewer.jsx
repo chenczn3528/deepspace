@@ -3,6 +3,7 @@ import LeftIcon from "../icons/LeftIcon.jsx";
 import RightIcon from "../icons/RightIcon.jsx";
 import LockIcon from "../icons/LockIcon.jsx";
 import ShortVideoIcon from "../icons/ShortVideoIcon.jsx";
+import { Asset } from './Asset.jsx';
 
 const FullImageViewer = ({
      videoUrl,

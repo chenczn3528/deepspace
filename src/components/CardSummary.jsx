@@ -1,6 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';  // 确保你有安装这个库
 import CardSummaryImageViewer from './CardSummaryImageViewer.jsx';
+import { Asset } from './Asset.jsx';
 
 const CardSummary = ({ drawResults, onClose, fontsize }) => {
 
