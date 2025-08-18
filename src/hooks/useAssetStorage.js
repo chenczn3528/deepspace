@@ -574,11 +574,24 @@ export function useAssetStorage() {
         }
       }
       
+      // 校验：必须拿到全部分块
+      if (chunks.length !== asset.totalChunks) {
+        console.warn(`getAssetData: incomplete chunks for ${assetId}. expected ${asset.totalChunks}, got ${chunks.length}`);
+        return null;
+      }
+
       // 按顺序重组文件
       chunks.sort((a, b) => a.chunkIndex - b.chunkIndex);
       
       // 合并所有分块
       const totalSize = chunks.reduce((sum, chunk) => sum + chunk.data.byteLength, 0);
+
+      // 校验：合并后的大小应与 asset.size 一致
+      if (typeof asset.size === 'number' && totalSize !== asset.size) {
+        console.warn(`getAssetData: size mismatch for ${assetId}. meta=${asset.size}, merged=${totalSize}`);
+        return null;
+      }
+
       const mergedArray = new Uint8Array(totalSize);
       
       let offset = 0;

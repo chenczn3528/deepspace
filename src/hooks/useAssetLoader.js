@@ -81,20 +81,15 @@ export function useAssetLoader() {
     }
   }, [loadAsset]);
 
-  // 清理 URL 对象
+  // 清理 URL 对象（改为仅手动调用，避免开发环境 StrictMode 二次卸载导致正在使用的 blob URL 被提前释放）
   const cleanup = useCallback(() => {
     loadedAssets.forEach(url => {
-      if (url.startsWith('blob:')) {
-        URL.revokeObjectURL(url);
+      if (typeof url === 'string' && url.startsWith('blob:')) {
+        try { URL.revokeObjectURL(url); } catch {}
       }
     });
     setLoadedAssets(new Map());
   }, [loadedAssets]);
-
-  // 组件卸载时清理
-  useEffect(() => {
-    return cleanup;
-  }, [cleanup]);
 
   return {
     loadAsset,

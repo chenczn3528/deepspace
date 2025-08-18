@@ -24,6 +24,13 @@ export function Asset({ src, type, alt, refreshKey, ...props }) {
     if (src) {
       loadAssetData();
     }
+
+    // 局部清理：当 assetSrc 是 blob: 时，在此组件卸载或依赖变更时回收
+    return () => {
+      if (typeof assetSrc === 'string' && assetSrc.startsWith('blob:')) {
+        try { URL.revokeObjectURL(assetSrc); } catch {}
+      }
+    };
   }, [src, type, loadAsset, refreshKey]);
 
   if (loading) {
