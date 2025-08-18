@@ -252,7 +252,7 @@ export function useAssetStorage() {
           type: type,
           size: file.size,
           hash: fileHash,
-          metadata: metadata,
+          metadata: { ...metadata, contentType: file.type },
           status: 'storing',
           createdAt: new Date().toISOString(),
           totalChunks: totalChunks,
@@ -379,7 +379,7 @@ export function useAssetStorage() {
           type: type,
           size: file.size,
           hash: fileHash,
-          metadata: metadata,
+          metadata: { ...metadata, contentType: file.type },
           status: 'completed',
           createdAt: new Date().toISOString(),
           totalChunks: totalChunks,
@@ -587,7 +587,7 @@ export function useAssetStorage() {
         offset += chunk.data.byteLength;
       }
       
-      return new Blob([mergedArray], { type: asset.metadata?.type || 'application/octet-stream' });
+      return new Blob([mergedArray], { type: asset.metadata?.contentType || asset.metadata?.type || 'application/octet-stream' });
     } catch (err) {
       console.error('Failed to get asset data:', err);
       return null;
