@@ -5,7 +5,7 @@ import { useAssetStorage } from '../hooks/useAssetStorage';
 const AssetTest = () => {
   const { storeAllAssets, getStorageStats, clearStorage, status, progress, currentAsset } = useAssetStorage();
   const [stats, setStats] = useState(null);
-  const [autoRefresh, setAutoRefresh] = useState(true);
+  // 自动刷新：移除开关，始终自动刷新
   const [fileSizeInfo, setFileSizeInfo] = useState(null);
 
   // 加载统计信息 - 使用 useCallback 避免无限循环
@@ -27,13 +27,11 @@ const AssetTest = () => {
     try {
       await storeAllAssets();
       // 存储完成后自动刷新统计信息
-      if (autoRefresh) {
-        await loadStats();
-      }
+      await loadStats();
     } catch (error) {
       console.error('Failed to store assets:', error);
     }
-  }, [storeAllAssets, loadStats, autoRefresh]);
+  }, [storeAllAssets, loadStats]);
 
   // 清空存储
   const handleClear = useCallback(async () => {
@@ -47,10 +45,10 @@ const AssetTest = () => {
 
   // 监听状态变化，自动刷新统计信息
   useEffect(() => {
-    if (status === 'completed' && autoRefresh) {
+    if (status === 'completed') {
       loadStats();
     }
-  }, [status, autoRefresh, loadStats]);
+  }, [status, loadStats]);
 
   // 只在组件挂载时加载一次统计信息
   useEffect(() => {
@@ -198,24 +196,7 @@ const AssetTest = () => {
           控制面板
         </label>
         
-        {/* 自动刷新开关 */}
-        <div style={{ 
-          marginBottom: '16px', 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '8px' 
-        }}>
-          <input
-            type="checkbox"
-            id="autoRefresh"
-            checked={autoRefresh}
-            onChange={(e) => setAutoRefresh(e.target.checked)}
-            style={{ width: '16px', height: '16px' }}
-          />
-          <label htmlFor="autoRefresh" style={{ fontSize: '14px' }}>
-            自动刷新统计信息
-          </label>
-        </div>
+        {/* 自动刷新：已移除开关，默认自动刷新 */}
         
         <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
           <button
@@ -278,16 +259,15 @@ const AssetTest = () => {
         
         {/* 进度条 */}
         {renderProgressBar()}
-        
-        {/* 文件大小信息 */}
-        {renderFileSizeInfo()}
-        
-        {/* 统计信息 */}
+
+        {/* 统计信息 - 移到进度条下面 */}
         {stats && (
           <div style={{ 
             padding: '12px', 
             backgroundColor: '#374151', 
-            borderRadius: '4px'
+            borderRadius: '4px',
+            marginTop: '8px',
+            marginBottom: '8px'
           }}>
             <p style={{ margin: '4px 0' }}>总素材数: {stats.totalAssets}</p>
             <p style={{ margin: '4px 0' }}>已完成: {stats.completedAssets}</p>
@@ -295,6 +275,9 @@ const AssetTest = () => {
             <p style={{ margin: '4px 0' }}>总大小: {(stats.totalSize / 1024 / 1024).toFixed(2)} MB</p>
           </div>
         )}
+
+        {/* 文件大小信息 - 移到统计信息下面 */}
+        {renderFileSizeInfo()}
       </div>
 
       {/* 视频测试 */}

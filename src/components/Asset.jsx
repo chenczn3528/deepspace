@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAssetLoader } from '../hooks/useAssetLoader';
 
-export function Asset({ src, type, alt, ...props }) {
+export function Asset({ src, type, alt, refreshKey, ...props }) {
   const { loadAsset } = useAssetLoader();
   const [assetSrc, setAssetSrc] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -10,12 +10,12 @@ export function Asset({ src, type, alt, ...props }) {
     const loadAssetData = async () => {
       try {
         setLoading(true);
-        const url = await loadAsset(type, src);
-        setAssetSrc(url);
+        // 仅使用本地缓存，未命中则不加载网络，避免首屏网络请求
+        const cachedUrl = await loadAsset(type, src, { onlyCached: true });
+        setAssetSrc(cachedUrl || null);
       } catch (error) {
         console.error('Failed to load asset:', error);
-        // 使用原始路径作为后备
-        setAssetSrc(`/${type === 'image' ? 'images' : type + 's'}/${src}`);
+        setAssetSrc(null);
       } finally {
         setLoading(false);
       }
@@ -24,10 +24,14 @@ export function Asset({ src, type, alt, ...props }) {
     if (src) {
       loadAssetData();
     }
-  }, [src, type, loadAsset]);
+  }, [src, type, loadAsset, refreshKey]);
 
   if (loading) {
     return <div>加载中...</div>;
+  }
+
+  if (!assetSrc) {
+    return <div style={{ fontSize: '14px', color: '#9ca3af' }}>未缓存</div>;
   }
 
   switch (type) {

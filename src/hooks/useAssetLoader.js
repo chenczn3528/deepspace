@@ -8,7 +8,8 @@ export function useAssetLoader() {
   const [error, setError] = useState(null);
 
   // 自动获取素材大小并加载
-  const loadAsset = useCallback(async (type, fileName) => {
+  const loadAsset = useCallback(async (type, fileName, options = {}) => {
+    const { onlyCached = false } = options;
     try {
       const networkPath = `/${type === 'image' ? 'images' : type + 's'}/${fileName}`;
 
@@ -21,6 +22,11 @@ export function useAssetLoader() {
           setLoadedAssets(prev => new Map(prev).set(byUrl.id, url));
           return url;
         }
+      }
+
+      // 仅缓存模式：未命中则不走网络，直接返回 null
+      if (onlyCached) {
+        return null;
       }
 
       // 2) 再尝试 HEAD 拿 content-length，按 “名称+大小” 的 id 命中
