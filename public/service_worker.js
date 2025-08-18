@@ -1,4 +1,4 @@
-const CACHE_NAME = 'deepspace-cache-v5';
+const CACHE_NAME = 'deepspace-cache-v6';
 const FILES_TO_CACHE = [
   '/deepspace/videos/gold_card.MP4',
   '/deepspace/videos/no_gold_card.mp4',
@@ -67,6 +67,11 @@ self.addEventListener('activate', (event) => {
 // 拦截 fetch 请求
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
+
+  // 非 http(s) 协议的请求（如 blob:, data:）不拦截，交给浏览器处理
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    return;
+  }
 
   // 跳过来自 patchwiki 或其他外部源的请求
   if (url.origin !== self.location.origin) {
