@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useAssetLoader } from '../hooks/useAssetLoader';
 
 const TestProbability = ({ getRandomCard, setShowProbability, fontsize }) => {
 
@@ -6,6 +7,21 @@ const TestProbability = ({ getRandomCard, setShowProbability, fontsize }) => {
   const [result, setResult] = useState(null);
 
   const [loading, setLoading] = useState(false);
+  const { loadAsset } = useAssetLoader();
+  const [bgUrl, setBgUrl] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const url = await loadAsset('image', '结算背景.jpg', { onlyCached: true });
+        if (isMounted) setBgUrl(url || null);
+      } catch {
+        if (isMounted) setBgUrl(null);
+      }
+    })();
+    return () => { isMounted = false; };
+  }, [loadAsset]);
 
 
   const runTest = () => {
@@ -56,7 +72,9 @@ const TestProbability = ({ getRandomCard, setShowProbability, fontsize }) => {
         <div
             className="absolute flex flex-col"
             style={{
-              backgroundImage: "url('images/结算背景.jpg')",
+              backgroundImage: `url(${bgUrl || 'images/结算背景.jpg'})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center center',
               width: `${fontsize * 26}px`,
               height: `${fontsize * 32}px`,
               color: 'black',

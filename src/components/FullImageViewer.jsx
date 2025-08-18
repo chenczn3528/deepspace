@@ -160,9 +160,14 @@ const FullImageViewer = ({
 
 
             {/* 底部图片（绝对定位） */}
-            <img
+            {/* <img
                 src="images/结算背景.jpg"
                 alt="底部装饰"
+                className="absolute w-full h-full z-0"
+            /> */}
+            <Asset
+                src="结算背景.jpg"
+                type="image"
                 className="absolute w-full h-full z-0"
             />
 
@@ -198,7 +203,7 @@ const FullImageViewer = ({
                 <div>
                     <div className="absolute flex items-center z-10"
                          style={{bottom: `${fontsize * 6}px`, left: `${fontsize * 2}px`}}>
-                        <img
+                        {/* <img
                             src={`images/${card?.star}.png`}
                             style={{marginRight: `${fontsize * 0.6}px`, height: `${fontsize * 2.5}px`}}
                         />
@@ -212,6 +217,25 @@ const FullImageViewer = ({
                                 height: `${card?.card_type_tag === "日冕" ?
                                     fontsize * 2.5 : fontsize * 1.8}px`
                             }}
+                        /> */}
+                        <Asset
+                            src={`${card?.star}.png`}
+                            type="image"
+                            style={{marginRight: `${fontsize * 0.6}px`, height: `${fontsize * 2.5}px`}}
+                        />
+                        
+                        <Asset
+                            src={`${card?.card_color_tag}.png`}
+                            type="image"
+                            style={{marginRight: `${fontsize * 0.2}px`, height: `${fontsize * 1.8}px`}}
+                        />
+                        
+                        
+                        <Asset
+                            src={`${card?.card_type_tag}.png`}
+                            type="image"
+                            style={{height: `${card?.card_type_tag === "日冕" ?
+                                fontsize * 2.5 : fontsize * 1.8}px`}}
                         />
                     </div>
 

@@ -28,11 +28,16 @@ const CardSummary = ({ drawResults, onClose, fontsize }) => {
             onClick={onClose}
         >
             {/* 底部图片（绝对定位） */}
-            <img
+            <Asset
+                src="结算背景.jpg"
+                type="image"
+                className="absolute z-10 w-full h-full"
+            />
+            {/* <img
                 src="images/结算背景.jpg"
                 alt="底部装饰"
                 className="absolute z-10 w-full h-full"
-            />
+            /> */}
 
 
             {/* 卡片网格 */}

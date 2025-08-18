@@ -17,7 +17,7 @@ import VideoPage from "./components/VideoPage.jsx";
 import { Asset } from './components/Asset.jsx';
 
 
-const Home = ({isPortrait}) => {
+const Home = ({isPortrait, openAssetTest}) => {
 
     // 加载serviceWorker
     if ('serviceWorker' in navigator) {
@@ -668,6 +668,7 @@ const Home = ({isPortrait}) => {
                 setMusicID={setMusicID}
                 showMusicPageZIndex={showMusicPageZIndex}
                 setShowMusicPageZIndex={setShowMusicPageZIndex}
+                openAssetTest={openAssetTest}
             />
 
 

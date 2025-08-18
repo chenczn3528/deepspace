@@ -305,14 +305,20 @@ const GalleryPage = ({
                                 />
 
                                 {/*星谱*/}
-                                <img
+                                {/* <img
                                     src={`images/${card.card_color_tag}.png`}
+                                    className="absolute"
+                                    style={{top: `${fontsize * 0.3}px`, left: `${fontsize * 0.3}px`, width: `${fontsize * 1.5}px`}}
+                                /> */}
+                                <Asset
+                                    src={`${card.card_color_tag}.png`}
+                                    type="image"
                                     className="absolute"
                                     style={{top: `${fontsize * 0.3}px`, left: `${fontsize * 0.3}px`, width: `${fontsize * 1.5}px`}}
                                 />
 
                                 {/*日卡月卡*/}
-                                <img
+                                {/* <img
                                     src={`images/${card.card_type_tag}.png`}
                                     className="absolute z-10"
                                     style={{
@@ -320,11 +326,24 @@ const GalleryPage = ({
                                         left: `${fontsize * 0.3}px`,
                                         width: card.card_type_tag === "月晖" ? `${fontsize * 1.5}px` : `${fontsize * 1.8}px`
                                     }}
+                                /> */}
+                                <Asset
+                                    src={`${card.card_type_tag}.png`}
+                                    type="image"
+                                    className="absolute z-10"
+                                    style={{bottom: `${fontsize * 2.3}px`, left: `${fontsize * 0.3}px`, width: `${fontsize * 1.5}px`}}
                                 />
 
                                 {/*星级*/}
-                                <img
+                                {/* <img
                                     src={`images/${card.star}.png`}
+                                    className="absolute z-10"
+                                    style={{bottom: `${fontsize * 2.3}px`, right: 0, height: `${fontsize * 1.3}px`}}
+                                /> */}
+
+                                <Asset
+                                    src={`${card.star}.png`}
+                                    type="image"
                                     className="absolute z-10"
                                     style={{bottom: `${fontsize * 2.3}px`, right: 0, height: `${fontsize * 1.3}px`}}
                                 />

@@ -35,6 +35,7 @@ const SettingsLayer = ({
     setShowMusicPageZIndex,
     musicID,
     setMusicID,
+    openAssetTest,
 }) => {
 
 
@@ -113,50 +114,6 @@ const SettingsLayer = ({
                 <MusicIcon color="gray" size={fontsize * 2} />
             </button>
 
-            {/*/!*音频*!/*/}
-            {/*/!*<audio ref={audioRef} loop src="audios/时空引力.mp3"/>*!/*/}
-            {/*<button onClick={() => {*/}
-            {/*    setShowPlayer(!showPlayer);*/}
-            {/*    setMusicID("2660222377");*/}
-            {/*}} className="absolute top-[60%] right-[0]">*/}
-            {/*    {showPlayer ? "隐藏音乐播放器" : "显示音乐播放器"}*/}
-            {/*</button>*/}
-
-
-            {/*/!*放音乐按钮*!/*/}
-            {/*<button*/}
-            {/*    onClick={toggleSlider}*/}
-            {/*    className="absolute"*/}
-            {/*    style={{*/}
-            {/*        background: 'transparent',*/}
-            {/*        border: 'none',*/}
-            {/*        padding: 0,*/}
-            {/*        top: `${fontsize * 1.2}px`,*/}
-            {/*        right: `${fontsize * 1.2}px`*/}
-            {/*    }}*/}
-            {/*>*/}
-            {/*    {volume !== 0 ? (*/}
-            {/*        <MusicPlayIcon color="gray" size={fontsize * 2}/>*/}
-            {/*    ) : (*/}
-            {/*        <MusicMuteIcon color="gray" size={fontsize * 2}/>*/}
-            {/*    )}*/}
-            {/*</button>*/}
-            {/*{showSlider && (*/}
-            {/*    <input*/}
-            {/*        type="range"*/}
-            {/*        min={0}*/}
-            {/*        max={1}*/}
-            {/*        step={0.01}*/}
-            {/*        value={volume}*/}
-            {/*        onChange={(e) => setVolume(parseFloat(e.target.value))}*/}
-            {/*        style={{*/}
-            {/*            position: 'absolute',*/}
-            {/*            top: `${fontsize * 2}px`,*/}
-            {/*            right: '0',*/}
-            {/*            height: `${fontsize * 4}px`*/}
-            {/*        }}*/}
-            {/*    />*/}
-            {/*)}*/}
 
 
             {/*右上角按钮、文字*/}
@@ -164,6 +121,9 @@ const SettingsLayer = ({
                 <div className="flex flex-row gap-[10px]">
                     {/*查看图鉴*/}
                     <button style={{fontSize: `${fontsize * 1.2}px`}} onClick={() => setShowGallery(true)}>图鉴</button>
+
+                    {/*素材测试*/}
+                    <button style={{fontSize: `${fontsize * 1.2}px`}} onClick={() => openAssetTest && openAssetTest()}>动画缓存</button>
 
                     {/*测试概率*/}
                     <button style={{fontSize: `${fontsize * 1.2}px`}}

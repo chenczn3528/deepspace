@@ -83,7 +83,7 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, onSkip, isSingleDraw, 
           />
         )}
 
-        <audio
+        {/* <audio
             ref={audioRef}
             preload="auto"
             autoPlay
@@ -95,7 +95,14 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, onSkip, isSingleDraw, 
               type="audio/mp3"
           />
           Your browser does not support the audio element.
-        </audio>
+        </audio> */}
+        <Asset
+            src={isFiveStar ? '出金.mp3' : '不出金.mp3'}
+            type="audio"
+            autoPlay
+            muted={false}
+            loop
+        />
       </div>
     </div>
   );

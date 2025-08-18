@@ -77,7 +77,7 @@ function App() {
           {showAssetTest ? (
             <AssetTest onClose={() => setShowAssetTest(false)} />
           ) : (
-            <Home isPortrait={isPortrait}/>
+            <Home isPortrait={isPortrait} openAssetTest={() => setShowAssetTest(true)} />
           )}
           {/* <AssetManager/> */}
         </div>

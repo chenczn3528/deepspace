@@ -1,6 +1,7 @@
 // CardOverlay.jsx
 import React, {useEffect, useRef, useState} from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { Asset } from './Asset';
 
 const CardOverlay = ({
     showCardOverlay,
@@ -77,11 +78,16 @@ const CardOverlay = ({
                onClick={() => {if (!isCurrentFiveStar || videoPlayed) {handleNextCard();}}}// 只有视频播放完了，才能允许切换
             >
                 {/* 底部图片（绝对定位） */}
-                <img
+                <Asset  
+                    src="结算背景.jpg"
+                    type="image"
+                    className="absolute w-full h-full flex z-0"
+                />
+                {/* <img
                     src="images/结算背景.jpg"
                     alt="底部装饰"
                     className="absolute w-full h-full flex z-0"
-                />
+                /> */}
 
                 {isCurrentFiveStar && !videoPlayed && (
                     // 视频播放层
@@ -134,7 +140,26 @@ const CardOverlay = ({
 
                         <div className="absolute flex items-center z-20"
                              style={{bottom: `${fontsize * 6}px`, left: `${fontsize * 2}px`}}>
-                            <img
+                            <Asset
+                                src={`${drawResultsRef.current[currentCardIndex]?.card?.star}.png`}
+                                type="image"
+                                style={{marginRight: `${fontsize * 0.6}px`, height: `${fontsize * 2.5}px`}}
+                            />
+
+                            <Asset
+                                src={`${drawResultsRef.current[currentCardIndex]?.card?.card_color_tag}.png`}
+                                type="image"
+                                style={{marginRight:`${fontsize * 0.2}px`, height: `${fontsize * 1.8}px`}}
+                            />
+
+                            <Asset
+                                src={`${drawResultsRef.current[currentCardIndex]?.card?.card_type_tag}.png`}
+                                type="image"
+                                style={{height: `${drawResultsRef.current[currentCardIndex]?.card?.card_type_tag === "日冕" ? 
+                                      fontsize * 2.5 : fontsize * 1.8}px`}}
+                            />
+                            
+                            {/* <img
                                 src={`images/${drawResultsRef.current[currentCardIndex]?.card?.star}.png`}
                                 style={{marginRight: `${fontsize * 0.6}px`, height: `${fontsize * 2.5}px`}}
                             />
@@ -146,7 +171,7 @@ const CardOverlay = ({
                                 src={`images/${drawResultsRef.current[currentCardIndex]?.card?.card_type_tag}.png`}
                                 style={{height: `${drawResultsRef.current[currentCardIndex]?.card?.card_type_tag === "日冕" ? 
                                       fontsize * 2.5 : fontsize * 1.8}px`}}
-                            />
+                            /> */}
                         </div>
 
 
