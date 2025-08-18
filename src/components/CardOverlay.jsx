@@ -70,22 +70,30 @@ const CardOverlay = ({
 
                 {isCurrentFiveStar && !videoPlayed && (
                     // 视频播放层
-                    <video
+                    // <video
+                    //     className="absolute w-full h-full object-cover z-20"
+                    //     preload="auto"
+                    //     autoPlay
+                    //     playsInline
+                    //     muted
+                    //     controls={false}
+                    //     onEnded={() => setVideoPlayed(true)}
+                    //     style={{ pointerEvents: 'none' }}
+                    // >
+                    //     <source
+                    //         src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.mp4`}
+                    //         type="video/mp4"
+                    //     />
+                    //         Your browser does not support the video tag.
+                    // </video>
+                    <Asset
+                        src={`${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.mp4`}
+                        type="video"
                         className="absolute w-full h-full object-cover z-20"
-                        preload="auto"
                         autoPlay
-                        playsInline
                         muted
-                        controls={false}
                         onEnded={() => setVideoPlayed(true)}
-                        style={{ pointerEvents: 'none' }}
-                    >
-                        <source
-                            src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.mp4`}
-                            type="video/mp4"
-                        />
-                            Your browser does not support the video tag.
-                    </video>
+                    />
                 )}
 
 
