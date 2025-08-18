@@ -59,8 +59,6 @@ const AssetTest = () => {
 
   // 渲染进度条
   const renderProgressBar = () => {
-    if (status !== 'storing') return null;
-    
     return (
       <div style={{ marginBottom: '16px' }}>
         <div style={{ 
@@ -276,11 +274,6 @@ const AssetTest = () => {
           >
             清空存储
           </button>
-        </div>
-        
-        {/* 状态显示 */}
-        <div style={{ marginBottom: '16px' }}>
-          <p style={{ margin: '4px 0' }}>状态: {status}</p>
         </div>
         
         {/* 进度条 */}
