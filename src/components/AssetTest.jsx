@@ -199,13 +199,17 @@ const AssetTest = ({ onClose }) => {
 
       <label style={{ 
         display: 'block',
-        fontSize: '30px', 
+        fontSize: '28px', 
         fontWeight: 'bold', 
         marginTop: `${fontsize * 1.2}px`,
-        marginBottom: '24px',
+        marginBottom: '12px',
         textAlign: 'center'
       }}>
-        素材加载测试页面
+        动画素材缓存
+      </label>
+
+      <label style={{color: "gray", fontSize: `${fontsize * 1.1}px`, marginBottom: '12px'}}>
+        解决各种视频音频播放很卡的问题，先点击“存储所有素材”按钮，存储完后点击“刷新网页”按钮，退出页面再开始抽卡
       </label>
       
       {/* 控制面板 */}
@@ -215,16 +219,6 @@ const AssetTest = ({ onClose }) => {
         backgroundColor: '#1f2937', 
         borderRadius: '8px'
       }}>
-        <label style={{ 
-          display: 'block',
-          fontSize: '20px', 
-          fontWeight: '600', 
-          marginBottom: '16px'
-        }}>
-          控制面板
-        </label>
-        
-        {/* 自动刷新：已移除开关，默认自动刷新 */}
         
         <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', flexWrap: 'wrap' }}>
           <button
