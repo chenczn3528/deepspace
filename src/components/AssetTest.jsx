@@ -280,6 +280,22 @@ const AssetTest = ({ onClose }) => {
             清空存储
           </button>
 
+          <button
+            onClick={() => onClose()}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#059669',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.style.backgroundColor = '#047857'}
+            onMouseLeave={(e) => e.target.style.backgroundColor = '#059669'}
+          >
+            开始抽卡
+          </button>
+
           
         </div>
         
