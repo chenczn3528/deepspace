@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Asset } from './Asset';
+import { Asset } from './Asset.jsx';
+import { useAssetLoader } from '../hooks/useAssetLoader';
 
-const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, onSkip, isSingleDraw, fontsize }) => {
+const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, onSkip, isSingleDraw, fontsize, globalVolume }) => {
   const videoRef = useRef(null);
   const audioRef = useRef(null);
   const [videoDuration, setVideoDuration] = useState(0);
   const [isSkipped, setIsSkipped] = useState(false);
+  const { loadAsset } = useAssetLoader();
 
   const handleVideoLoaded = () => {
     if (videoRef.current) {
@@ -19,17 +21,71 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, onSkip, isSingleDraw, 
 
   const handleSkip = () => {
     setIsSkipped(true);
-    onSkip?.(true); // ✅ 通知父组件跳过了
-    setVideoDuration(0.1); // 立即结束动画
+    onSkip?.(true);
+    setVideoDuration(0.1);
     onAnimationEnd();
   };
 
   useEffect(() => {
-    if (videoRef.current && audioRef.current) {
-      videoRef.current.play();
-      audioRef.current.play();
-    }
-  }, [isFiveStar]);
+    const playMedia = async () => {
+      try {
+        // 加载视频
+        const videoFileName = isFiveStar ? 'gold_card.mp4' : 'no_gold_card.mp4';
+        const videoUrl = await loadAsset('video', videoFileName);
+        
+        // 加载音频
+        const audioFileName = isFiveStar ? '出金.mp3' : '不出金.mp3';
+        const audioUrl = await loadAsset('audio', audioFileName);
+        
+        if (videoRef.current && audioRef.current) {
+          // 设置视频源
+          if (videoRef.current.src !== videoUrl) {
+            videoRef.current.src = videoUrl;
+          }
+          
+          // 设置音频源
+          if (audioRef.current.src !== audioUrl) {
+            audioRef.current.src = audioUrl;
+          }
+          
+          // 为音频应用增益
+          try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            const ctx = new AudioCtx();
+            if (ctx.state === 'suspended') {
+              try { await ctx.resume(); } catch {}
+            }
+            
+            // 获取增益设置
+            let sfxGain = 1;
+            try {
+              const saved = localStorage.getItem('sfxGain');
+              if (saved) {
+                const parsed = parseFloat(saved);
+                if (!Number.isNaN(parsed) && parsed > 0) sfxGain = parsed;
+              }
+            } catch {}
+            
+            const source = ctx.createMediaElementSource(audioRef.current);
+            const gainNode = ctx.createGain();
+            gainNode.gain.value = sfxGain;
+            source.connect(gainNode);
+            gainNode.connect(ctx.destination);
+          } catch (e) {
+            // 忽略增益管线错误，保底直接播放
+          }
+          
+          // 播放媒体
+          await videoRef.current.play();
+          await audioRef.current.play();
+        }
+      } catch (error) {
+        console.warn('媒体播放失败:', error);
+      }
+    };
+
+    playMedia();
+  }, [isFiveStar, loadAsset]);
 
   useEffect(() => {
     if (videoDuration > 0) {
@@ -61,47 +117,23 @@ const DrawAnimationCards = ({ isFiveStar, onAnimationEnd, onSkip, isSingleDraw, 
             </button>
         )}
 
-        {isFiveStar ? (
-          <Asset
-            src="gold_card.mp4"
-            type="video"
-            autoPlay
-            muted
-            playsInline
-            onEnded={handleVideoEnded}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center' }}
-          />
-        ) : (
-          <Asset
-            src="no_gold_card.mp4"
-            type="video"
-            autoPlay
-            muted
-            playsInline
-            onEnded={handleVideoEnded}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center' }}
-          />
-        )}
+        {/* 视频元素 */}
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          playsInline
+          onLoadedMetadata={handleVideoLoaded}
+          onEnded={handleVideoEnded}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center' }}
+        />
 
-        {/* <audio
-            ref={audioRef}
-            preload="auto"
-            autoPlay
-            loop
-            muted={false}
-        >
-          <source
-              src={isFiveStar ? 'audios/出金.mp3' : 'audios/不出金.mp3'}
-              type="audio/mp3"
-          />
-          Your browser does not support the audio element.
-        </audio> */}
-        <Asset
-            src={isFiveStar ? '出金.mp3' : '不出金.mp3'}
-            type="audio"
-            autoPlay
-            muted={false}
-            loop
+        {/* 音频元素 */}
+        <audio
+          ref={audioRef}
+          autoPlay
+          loop
+          style={{ display: 'none' }}
         />
       </div>
     </div>

@@ -2,6 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';  // 确保你有安装这个库
 import CardSummaryImageViewer from './CardSummaryImageViewer.jsx';
 import { Asset } from './Asset.jsx';
+import { useAssetLoader } from '../hooks/useAssetLoader';
 
 const CardSummary = ({ drawResults, onClose, fontsize }) => {
 
@@ -9,15 +10,52 @@ const CardSummary = ({ drawResults, onClose, fontsize }) => {
     // 设置音效
     const summaryAudioRef = useRef(null);
 
-    useEffect(() => {
-        summaryAudioRef.current = new Audio("audios/展示结算.mp3");
-        summaryAudioRef.current.volume = 1;
-        summaryAudioRef.current.currentTime = 0;
+    const { loadAsset } = useAssetLoader();
 
-        summaryAudioRef.current
-            .play()
-            .catch((err) => console.warn("播放十抽总结音效失败：", err));
-    }, []); // 组件加载时播放一次
+  useEffect(() => {
+    // 使用 Asset 系统加载并播放展示总结音效
+    const playSummarySound = async () => {
+      try {
+        const audioUrl = await loadAsset('audio', '展示结算.mp3');
+        if (audioUrl) {
+          const audio = new Audio(audioUrl);
+          audio.volume = 1;
+
+          // 使用 WebAudio 增益放大（可配置，读取 localStorage 的 sfxGain）
+          try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            const ctx = new AudioCtx();
+            if (ctx.state === 'suspended') {
+              try { await ctx.resume(); } catch {}
+            }
+            const source = ctx.createMediaElementSource(audio);
+            const gainNode = ctx.createGain();
+            let sfxGain = 1;
+            try {
+              const saved = localStorage.getItem('sfxGain');
+              if (saved) {
+                const parsed = parseFloat(saved);
+                if (!Number.isNaN(parsed) && parsed > 0) sfxGain = parsed;
+              }
+            } catch {}
+            gainNode.gain.value = sfxGain;
+            source.connect(gainNode);
+            gainNode.connect(ctx.destination);
+          } catch (e) {
+            // 忽略增益管线错误，保底直接播放
+          }
+
+          audio.currentTime = 0;
+          await audio.play();
+          summaryAudioRef.current = audio;
+        }
+      } catch (err) {
+        console.warn("播放十抽总结音效失败：", err);
+      }
+    };
+
+    playSummarySound();
+  }, [loadAsset]); // 组件加载时播放一次
 
     const [showImageViewer, setShowImageViewer] = React.useState(false);
     const [viewerIndex, setViewerIndex] = React.useState(0);

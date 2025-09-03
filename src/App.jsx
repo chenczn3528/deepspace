@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import Home from './Home.jsx';
 import AssetManager from './components/AssetManager.jsx';
-import AssetTest from './components/AssetTest.jsx'; // 添加这行
+import AssetTest from './components/AssetTest.jsx';
 
 function App() {
   const wrapperRef = useRef();

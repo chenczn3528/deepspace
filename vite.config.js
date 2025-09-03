@@ -2,6 +2,21 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { resolve } from 'path'
+import { execSync } from 'child_process'
+
+// Read git info at build time
+function getGitInfo() {
+  try {
+    const hash = execSync('git rev-parse --short HEAD').toString().trim()
+    const dateIso = execSync('git log -1 --format=%cI').toString().trim()
+    const message = execSync('git log -1 --pretty=%s').toString().trim()
+    return { hash, dateIso, message }
+  } catch (e) {
+    return { hash: null, dateIso: null, message: null }
+  }
+}
+
+const git = getGitInfo()
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -30,6 +45,9 @@ export default defineConfig({
   base: '/',
   define: {
     'process.env': {},
+    __BUILD_GIT_HASH__: JSON.stringify(git.hash),
+    __BUILD_GIT_DATE_ISO__: JSON.stringify(git.dateIso),
+    __BUILD_GIT_MESSAGE__: JSON.stringify(git.message),
   },
   resolve: {
     alias: {

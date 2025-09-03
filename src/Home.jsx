@@ -71,6 +71,12 @@ const Home = ({isPortrait, openAssetTest}) => {
     const fontsize = useResponsiveFontSize({scale: 0.9});
 
     const [musicID, setMusicID] = useLocalStorageState("ds_musicID", songsList[0]["id"].slice(0,10))
+    
+    // 全局音量控制
+    const [globalVolume, setGlobalVolume] = useLocalStorageState("ds_globalVolume", 1.0)
+
+    // 音效增益控制
+    const [sfxGain, setSfxGain] = useLocalStorageState("ds_sfxGain", 1.0)
 
 
     // 清除缓存数据
@@ -85,6 +91,8 @@ const Home = ({isPortrait, openAssetTest}) => {
             'ds_includeThreeStar',
             'ds_onlySelectedRoleCard',
             'ds_musicID',
+            'ds_globalVolume',
+            'ds_sfxGain', // 添加这一行
         ];
         keysToClear.forEach(key => localStorage.removeItem(key));
         clearHistory();
@@ -612,6 +620,7 @@ const Home = ({isPortrait, openAssetTest}) => {
                 autoPlay
                 muted
                 playsInline
+                volume={globalVolume}
                 onEnded={() => {
                     const validDrawId = drawSessionIdRef.current;
                     if (!validDrawId) return;
@@ -669,6 +678,10 @@ const Home = ({isPortrait, openAssetTest}) => {
                 showMusicPageZIndex={showMusicPageZIndex}
                 setShowMusicPageZIndex={setShowMusicPageZIndex}
                 openAssetTest={openAssetTest}
+                globalVolume={globalVolume}
+                setGlobalVolume={setGlobalVolume}
+                sfxGain={sfxGain}
+                setSfxGain={setSfxGain}
             />
 
 
@@ -680,6 +693,8 @@ const Home = ({isPortrait, openAssetTest}) => {
                     onSkip={(skipped) => setVideoSkipped(skipped)}
                     isSingleDraw={isSingleDraw}
                     fontsize={fontsize}
+                    globalVolume={globalVolume}
+                    sfxGain={sfxGain} // 添加这一行
                 />
             )}
 
@@ -693,6 +708,8 @@ const Home = ({isPortrait, openAssetTest}) => {
                 setVideoPlayed={setVideoPlayed}
                 handleNextCard={handleNextCard}
                 fontsize={fontsize}
+                globalVolume={globalVolume}
+                sfxGain={sfxGain} // 添加这一行
             />
 
 

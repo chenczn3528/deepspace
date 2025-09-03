@@ -2,6 +2,8 @@ import React, {useEffect, useRef, useState} from 'react';
 import MusicPlayIcon from "../icons/MusicPlayIcon.jsx";
 import MusicMuteIcon from "../icons/MusicMuteIcon.jsx";
 import MusicIcon from "../icons/MusicIcon.jsx";
+import MusicVolumeIcon from "../icons/MusicVolumeIcon.jsx";
+import { useAssetLoader } from '../hooks/useAssetLoader';
 
 const SettingsLayer = ({
     totalDrawCount,
@@ -36,56 +38,75 @@ const SettingsLayer = ({
     musicID,
     setMusicID,
     openAssetTest,
+    globalVolume,
+    setGlobalVolume,
 }) => {
 
+    const { loadAsset } = useAssetLoader();
 
+    // 音效增益设置开关与数值
+    const [showGainCtrl, setShowGainCtrl] = useState(false);
+    const [sfxGain, setSfxGain] = useState(() => {
+        try {
+            const saved = localStorage.getItem('sfxGain');
+            const v = saved ? parseFloat(saved) : 1;
+            return Number.isNaN(v) ? 1 : v;
+        } catch { return 1; }
+    });
 
+    useEffect(() => {
+        try { localStorage.setItem('sfxGain', String(sfxGain)); } catch {}
+    }, [sfxGain]);
 
-    // // ========================================================
-    // // 背景音乐设置
-    // const audioRef = useRef(null);
-    // const [volume, setVolume] = useState(0.1);
-    // const [showSlider, setShowSlider] = useState(false);
-    // const hideTimeoutRef = useRef(null);
-    //
-    // useEffect(() => {
-    //     const audio = audioRef.current;
-    //     if (audio) {
-    //         audio.volume = volume;
-    //         audio.loop = true;
-    //         audio.play().catch((err) => {
-    //             console.warn('自动播放失败', err);
-    //         });
-    //     }
-    // }, []);
-    //
-    // useEffect(() => {
-    //     if (audioRef.current) {
-    //         audioRef.current.volume = volume;
-    //         if (audioRef.current.paused && volume > 0) {
-    //             audioRef.current.play().catch(() => {});
-    //         }
-    //     }
-    // }, [volume]);
-    //
-    // // 每次显示音量条后自动在 2 秒后隐藏
-    // useEffect(() => {
-    //     if (showSlider) {
-    //         clearTimeout(hideTimeoutRef.current);
-    //         hideTimeoutRef.current = setTimeout(() => {
-    //             setShowSlider(false);
-    //         }, 2000);
-    //     }
-    //     return () => clearTimeout(hideTimeoutRef.current);
-    // }, [showSlider]);
-    //
-    // const toggleSlider = () => {
-    //     setShowSlider(true);
-    // };
-    //
-    //
-    // const [musicID, setMusicID] = useState("2660222366");
-    // const [showPlayer, setShowPlayer] = useState(true);
+    // 点击外部区域关闭音效设置面板
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (showGainCtrl) {
+                // 检查点击是否在音效设置面板外部
+                const gainPanel = document.querySelector('[data-gain-panel]');
+                const gainButton = document.querySelector('[data-gain-button]');
+                
+                if (gainPanel && gainButton && 
+                    !gainPanel.contains(event.target) && 
+                    !gainButton.contains(event.target)) {
+                    setShowGainCtrl(false);
+                }
+            }
+        };
+
+        if (showGainCtrl) {
+            document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener('touchstart', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('touchstart', handleClickOutside);
+        };
+    }, [showGainCtrl]);
+
+    const playTestSfx = async () => {
+        try {
+            const url = await loadAsset('audio', '切换音效.mp3');
+            if (!url) return;
+            const audio = new Audio(url);
+            audio.volume = 1;
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioCtx();
+                if (ctx.state === 'suspended') {
+                    try { await ctx.resume(); } catch {}
+                }
+                const source = ctx.createMediaElementSource(audio);
+                const gainNode = ctx.createGain();
+                gainNode.gain.value = sfxGain > 0 ? sfxGain : 1;
+                source.connect(gainNode);
+                gainNode.connect(ctx.destination);
+            } catch {}
+            audio.currentTime = 0;
+            await audio.play();
+        } catch {}
+    };
 
     const handleCopy = async () => {
         try {
@@ -104,6 +125,46 @@ const SettingsLayer = ({
 
     return (
         <div className="absolute w-full h-full">
+
+            {/* 音效增益按钮与隐藏面板 */}
+            <button className="absolute"
+                data-gain-button
+                onClick={() => {setShowGainCtrl(v => !v)}}
+                style={{background: 'transparent', border: 'none', padding: 0, top: `${fontsize * 1.2}px`, right: `${fontsize * 3.8}px`}}
+            >
+                <MusicVolumeIcon size={fontsize * 2} color="gray"/>
+            </button>
+
+
+            
+            {showGainCtrl && (
+                <div className="absolute items-center gap-[1vmin]"
+                        data-gain-panel
+                        style={{
+                        top: `${fontsize * 4.2}px`, 
+                        right: `${fontsize * 1.2}px`,
+                        padding: `${fontsize * 0.8}px`,
+                        borderRadius: `${fontsize * 0.1}px`,
+                        backgroundColor: 'rgba(43, 45, 57)',
+                        }}
+                >
+                    <label style={{color: 'white', textShadow: '0 0 6px black', fontSize: `${fontsize * 1.1}px`, whiteSpace: 'nowrap', marginRight: `${fontsize * 0.5}px`}}>音效音量大小</label>
+                    <input
+                        type="range"
+                        min="0.5"
+                        max="10"
+                        step="0.1"
+                        value={sfxGain}
+                        onChange={(e) => setSfxGain(parseFloat(e.target.value))}
+                        onMouseUp={playTestSfx}
+                        onTouchEnd={playTestSfx}
+                        style={{width: `${fontsize * 8}px`}}
+                    />
+                    <span style={{color: 'white', textShadow: '0 0 6px black', fontSize: `${fontsize * 1.1}px`, minWidth: `${fontsize * 8}px`, textAlign: 'right'}}>
+                        {`${(sfxGain || 1).toFixed(1)}`}
+                    </span>
+                </div>
+            )}
 
             {/*放音乐按钮*/}
             <button

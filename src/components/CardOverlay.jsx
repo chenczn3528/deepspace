@@ -1,6 +1,7 @@
 // CardOverlay.jsx
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { Asset } from './Asset.jsx';
+import { useAssetLoader } from '../hooks/useAssetLoader';
 
 
 const CardOverlay = ({
@@ -33,7 +34,77 @@ const CardOverlay = ({
 
     // ========================================================
     // 使用 Asset 播放音效（自动播放，随索引/显示状态变化重新挂载触发播放）
-    const audioKey = `${showCardOverlay ? 1 : 0}-${currentCardIndex}`;
+    const cardSoundRef = useRef(null);
+    const { loadAsset } = useAssetLoader();
+
+    const allCards = drawResultsRef.current.map(item => item.card);
+    const card = allCards[currentCardIndex];
+
+    // ⭐ 播放音效
+    useEffect(() => {
+        if (!showCardOverlay || !card) return;
+        
+        let soundFileName;
+        if (card.star === '5星') {
+            soundFileName = '金卡展示.mp3';
+        } else {
+            soundFileName = '切换音效.mp3';
+        }
+
+        // 使用 Asset 系统加载音频
+        const playSound = async () => {
+            try {
+                const audioUrl = await loadAsset('audio', soundFileName);
+                if (audioUrl) {
+                    const audio = new Audio(audioUrl);
+                    audio.volume = 1;
+
+                    // 使用 WebAudio 增益放大（可配置）
+                    try {
+                        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                        const ctx = new AudioCtx();
+                        if (ctx.state === 'suspended') {
+                            try { await ctx.resume(); } catch {}
+                        }
+                        const source = ctx.createMediaElementSource(audio);
+                        const gainNode = ctx.createGain();
+                        let sfxGain = 1;
+                        try {
+                            const saved = localStorage.getItem('sfxGain');
+                            if (saved) {
+                                const parsed = parseFloat(saved);
+                                if (!Number.isNaN(parsed) && parsed > 0) sfxGain = parsed;
+                            }
+                        } catch {}
+                        gainNode.gain.value = sfxGain;
+                        source.connect(gainNode);
+                        gainNode.connect(ctx.destination);
+                    } catch (e) {
+                        // 失败则忽略增益管线，直接播放
+                    }
+
+                    audio.currentTime = 0;
+                    await audio.play();
+                    cardSoundRef.current = audio;
+                }
+            } catch (err) {
+                console.warn("音效播放失败:", err);
+            }
+        };
+
+        playSound();
+
+        // 清理函数：当依赖变化时停止之前的音频
+        return () => {
+            if (cardSoundRef.current) {
+                try {
+                    cardSoundRef.current.pause();
+                    cardSoundRef.current.currentTime = 0;
+                } catch {}
+                cardSoundRef.current = null;
+            }
+        };
+    }, [card, showCardOverlay, loadAsset, currentCardIndex]);
 
 
     // 预加载小图，等大图加载完以后跳出来
@@ -56,12 +127,6 @@ const CardOverlay = ({
                onClick={() => {if (!isCurrentFiveStar || videoPlayed) {handleNextCard();}}}// 只有视频播放完了，才能允许切换
             >
                 {/* 底部图片（绝对定位） */}
-                
-                {/* <img
-                    src="images/结算背景.jpg"
-                    alt="底部装饰"
-                    className="absolute w-full h-full flex z-0"
-                /> */}
                 <Asset  
                     src="结算背景.jpg"
                     type="image"
@@ -69,23 +134,6 @@ const CardOverlay = ({
                 />
 
                 {isCurrentFiveStar && !videoPlayed && (
-                    // 视频播放层
-                    // <video
-                    //     className="absolute w-full h-full object-cover z-20"
-                    //     preload="auto"
-                    //     autoPlay
-                    //     playsInline
-                    //     muted
-                    //     controls={false}
-                    //     onEnded={() => setVideoPlayed(true)}
-                    //     style={{ pointerEvents: 'none' }}
-                    // >
-                    //     <source
-                    //         src={`videos/${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.mp4`}
-                    //         type="video/mp4"
-                    //     />
-                    //         Your browser does not support the video tag.
-                    // </video>
                     <Asset
                         src={`${drawResultsRef.current[currentCardIndex]?.card?.character}金卡.mp4`}
                         type="video"
@@ -145,20 +193,6 @@ const CardOverlay = ({
                                 style={{height: `${drawResultsRef.current[currentCardIndex]?.card?.card_type_tag === "日冕" ? 
                                       fontsize * 2.5 : fontsize * 1.8}px`}}
                             />
-                            
-                            {/* <img
-                                src={`images/${drawResultsRef.current[currentCardIndex]?.card?.star}.png`}
-                                style={{marginRight: `${fontsize * 0.6}px`, height: `${fontsize * 2.5}px`}}
-                            />
-                            <img
-                                src={`images/${drawResultsRef.current[currentCardIndex]?.card?.card_color_tag}.png`}
-                                style={{marginRight:`${fontsize * 0.2}px`, height: `${fontsize * 1.8}px`}}
-                            />
-                            <img
-                                src={`images/${drawResultsRef.current[currentCardIndex]?.card?.card_type_tag}.png`}
-                                style={{height: `${drawResultsRef.current[currentCardIndex]?.card?.card_type_tag === "日冕" ? 
-                                      fontsize * 2.5 : fontsize * 1.8}px`}}
-                            /> */}
                         </div>
 
 
@@ -188,15 +222,6 @@ const CardOverlay = ({
                                 {drawResultsRef.current[currentCardIndex]?.card?.name}
                             </label>
                         </div>
-
-                        {/* 音效：使用 Asset 自动播放，避免手动 new Audio 造成缓存不走 */}
-                        <Asset
-                            key={audioKey}
-                            src={isCurrentFiveStar ? '金卡展示.mp3' : '切换音效.mp3'}
-                            type="audio"
-                            autoPlay
-                            style={{ display: 'none' }}
-                        />
                     </>
                 ) : null}
             </div>
