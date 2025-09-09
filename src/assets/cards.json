@@ -336,6 +336,20 @@
     "video_url": ""
   },
   {
+    "character": "黎深",
+    "name": "以我寄黎明",
+    "card_type_tag": "月晖",
+    "card_color_tag": "粉珀",
+    "star": "5星",
+    "talent": "生命",
+    "get": "限时许愿[[「以我寄黎明」]]",
+    "permanent": "",
+    "time": "2025/8/31",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/0/0a/gb35x4p4opshfbi0iii3wu52upbb0la.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E4%BB%A5%E6%88%91%E5%AF%84%E9%BB%8E%E6%98%8E.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//0/0a/gb35x4p4opshfbi0iii3wu52upbb0la.png?download",
+    "video_url": "https://player.bilibili.com/player.html?isOutside=true&bvid=BV1tH4y1w7y4&p=&autoplay=auto&preload=auto&quality=1080p"
+  },
+  {
     "character": "夏以昼",
     "name": "澄风掠海",
     "card_type_tag": "月晖",
@@ -2114,6 +2128,34 @@
     "video_url": ""
   },
   {
+    "character": "夏以昼",
+    "name": "焚线",
+    "card_type_tag": "月晖",
+    "card_color_tag": "紫辉",
+    "star": "4星",
+    "talent": "生命",
+    "get": "特别密约<br>活动-[[「升级密约」11期]]",
+    "permanent": "",
+    "time": "2025/8/31",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/2/29/4a52f3qzd3w6iqpbliw7y54m9egycqu.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%84%9A%E7%BA%BF.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//2/29/4a52f3qzd3w6iqpbliw7y54m9egycqu.png?download",
+    "video_url": ""
+  },
+  {
+    "character": "秦彻",
+    "name": "共酣",
+    "card_type_tag": "月晖",
+    "card_color_tag": "粉珀",
+    "star": "4星",
+    "talent": "生命",
+    "get": "特别密约<br>活动-[[「升级密约」11期]]",
+    "permanent": "",
+    "time": "2025/8/31",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/2/26/jnczct3ckl24jzzpqmihnkqmnbltkhm.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E5%85%B1%E9%85%A3.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//2/26/jnczct3ckl24jzzpqmihnkqmnbltkhm.png?download",
+    "video_url": ""
+  },
+  {
     "character": "祁煜",
     "name": "透明洋",
     "card_type_tag": "月晖",
@@ -2316,7 +2358,7 @@
     "card_color_tag": "蓝弧",
     "star": "4星",
     "talent": "生命",
-    "get": "许愿",
+    "get": "签到「十日与你」",
     "permanent": "",
     "time": "2025/1/22",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/a/ab/if929pmovuqbj5zy3v2r47xnqm7vhzd.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E9%80%82%E9%85%8D%E6%B5%81%E8%A8%80.png",
@@ -3752,12 +3794,26 @@
     "video_url": ""
   },
   {
+    "character": "黎深",
+    "name": "冰晶世界",
+    "card_type_tag": "月晖",
+    "card_color_tag": "黄璃",
+    "star": "3星",
+    "talent": "攻击",
+    "get": "[[「沉日尽头」]]期许商店兑换获得",
+    "permanent": "",
+    "time": "2025/8/31",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/7/71/pgadrg0n0qkm0mt2tog8wglbo2y0t34.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E5%86%B0%E6%99%B6%E4%B8%96%E7%95%8C.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//7/71/pgadrg0n0qkm0mt2tog8wglbo2y0t34.png?download",
+    "video_url": ""
+  },
+  {
     "character": "沈星回",
     "name": "拭痕",
     "card_type_tag": "月晖",
     "card_color_tag": "粉珀",
     "star": "3星",
-    "talent": "攻击",
+    "talent": "生命",
     "get": "[[「时墟回轮」]]河岸工坊兑换获得",
     "permanent": "",
     "time": "2025/7/25",

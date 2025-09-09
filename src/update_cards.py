@@ -103,7 +103,10 @@ def fetch_detail_image(card_url, card_name):
                 result = fetch_bilibili_video_info(bvid)
                 video_infomation[bvid] = result
             page = find_dict_by_value(video_infomation[bvid], card_name)
-            video_url = video_url.replace("p=&", "p=" + str(page.get("page")) + "&").replace("autoplay=0", "autoplay=auto")
+            if page:
+                video_url = video_url.replace("p=&", "p=" + str(page.get("page", "")) + "&").replace("autoplay=0", "autoplay=auto")
+            else:
+                video_url = video_url.replace("autoplay=0", "autoplay=auto")
             video_url = "https://player.bilibili.com/player.html?isOutside=true&" + video_url + "&preload=auto&quality=1080p"
             print(video_url)
 
@@ -119,6 +122,8 @@ def fetch_detail_image(card_url, card_name):
             return "", "", ""
     except Exception as e:
         print(f"❌ 获取详情页失败：{card_url}，错误：{e}", flush=True)
+        print(img)
+        print(video_url)
         return "", "", ""
 
 
