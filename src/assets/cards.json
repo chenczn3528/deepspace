@@ -336,6 +336,20 @@
     "video_url": ""
   },
   {
+    "character": "秦彻",
+    "name": "热意揣度",
+    "card_type_tag": "月晖",
+    "card_color_tag": "紫辉",
+    "star": "5星",
+    "talent": "防御",
+    "get": "限时许愿[[「热意揣度」]]",
+    "permanent": "",
+    "time": "2025/9/9",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/6/63/az5w9f4nhk047klhbacg3jix7a6iqnr.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%83%AD%E6%84%8F%E6%8F%A3%E5%BA%A6.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//6/63/az5w9f4nhk047klhbacg3jix7a6iqnr.png?download",
+    "video_url": "https://player.bilibili.com/player.html?isOutside=true&bvid=BV16T421r7je&p=&autoplay=auto&preload=auto&quality=1080p"
+  },
+  {
     "character": "黎深",
     "name": "以我寄黎明",
     "card_type_tag": "月晖",
@@ -2125,6 +2139,20 @@
     "time": "2024/1/18",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/e/e9/t7vnu8vyspv2d7c6h55wvji7o484ioy.png/400px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E9%9D%99%E8%B0%A7%E7%9E%AC%E6%81%AF.png",
     "image": "https://patchwiki.biligame.com/images/lysk//e/e9/t7vnu8vyspv2d7c6h55wvji7o484ioy.png?download",
+    "video_url": ""
+  },
+  {
+    "character": "夏以昼",
+    "name": "奔夏一刻",
+    "card_type_tag": "月晖",
+    "card_color_tag": "绿珥",
+    "star": "4星",
+    "talent": "防御",
+    "get": "[[「十日与你」13期]]活动中获取",
+    "permanent": "",
+    "time": "2025/9/13",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/a/a2/8u739iylvg9fsc5qs4xgz5mis2uil9r.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E5%A5%94%E5%A4%8F%E4%B8%80%E5%88%BB.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//a/a2/8u739iylvg9fsc5qs4xgz5mis2uil9r.png?download",
     "video_url": ""
   },
   {
