@@ -1,5 +1,33 @@
 [
   {
+    "character": "黎深",
+    "name": "神谕圣咏",
+    "card_type_tag": "日冕",
+    "card_color_tag": "粉珀",
+    "star": "5星",
+    "talent": "生命",
+    "get": "限时许愿[[「时与世的边缘」]]",
+    "permanent": "",
+    "time": "2025/9/25",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/6/69/4ks1h0mr4pka2m5nwn5gd36z4iccr7f.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%A5%9E%E8%B0%95%E5%9C%A3%E5%92%8F.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//6/69/4ks1h0mr4pka2m5nwn5gd36z4iccr7f.png?download",
+    "video_url": "https://player.bilibili.com/player.html?isOutside=true&bvid=BV1tH4y1w7y4&p=26&autoplay=auto&preload=auto&quality=1080p"
+  },
+  {
+    "character": "黎深",
+    "name": "神谕归寂",
+    "card_type_tag": "日冕",
+    "card_color_tag": "粉珀",
+    "star": "5星",
+    "talent": "生命",
+    "get": "限时许愿[[「时与世的边缘」]]",
+    "permanent": "",
+    "time": "2025/9/25",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/f/f4/kgxkp16colca0uoliu7k78f4649ckyb.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%A5%9E%E8%B0%95%E5%BD%92%E5%AF%82.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//f/f4/kgxkp16colca0uoliu7k78f4649ckyb.png?download",
+    "video_url": "https://player.bilibili.com/player.html?isOutside=true&bvid=BV1tH4y1w7y4&p=27&autoplay=auto&preload=auto&quality=1080p"
+  },
+  {
     "character": "沈星回",
     "name": "夜誓烬歌",
     "card_type_tag": "日冕",
@@ -347,7 +375,7 @@
     "time": "2025/9/9",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/6/63/az5w9f4nhk047klhbacg3jix7a6iqnr.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%83%AD%E6%84%8F%E6%8F%A3%E5%BA%A6.png",
     "image": "https://patchwiki.biligame.com/images/lysk//6/63/az5w9f4nhk047klhbacg3jix7a6iqnr.png?download",
-    "video_url": "https://player.bilibili.com/player.html?isOutside=true&bvid=BV16T421r7je&p=&autoplay=auto&preload=auto&quality=1080p"
+    "video_url": "https://player.bilibili.com/player.html?isOutside=true&bvid=BV16T421r7je&p=18&autoplay=auto&preload=auto&quality=1080p"
   },
   {
     "character": "黎深",
@@ -361,7 +389,7 @@
     "time": "2025/8/31",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/0/0a/gb35x4p4opshfbi0iii3wu52upbb0la.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E4%BB%A5%E6%88%91%E5%AF%84%E9%BB%8E%E6%98%8E.png",
     "image": "https://patchwiki.biligame.com/images/lysk//0/0a/gb35x4p4opshfbi0iii3wu52upbb0la.png?download",
-    "video_url": "https://player.bilibili.com/player.html?isOutside=true&bvid=BV1tH4y1w7y4&p=&autoplay=auto&preload=auto&quality=1080p"
+    "video_url": "https://player.bilibili.com/player.html?isOutside=true&bvid=BV1tH4y1w7y4&p=25&autoplay=auto&preload=auto&quality=1080p"
   },
   {
     "character": "夏以昼",
@@ -1596,6 +1624,34 @@
     "video_url": "https://player.bilibili.com/player.html?isOutside=true&bvid=BV1tH4y1w7y4&p=3&autoplay=auto&preload=auto&quality=1080p"
   },
   {
+    "character": "黎深",
+    "name": "终序永劫",
+    "card_type_tag": "日冕",
+    "card_color_tag": "紫辉",
+    "star": "4星",
+    "talent": "防御",
+    "get": "「金蚀启世」搭档预演",
+    "permanent": "",
+    "time": "2025/9/25",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/9/97/jal1pf4jog0x7dv5ub401ec25rx1q8m.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%BB%88%E5%BA%8F%E6%B0%B8%E5%8A%AB.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//9/97/jal1pf4jog0x7dv5ub401ec25rx1q8m.png?download",
+    "video_url": ""
+  },
+  {
+    "character": "黎深",
+    "name": "终序牵怀",
+    "card_type_tag": "日冕",
+    "card_color_tag": "紫辉",
+    "star": "4星",
+    "talent": "防御",
+    "get": "「金蚀启世」不归行途",
+    "permanent": "",
+    "time": "2025/9/25",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/7/7c/dk70xae6w5ddydwpsct2evxi32cqlj2.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%BB%88%E5%BA%8F%E7%89%B5%E6%80%80.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//7/7c/dk70xae6w5ddydwpsct2evxi32cqlj2.png?download",
+    "video_url": ""
+  },
+  {
     "character": "沈星回",
     "name": "鎏光碎梦",
     "card_type_tag": "日冕",
@@ -1605,8 +1661,8 @@
     "get": "「时墟回轮」朝圣之旅",
     "permanent": "",
     "time": "2025/7/25",
-    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/a/a0/ae6h9ukdqcnjxd3sxxg4x1gykyl70fm.png/900px-%E6%80%9D%E5%BF%B5%E6%A8%AA%E5%9B%BE-%E9%8E%8F%E5%85%89%E7%A2%8E%E6%A2%A6.png",
-    "image": "https://patchwiki.biligame.com/images/lysk//a/a0/ae6h9ukdqcnjxd3sxxg4x1gykyl70fm.png?download",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/2/2d/teex7p2lqy3sl2smz3g7yhvzmddg6mf.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E9%8E%8F%E5%85%89%E7%A2%8E%E6%A2%A6.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//2/2d/teex7p2lqy3sl2smz3g7yhvzmddg6mf.png?download",
     "video_url": ""
   },
   {
@@ -1619,8 +1675,8 @@
     "get": "「时墟回轮」搭档预演",
     "permanent": "",
     "time": "2025/7/25",
-    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/6/61/d3fb0hqeezmjip901fk3bsa57k0rb0n.png/900px-%E6%80%9D%E5%BF%B5%E6%A8%AA%E5%9B%BE-%E9%8E%8F%E5%85%89%E8%9C%83%E5%BD%B1.png",
-    "image": "https://patchwiki.biligame.com/images/lysk//6/61/d3fb0hqeezmjip901fk3bsa57k0rb0n.png?download",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/5/50/92sk3aoxbfhovunyawzi8gd1sczbk82.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E9%8E%8F%E5%85%89%E8%9C%83%E5%BD%B1.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//5/50/92sk3aoxbfhovunyawzi8gd1sczbk82.png?download",
     "video_url": ""
   },
   {
@@ -3819,6 +3875,20 @@
     "time": "2024/1/18",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/7/74/dozl471pv1f3wyiyij9tlh46lz6fl1v.png/400px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%9F%A5%E6%88%BF.png",
     "image": "https://patchwiki.biligame.com/images/lysk//7/74/dozl471pv1f3wyiyij9tlh46lz6fl1v.png?download",
+    "video_url": ""
+  },
+  {
+    "character": "黎深",
+    "name": "终见",
+    "card_type_tag": "月晖",
+    "card_color_tag": "紫辉",
+    "star": "3星",
+    "talent": "生命",
+    "get": "[[「金蚀启世」]]涅亚货栈兑换获得",
+    "permanent": "",
+    "time": "2025/9/25",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/4/40/cqsar8r0j0a80bsvtywytughou54nox.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%BB%88%E8%A7%81.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//4/40/cqsar8r0j0a80bsvtywytughou54nox.png?download",
     "video_url": ""
   },
   {
