@@ -108,7 +108,7 @@ const Home = ({isPortrait, openAssetTest}) => {
     const [drawnCards, setDrawnCards] = useState([]); // 存储已抽到的卡片的数组
     const drawResultsRef = useRef([]); // 引用存储抽卡结果的数组，避免重新渲染时丢失数据，保存每次抽卡的结果，以便后续处理和展示
 
-    const roles = ['随机', ...new Set(cardData.map(card => card.character))]; // 存储可选择的角色列表
+    const roles = ['随机', '沈星回', '黎深', '祁煜', '秦彻', '夏以昼']; // 存储可选择的角色列表
 
     const drawSessionIdRef = useRef(0); // 全局流程控制 ID，抽卡直接出现结果的bug
     const [isDrawing, setIsDrawing] = useState(false); // 防止重复抽卡

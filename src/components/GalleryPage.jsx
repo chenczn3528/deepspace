@@ -5,6 +5,7 @@ import LeftIcon from "../icons/LeftIcon.jsx";
 import FullScreenIcon from "../icons/FullScreenIcon.jsx";
 import SmallScreenIcon from "../icons/SmallScreenIcon.jsx";
 import LockIcon from "../icons/LockIcon.jsx";
+import BlurIcon from "../icons/BlurIcon.jsx";
 import cardData from '../assets/cards.json';
 import { Asset } from './Asset.jsx';
 
@@ -22,10 +23,19 @@ const GalleryPage = ({
     const [showAllCards, setShowAllCards] = useState(false);
     const [withLockCards, setWithLockCards] = useState([]);
     const [showLockIcon, setShowLockIcon] = useState(false);
+    const [isBlurEnabled, setIsBlurEnabled] = useState(() => {
+        const saved = localStorage.getItem('gallery-blur-enabled');
+        return saved ? JSON.parse(saved) : false;
+    });
 
     useEffect(() => {
         setWithLockCards(cardData);
     }, []);
+
+    // 保存模糊状态到localStorage
+    useEffect(() => {
+        localStorage.setItem('gallery-blur-enabled', JSON.stringify(isBlurEnabled));
+    }, [isBlurEnabled]);
 
     useEffect(()=>{
         if(selectedCharacter === "全部") {
@@ -185,6 +195,17 @@ const GalleryPage = ({
                         </button>
                     )}
 
+                    {/*模糊按钮*/}
+                    {showLockIcon && showAllCards && (
+                        <button
+                            className="flex items-center ml-[20px] z-20"
+                            style={{background: 'transparent', border: 'none', padding: 0}}
+                            onClick={() => setIsBlurEnabled(prev => !prev)}
+                        >
+                            <BlurIcon size={fontsize * 2} color={isBlurEnabled ? 'lightgray' : 'black'}/>
+                        </button>
+                    )}
+
                     <div className="absolute flex flex-row right-[0] items-center" style={{gap: `${fontsize}px`}}>
                         {/*排序*/}
                         <select
@@ -295,19 +316,42 @@ const GalleryPage = ({
                             <div
                                 key={card.name}
                                 className="relative w-full"
-                                style={{height: squareView ? `${fontsize * 12}px` : `${fontsize * 18}px`}}
+                                style={{
+                                    height: squareView ? `${fontsize * 12}px` : `${fontsize * 18}px`,
+                                    overflow: 'hidden',
+                                    borderRadius: '8px'
+                                }}
                             >
                                 {/*主图*/}
-                                <img
-                                    src={card.image_small}
-                                    alt={card.name}
-                                    className={`absolute inset-0 w-full h-full rounded ${squareView ? 'object-cover object-top' : 'object-cover'}`}
-                                    style={{height: squareView ? `${fontsize * 10}px` : `${fontsize * 16}px`}}
-                                    onClick={() => {
-                                        setCurrentIndex(index);
-                                        setShowFullImage(true);
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        width: '100%',
+                                        height: squareView ? `${fontsize * 10}px` : `${fontsize * 16}px`,
+                                        overflow: 'hidden',
+                                        borderRadius: '8px'
                                     }}
-                                />
+                                >
+                                    <img
+                                        src={card.image_small}
+                                        alt={card.name}
+                                        className={`w-full h-full ${squareView ? 'object-cover object-top' : 'object-cover'}`}
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            filter: (isBlurEnabled && !card.owned) ? 'blur(6px)' : 'none',
+                                            transition: 'filter 0.3s ease',
+                                            transform: (isBlurEnabled && !card.owned) ? 'scale(1.05)' : 'scale(1)',
+                                            transformOrigin: 'center'
+                                        }}
+                                        onClick={() => {
+                                            setCurrentIndex(index);
+                                            setShowFullImage(true);
+                                        }}
+                                    />
+                                </div>
 
                                 {/*星谱*/}
                                 {/* <img

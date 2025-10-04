@@ -181,13 +181,13 @@ const SettingsLayer = ({
             <div className="absolute flex flex-col" style={{top: `${fontsize * 1.2}px`, left: `${fontsize * 1.2}px`}}>
                 <div className="flex flex-row gap-[10px]">
                     {/*查看图鉴*/}
-                    <button style={{fontSize: `${fontsize * 1.2}px`}} onClick={() => setShowGallery(true)}>图鉴</button>
+                    <button style={{fontSize: `${fontsize * 1.2}px`, backgroundColor: 'rgba(255, 255, 255, 0.9)'}} onClick={() => setShowGallery(true)}>图鉴</button>
 
                     {/*素材测试*/}
-                    <button style={{fontSize: `${fontsize * 1.2}px`}} onClick={() => openAssetTest && openAssetTest()}>动画缓存</button>
+                    <button style={{fontSize: `${fontsize * 1.2}px`, backgroundColor: 'rgba(255, 255, 255, 0.9)'}} onClick={() => openAssetTest && openAssetTest()}>动画缓存</button>
 
                     {/*测试概率*/}
-                    <button style={{fontSize: `${fontsize * 1.2}px`}}
+                    <button style={{fontSize: `${fontsize * 1.2}px`, backgroundColor: 'rgba(255, 255, 255, 0.9)'}}
                             onClick={() => setShowProbability(!showProbability)}>测试概率
                     </button>
                 </div>
@@ -202,8 +202,6 @@ const SettingsLayer = ({
                     className="flex flex-col mt-[5px]"
                 >
                     <span style={{color: 'red', fontWeight: 800}}>重要提示：</span>
-                    <label>第一次加载网页的视频、动画会很卡</label>
-                    <label>需要等待一段时间让资源加载完</label>
                     <label>数据来源：恋与深空WIKI</label>
                     <div className="flex flex-row">
                         <label>反馈bug或功能需求：</label>
@@ -239,7 +237,7 @@ const SettingsLayer = ({
             >
                 {/*清除所有记录*/}
                 <div>
-                    <button style={{fontSize: `${fontsize * 1.2}px`}} onClick={clearLocalData}>清除所有记录</button>
+                    <button style={{fontSize: `${fontsize * 1.2}px`, backgroundColor: 'rgba(255, 255, 255, 0.9)'}} onClick={clearLocalData}>清除所有记录</button>
                 </div>
 
 
@@ -326,7 +324,7 @@ const SettingsLayer = ({
                             setShowSummary(false);
                             handleDraw(1);
                         }}
-                        style={{fontSize: `${fontsize * 1.2}px`}}
+                        style={{fontSize: `${fontsize * 1.2}px`, backgroundColor: 'rgba(255, 255, 255, 0.9)'}}
                     >
                         许愿一次
                     </button>
@@ -339,7 +337,7 @@ const SettingsLayer = ({
                             handleDraw(10);
                         }}
                         disabled={isDrawing || isAnimatingDrawCards}
-                        style={{fontSize: `${fontsize * 1.2}px`}}
+                        style={{fontSize: `${fontsize * 1.2}px`, backgroundColor: 'rgba(255, 255, 255, 0.9)'}}
                     >
                         {isDrawing ? '抽卡中...' : '许愿十次'}
                     </button>
@@ -367,7 +365,7 @@ const SettingsLayer = ({
                     {/* 抽卡历史记录按钮 */}
                     <button
                         onClick={() => setShowHistory(!showHistory)}
-                        style={{fontSize: `${fontsize * 1.2}px`}}
+                        style={{fontSize: `${fontsize * 1.2}px`, backgroundColor: 'rgba(255, 255, 255, 0.9)'}}
                         id="history-toggle-button"
                     >
                         {showHistory ? '关闭抽卡记录' : '查看抽卡记录'}
