@@ -364,6 +364,20 @@
     "video_url": ""
   },
   {
+    "character": "沈星回",
+    "name": "来自星轨间",
+    "card_type_tag": "月晖",
+    "card_color_tag": "红漪",
+    "star": "5星",
+    "talent": "生命",
+    "get": "限时许愿[[「来自星轨间」]]",
+    "permanent": "",
+    "time": "2025/10/11",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/6/6c/jdmdya0m6o0elrg2o8gfmjb7e45vif9.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%9D%A5%E8%87%AA%E6%98%9F%E8%BD%A8%E9%97%B4.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//6/6c/jdmdya0m6o0elrg2o8gfmjb7e45vif9.png?download",
+    "video_url": "https://player.bilibili.com/player.html?isOutside=true&bvid=BV19m42137BV&p=&autoplay=auto&preload=auto&quality=1080p"
+  },
+  {
     "character": "秦彻",
     "name": "热意揣度",
     "card_type_tag": "月晖",
@@ -1630,7 +1644,7 @@
     "card_color_tag": "紫辉",
     "star": "4星",
     "talent": "防御",
-    "get": "「金蚀启世」搭档预演",
+    "get": "[[「金蚀启世」]]搭档预演",
     "permanent": "",
     "time": "2025/9/25",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/9/97/jal1pf4jog0x7dv5ub401ec25rx1q8m.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%BB%88%E5%BA%8F%E6%B0%B8%E5%8A%AB.png",
@@ -1644,7 +1658,7 @@
     "card_color_tag": "紫辉",
     "star": "4星",
     "talent": "防御",
-    "get": "「金蚀启世」不归行途",
+    "get": "[[「金蚀启世」]]不归行途",
     "permanent": "",
     "time": "2025/9/25",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/7/7c/dk70xae6w5ddydwpsct2evxi32cqlj2.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%BB%88%E5%BA%8F%E7%89%B5%E6%80%80.png",
@@ -3875,6 +3889,20 @@
     "time": "2024/1/18",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/7/74/dozl471pv1f3wyiyij9tlh46lz6fl1v.png/400px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%9F%A5%E6%88%BF.png",
     "image": "https://patchwiki.biligame.com/images/lysk//7/74/dozl471pv1f3wyiyij9tlh46lz6fl1v.png?download",
+    "video_url": ""
+  },
+  {
+    "character": "沈星回",
+    "name": "星旅梦伴",
+    "card_type_tag": "月晖",
+    "card_color_tag": "蓝弧",
+    "star": "3星",
+    "talent": "防御",
+    "get": "[[「漫迹光年」]]循星商店兑换获得",
+    "permanent": "",
+    "time": "2025/10/11",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/e/e6/1rxxy2ex4eqjhkp1adaqy5gr3ahrnvk.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%98%9F%E6%97%85%E6%A2%A6%E4%BC%B4.png",
+    "image": "https://patchwiki.biligame.com/images/lysk//e/e6/1rxxy2ex4eqjhkp1adaqy5gr3ahrnvk.png?download",
     "video_url": ""
   },
   {
