@@ -3,7 +3,6 @@ import { Asset } from './Asset';
 import { useAssetStorage } from '../hooks/useAssetStorage';
 import LeftIcon from '../icons/LeftIcon';
 import useResponsiveFontSize from '../hooks/useResponsiveFontSize';
-import { getAssetsByType } from '../assets/assets_config.js';
 
 const AssetTest = ({ onClose }) => {
   const { storeAllAssets, getStorageStats, clearStorage, status, progress, currentAsset } = useAssetStorage();
@@ -24,12 +23,33 @@ const AssetTest = ({ onClose }) => {
   // 加载统计信息 - 使用 useCallback 避免无限循环
   const loadStats = useCallback(async () => {
     try {
-      const storageStats = await getStorageStats();
-      setStats(storageStats);
-      
-      // 获取文件大小信息
-      const assetsConfig = await import('../assets/assets_config.js');
-      setFileSizeInfo(assetsConfig.assetsConfig);
+      const [storageStats, assetsConfigModule] = await Promise.all([
+        getStorageStats(),
+        import('../assets/assets_config.js'),
+      ]);
+
+      const config = assetsConfigModule.assetsConfig;
+      setFileSizeInfo(config);
+
+      const expectedTotal = config?.totalFiles ?? ['video', 'audio', 'image', 'sign']
+        .reduce((sum, key) => sum + (config?.assets?.[key]?.length || 0), 0);
+
+      const expectedSize = config?.totalSize ?? ['video', 'audio', 'image', 'sign']
+        .reduce(
+          (sizeSum, key) =>
+            sizeSum + (config?.assets?.[key]?.reduce((acc, file) => acc + (file.size || 0), 0) || 0),
+          0
+        );
+
+      const completedAssets = Math.min(storageStats?.completedAssets || 0, expectedTotal);
+      const incompleteAssets = Math.max(expectedTotal - completedAssets, 0);
+
+      setStats({
+        totalAssets: expectedTotal,
+        completedAssets,
+        incompleteAssets,
+        totalSize: expectedSize,
+      });
     } catch (error) {
       console.error('Failed to load stats:', error);
     }
@@ -50,11 +70,11 @@ const AssetTest = ({ onClose }) => {
   const handleClear = useCallback(async () => {
     try {
       await clearStorage();
-      setStats(null);
+      await loadStats();
     } catch (error) {
       console.error('Failed to clear storage:', error);
     }
-  }, [clearStorage]);
+  }, [clearStorage, loadStats]);
 
   // 监听状态变化，自动刷新统计信息
   useEffect(() => {

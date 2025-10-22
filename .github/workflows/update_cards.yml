@@ -2,7 +2,7 @@ name: Update Cards JSON
 
 on:
   schedule:
-    - cron: '30 6 * * *'  # 每天00:00执行
+    - cron: '0 19 * * *'  # 每天03:00执行
   workflow_dispatch:
 
 jobs:

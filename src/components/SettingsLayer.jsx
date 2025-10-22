@@ -202,7 +202,42 @@ const SettingsLayer = ({
                     className="flex flex-col mt-[5px]"
                 >
                     <span style={{color: 'red', fontWeight: 800}}>重要提示：</span>
-                    <label>数据来源：恋与深空WIKI</label>
+                    {/* <label>
+                        数据来源：
+                        <a
+                            href="https://wiki.biligame.com/lysk/%E9%A6%96%E9%A1%B5"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: '#1750eb' }}
+                        >
+                            恋与深空WIKI
+                        </a>
+                    </label> */}
+                    <label>
+                        数据来源：
+                        <a
+                            href="https://wiki.biligame.com/lysk/%E9%A6%96%E9%A1%B5"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: '#1750eb' }}
+                        >
+                            恋与深空 WIKI
+                        </a>
+                        <br />（由恋与深空 Evol 攻略组及社区贡献者维护）
+                    </label>
+                    
+                    <small style={{ color: '#888' }}>
+                        素材保持原样使用，遵循&nbsp;
+                        <a
+                            href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: '#1750eb' }}
+                        >
+                            CC BY-NC-SA 4.0
+                        </a>
+                        &nbsp;协议；<br />图片及相关素材版权归恋与深空官方所有，<br />本站仅用于学习与非商业展示用途。
+                    </small>
                     <div className="flex flex-row">
                         <label>反馈bug或功能需求：</label>
                         <button
