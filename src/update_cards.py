@@ -160,12 +160,39 @@ def build_player_url(src_tail_or_url: str, page_num: int | None) -> str:
 # -----------------------------
 # MediaWiki 读取
 # -----------------------------
+_mw_site: mwclient.Site | None = None
+
+def _get_mw_site(max_tries: int = 3) -> mwclient.Site | None:
+    """
+    初始化 mwclient.Site，带有限次数重试，避免瞬时网络抖动导致脚本崩溃。
+    """
+    global _mw_site
+    if _mw_site is not None:
+        return _mw_site
+
+    for attempt in range(1, max_tries + 1):
+        try:
+            site = mwclient.Site(host="wiki.biligame.com", path="/lysk/", clients_useragent=UA)
+            _mw_site = site
+            return site
+        except Exception as exc:
+            wait = 2 * attempt
+            print(
+                f"⚠️ mwclient 初始化失败 {attempt}/{max_tries}：{exc}，{wait}s 后重试",
+                flush=True,
+            )
+            time.sleep(wait)
+    return None
+
 def wiki_detailed_info(card_name: str) -> dict:
     """
     使用 mwclient 读取页面文本并解析字段。
     兼容模板行前导 '|'；失败返回 {}。
     """
-    site = mwclient.Site(host="wiki.biligame.com", path="/lysk/", clients_useragent=UA)
+    global _mw_site
+    site = _get_mw_site()
+    if site is None:
+        return {}
     field_map = {
         "思念角色": "character",
         "思念名称": "name",
@@ -178,7 +205,7 @@ def wiki_detailed_info(card_name: str) -> dict:
         "思念上线时间": "time",
     }
     max_tries = 5
-    for i in range(max_tries):
+    for i in range(1, max_tries + 1):
         try:
             page = site.pages[card_name]
             text = page.text() or ""
@@ -195,8 +222,12 @@ def wiki_detailed_info(card_name: str) -> dict:
                     info[field_map[k]] = v
             return info
         except Exception as e:
-            print(f"⚠️ mwclient 获取失败 {card_name}: {e}", flush=True)
-            time.sleep(2)
+            print(f"⚠️ mwclient 获取失败 {card_name} ({i}/{max_tries}): {e}", flush=True)
+            time.sleep(2 * i)
+            _mw_site = None  # 强制下一轮重新初始化连接
+            site = _get_mw_site()
+            if site is None:
+                break
     return {}
 
 def is_card_data_complete(card: dict) -> bool:

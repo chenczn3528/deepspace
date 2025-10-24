@@ -2,7 +2,7 @@ name: Update Songs JSON
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # 每天 UTC 时间 1:00 运行
+    - cron: '30 19 * * *'  # 每天 UTC 时间 3:30 运行
   workflow_dispatch:      # 也可以手动触发
 
 jobs:
