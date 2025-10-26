@@ -237,55 +237,67 @@ def is_card_data_complete(card: dict) -> bool:
 # -----------------------------
 # 详情页解析
 # -----------------------------
-def fetch_detail_image(detail_url: str, card_name: str):
+def fetch_detail_image(detail_url: str, card_name: str, max_retry: int = 3):
     """
     返回：small_img, big_img, video_url
     - 不下载文件
     - 兼容 iframe 被转义成文本
     - 尽量匹配分 P
+    - 支持自动重试（默认最多 3 次）
     """
     small_img = big_img = video_url = ""
-    try:
-        res = polite_get(detail_url)
-        soup = BeautifulSoup(res.content, "html.parser")
 
-        # 图片：只引用链接，不拼直链
-        img = soup.select_one(".center img") or soup.select_one("img")
-        if img:
-            src = img.get("src", "") or ""
-            srcset = img.get("srcset", "") or ""
-            big_img = parse_best_from_srcset(srcset) or src
-            small_img = src
+    for attempt in range(1, max_retry + 1):
+        try:
+            res = polite_get(detail_url)
+            soup = BeautifulSoup(res.content, "html.parser")
 
-        # 视频：用原始 bytes/转义文本兜底抓 <iframe>
-        blocks = extract_iframes(res.content)
-        if blocks:
-            m = IFRAME_SRC_RE.search(blocks[0])
-            raw_src = m.group(1) if m else ""
-            if raw_src:
-                # 提取 bvid 并尽可能匹配分 P
-                bvid = ""
-                try:
-                    q = parse_qs(urlparse(raw_src).query)
-                    bvid = (q.get("bvid") or [""])[0]
-                except Exception:
-                    pass
+            # 图片：只引用链接，不拼直链
+            img = soup.select_one(".center img") or soup.select_one("img")
+            if img:
+                src = img.get("src", "") or ""
+                srcset = img.get("srcset", "") or ""
+                big_img = parse_best_from_srcset(srcset) or src
+                small_img = src
 
-                page_num = None
-                if bvid:
-                    data = fetch_bilibili_video_info(bvid)
-                    hit = find_dict_by_value(data, card_name)
-                    if hit:
-                        page_num = hit.get("page")
+            # 视频：用原始 bytes/转义文本兜底抓 <iframe>
+            blocks = extract_iframes(res.content)
+            if blocks:
+                m = IFRAME_SRC_RE.search(blocks[0])
+                raw_src = m.group(1) if m else ""
+                if raw_src:
+                    # 提取 bvid 并尽可能匹配分 P
+                    bvid = ""
+                    try:
+                        q = parse_qs(urlparse(raw_src).query)
+                        bvid = (q.get("bvid") or [""])[0]
+                    except Exception:
+                        pass
 
-                # 兼容 '.html?xxx' 尾巴
-                tail_or_url = raw_src.split(".html?")[-1] if ".html?" in raw_src else raw_src
-                video_url = build_player_url(tail_or_url, page_num)
-                print(video_url, flush=True)
+                    page_num = None
+                    if bvid:
+                        data = fetch_bilibili_video_info(bvid)
+                        hit = find_dict_by_value(data, card_name)
+                        if hit:
+                            page_num = hit.get("page")
 
-    except Exception as e:
-        print(f"❌ 获取详情页失败：{detail_url}，错误：{e}", flush=True)
+                    # 兼容 '.html?xxx' 尾巴
+                    tail_or_url = raw_src.split(".html?")[-1] if ".html?" in raw_src else raw_src
+                    video_url = build_player_url(tail_or_url, page_num)
+                    print(video_url, flush=True)
 
+            # 成功则直接返回
+            return small_img, big_img, video_url
+
+        except Exception as e:
+            print(f"❌ 第 {attempt} 次获取详情页失败：{detail_url}，错误：{e}", flush=True)
+            if attempt < max_retry:
+                print(f"🔁 {1 if max_retry - attempt == 1 else max_retry - attempt} 次重试剩余，等待 1 秒后重试...", flush=True)
+                time.sleep(1)
+            else:
+                print("🚫 已达到最大重试次数，放弃重试。", flush=True)
+
+    # 全部失败则返回空结果
     return small_img, big_img, video_url
 
 # -----------------------------
