@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import MusicPlayIcon from "../icons/MusicPlayIcon.jsx";
 import MusicMuteIcon from "../icons/MusicMuteIcon.jsx";
 import MusicIcon from "../icons/MusicIcon.jsx";
@@ -9,6 +9,7 @@ const SettingsLayer = ({
     totalDrawCount,
     totalFiveStarCount,
     selectedRole,
+    selectedRoleFilters = [],
     setSelectedRole,
     onlySelectedRoleCard,
     setonlySelectedRoleCard,
@@ -40,9 +41,22 @@ const SettingsLayer = ({
     openAssetTest,
     globalVolume,
     setGlobalVolume,
+    setShowCardPoolFilter,
 }) => {
 
     const { loadAsset } = useAssetLoader();
+
+    const activeTargetRoles = useMemo(() => {
+        if (Array.isArray(selectedRoleFilters) && selectedRoleFilters.length > 0) {
+            return selectedRoleFilters.filter(Boolean);
+        }
+        if (selectedRole && selectedRole !== '随机') {
+            return [selectedRole];
+        }
+        return [];
+    }, [selectedRoleFilters, selectedRole]);
+    const hasTargetRoles = activeTargetRoles.length > 0;
+    const singleTargetRole = activeTargetRoles.length === 1 ? activeTargetRoles[0] : null;
 
     // 音效增益设置开关与数值
     const [showGainCtrl, setShowGainCtrl] = useState(false);
@@ -53,6 +67,18 @@ const SettingsLayer = ({
             return Number.isNaN(v) ? 1 : v;
         } catch { return 1; }
     });
+
+    useEffect(() => {
+        if (activeTargetRoles.length !== 1 && onlySelectedRoleCard) {
+            setonlySelectedRoleCard(false);
+        }
+    }, [activeTargetRoles, onlySelectedRoleCard, setonlySelectedRoleCard]);
+
+    useEffect(() => {
+        if (!hasTargetRoles && useSoftGuarantee) {
+            setUseSoftGuarantee(false);
+        }
+    }, [hasTargetRoles, useSoftGuarantee, setUseSoftGuarantee]);
 
     useEffect(() => {
         try { localStorage.setItem('sfxGain', String(sfxGain)); } catch {}
@@ -178,7 +204,7 @@ const SettingsLayer = ({
 
 
             {/*右上角按钮、文字*/}
-            <div className="absolute flex flex-col" style={{top: `${fontsize * 1.2}px`, left: `${fontsize * 1.2}px`}}>
+            <div className="absolute flex flex-col" style={{top: `${fontsize * 1.2}px`, left: `${fontsize * 1.2}px`, gap: `${fontsize * 0.6}px`}}>
                 <div className="flex flex-row gap-[10px]">
                     {/*查看图鉴*/}
                     <button style={{fontSize: `${fontsize * 1.2}px`, backgroundColor: 'rgba(255, 255, 255, 0.9)'}} onClick={() => setShowGallery(true)}>图鉴</button>
@@ -192,6 +218,26 @@ const SettingsLayer = ({
                     </button>
                 </div>
 
+                {/*筛选卡池 + 抽卡记录*/}
+                <div className="flex flex-row gap-[10px]">
+                    <button
+                        style={{
+                            fontSize: `${fontsize * 1.2}px`,
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        }}
+                        onClick={() => setShowCardPoolFilter && setShowCardPoolFilter(true)}
+                    >
+                        筛选卡池
+                    </button>
+                    <button
+                        onClick={() => setShowHistory(!showHistory)}
+                        style={{fontSize: `${fontsize * 1.2}px`, backgroundColor: 'rgba(255, 255, 255, 0.9)'}}
+                        id="history-toggle-button-top"
+                    >
+                        {showHistory ? '关闭抽卡记录' : '查看抽卡记录'}
+                    </button>
+                </div>
+
                 <div
                     style={{
                         color: 'lightgray',
@@ -202,17 +248,7 @@ const SettingsLayer = ({
                     className="flex flex-col mt-[5px]"
                 >
                     <span style={{color: 'red', fontWeight: 800}}>重要提示：</span>
-                    {/* <label>
-                        数据来源：
-                        <a
-                            href="https://wiki.biligame.com/lysk/%E9%A6%96%E9%A1%B5"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ color: '#1750eb' }}
-                        >
-                            恋与深空WIKI
-                        </a>
-                    </label> */}
+
                     <label>
                         数据来源：
                         <a
@@ -313,7 +349,7 @@ const SettingsLayer = ({
                     </div>
 
                     {/*是否开启大小保底*/}
-                    {selectedRole !== '随机' && (
+                    {hasTargetRoles && (
                         <div className="flex flex-row items-center" style={{gap: `${fontsize * 0.5}px`}}>
                             <label htmlFor="softGuarantee">开启大小保底机制</label>
                             <input
@@ -331,9 +367,9 @@ const SettingsLayer = ({
                     )}
 
                     {/*是否只抽xx的卡*/}
-                    {selectedRole !== '随机' && (
+                    {singleTargetRole && (
                         <div className="flex flex-row items-center" style={{gap: `${fontsize * 0.5}px`}}>
-                            <label htmlFor="onlyThisRole">只抽 {selectedRole} 的卡</label>
+                            <label htmlFor="onlyThisRole">只抽 {singleTargetRole} 的卡</label>
                             <input
                                 style={{width: `${fontsize * 1.3}px`, height: `${fontsize * 1.3}px`}}
                                 id="onlyThisRole"
@@ -382,29 +418,20 @@ const SettingsLayer = ({
                 <div className="flex flex-row items-center justify-between">
                     {/* 保底显示 */}
                     <label>
-                        {selectedRole === '随机' || !useSoftGuarantee ? (
-                            <>
-                                还剩 {70 - pityCount} 抽 必得五星
-                            </>
-                        ) : softPityFailed ? (
-                            <>
-                                还剩 {70 - pityCount} 抽 大保底
-                            </>
+                        {hasTargetRoles ? (
+                            useSoftGuarantee ? (
+                                softPityFailed ? (
+                                    <>还剩 {Math.max(0, 70 - pityCount)} 抽大保底</>
+                                ) : (
+                                    <>还剩 {Math.max(0, 70 - pityCount)} 抽小保底</>
+                                )
+                            ) : (
+                                <>还剩 {Math.max(0, 70 - pityCount)} 抽必得五星</>
+                            )
                         ) : (
-                            <>
-                                还剩 {70 - pityCount} 抽 小保底
-                            </>
+                            <>还剩 {Math.max(0, 70 - pityCount)} 抽必得五星</>
                         )}
                     </label>
-
-                    {/* 抽卡历史记录按钮 */}
-                    <button
-                        onClick={() => setShowHistory(!showHistory)}
-                        style={{fontSize: `${fontsize * 1.2}px`, backgroundColor: 'rgba(255, 255, 255, 0.9)'}}
-                        id="history-toggle-button"
-                    >
-                        {showHistory ? '关闭抽卡记录' : '查看抽卡记录'}
-                    </button>
                 </div>
 
             </div>

@@ -33,7 +33,7 @@ const TestProbability = ({ getRandomCard, setShowProbability, fontsize }) => {
     let threeStarCount = 0;
 
     for (let i = 0; i < testCount; i++) {
-      const result = getRandomCard(pity, fourStarCounter, false, '随机', false, true);
+      const result = getRandomCard(pity, fourStarCounter, [], false, true, false);
       const rarity = result.rarity;
 
       if (rarity === '5') {

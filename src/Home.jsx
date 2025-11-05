@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useMemo} from 'react';
 import cardData from './assets/cards.json';
 import songsList from './assets/songs_list.json'
 import DrawAnimationCards from './components/DrawAnimationCards.jsx';
@@ -9,6 +9,7 @@ import SettingsLayer from "./components/SettingsLayer.jsx";
 import CardSummary from "./components/CardSummary.jsx";
 import useLocalStorageState from './hooks/useLocalStorageState'
 import GalleryPage from "./components/GalleryPage.jsx";
+import CardPoolFilter from "./components/CardPoolFilter.jsx";
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import {useHistoryDB} from "./hooks/useHistoryDB.js";
 import useResponsiveFontSize from "./hooks/useResponsiveFontSize.js";
@@ -53,6 +54,7 @@ const Home = ({isPortrait, openAssetTest}) => {
     const [totalDrawCount, setTotalDrawCount] = useLocalStorageState('ds_totalDrawCount', 0);
     // 选择的角色
     const [selectedRole, setSelectedRole] = useLocalStorageState('ds_selectedRole', '随机');
+    const [selectedRoleFilters, setSelectedRoleFilters] = useLocalStorageState('ds_selectedRoleFilters', []);
     // 总出金数
     const [totalFiveStarCount, setTotalFiveStarCount] = useLocalStorageState('ds_totalFiveStarCount', 0);
     // 下次出金还需要多少
@@ -88,6 +90,8 @@ const Home = ({isPortrait, openAssetTest}) => {
             'ds_useSoftGuarantee',
             'ds_softPityFailed',
             'ds_selectedRole',
+            'ds_selectedRoleFilters',
+            'ds_selectedPools',
             'ds_includeThreeStar',
             'ds_onlySelectedRoleCard',
             'ds_musicID',
@@ -109,6 +113,15 @@ const Home = ({isPortrait, openAssetTest}) => {
     const drawResultsRef = useRef([]); // 引用存储抽卡结果的数组，避免重新渲染时丢失数据，保存每次抽卡的结果，以便后续处理和展示
 
     const roles = ['随机', '沈星回', '黎深', '祁煜', '秦彻', '夏以昼']; // 存储可选择的角色列表
+
+    const handleSelectedRoleChange = (role) => {
+        setSelectedRole(role);
+        if (role === '随机') {
+            setSelectedRoleFilters([]);
+        } else {
+            setSelectedRoleFilters([role]);
+        }
+    };
 
     const drawSessionIdRef = useRef(0); // 全局流程控制 ID，抽卡直接出现结果的bug
     const [isDrawing, setIsDrawing] = useState(false); // 防止重复抽卡
@@ -139,6 +152,59 @@ const Home = ({isPortrait, openAssetTest}) => {
     const [hasShownSummary, setHasShownSummary] = useState(false); // 是否已经展示过结算页面
     const [showGallery, setShowGallery] = useState(false); // 是否展示图鉴
     const [showProbability, setShowProbability] = useState(false); // 是否展示概率测试界面
+    const [showCardPoolFilter, setShowCardPoolFilter] = useState(false); // 是否展示筛选卡池界面
+
+    // 提取所有可用的池子
+    const cleanPoolName = (name) => {
+        if (!name) return "";
+        return name.replace(/^\[+/, "").trim();
+    };
+
+    const extractPoolName = (getStr) => {
+        if (!getStr) return "";
+        const bracketMatch = getStr.match(/[\[【]([^】\]]+)[\]】]/);
+        if (bracketMatch) {
+            return cleanPoolName(bracketMatch[1].replace(/「|」/g, ""));
+        }
+        const quoteMatch = getStr.match(/「([^」]+)」/);
+        if (quoteMatch) {
+            return cleanPoolName(quoteMatch[1]);
+        }
+        return cleanPoolName(getStr);
+    };
+
+    // 获取所有池子列表
+    const isExcludedPool = (name) => name === '许愿';
+
+    const allPools = useMemo(() => {
+        const poolSet = new Set();
+        cardData.forEach((card) => {
+            if (parseInt(card.star) === 5) {
+                const pool = extractPoolName(card.get);
+                if (pool && !isExcludedPool(pool)) {
+                    poolSet.add(pool);
+                }
+            }
+        });
+        return Array.from(poolSet);
+    }, []);
+
+    const [selectedPools, setSelectedPools] = useLocalStorageState('ds_selectedPools', allPools);
+
+    const ensureUnique = (array) => Array.from(new Set(array));
+
+    useEffect(() => {
+        if (!Array.isArray(selectedPools)) return;
+        let updated = selectedPools.filter(pool => !isExcludedPool(pool));
+        const hasPermanent = updated.includes('常驻');
+        if (!hasPermanent) {
+            updated = [...updated, '常驻'];
+        }
+        updated = ensureUnique(updated);
+        if (JSON.stringify(updated) !== JSON.stringify(selectedPools)) {
+            setSelectedPools(updated);
+        }
+    }, [selectedPools]);
 
     const [galleryHistory, setGalleryHistory] = useState([]);  // 图鉴历史
 
@@ -170,85 +236,6 @@ const Home = ({isPortrait, openAssetTest}) => {
             setGalleryHistory(uniqueHistory);
         }
     }, [loading, history]);
-
-
-
-    // // ========================================================
-    // // 背景音乐设置
-    // const audioRef = useRef(null);
-    // const [isMusicPlaying, setIsMusicPlaying] = useState(false); // 默认播放
-    //
-    // useEffect(() => {
-    //     const audio = audioRef.current;
-    //     if (audio) {
-    //         audio.volume = 0.3;
-    //
-    //         // 尝试自动播放音乐，只会在组件挂载时自动播放一次
-    //         const playPromise = audio.play();
-    //         if (playPromise !== undefined) {
-    //             playPromise
-    //                 .catch((err) => {
-    //                     console.warn("自动播放失败：", err);
-    //                 })
-    //                 .then(() => {
-    //                     console.log("音频自动播放成功");
-    //                 });
-    //         }
-    //     }
-    //     // 清理：组件卸载时不需要做额外处理
-    //     return () => {};
-    // }, []);
-    //
-    // const toggleMusic = () => {
-    //     const audio = audioRef.current;
-    //     if (!audio) return;
-    //
-    //     // 如果音频正在播放，点击暂停；如果音频暂停，点击播放
-    //     if (isMusicPlaying) {
-    //         audio.pause();  // 暂停音频
-    //     } else {
-    //         const playPromise = audio.play();
-    //         if (playPromise !== undefined) {
-    //             playPromise
-    //                 .then(() => {
-    //                     console.log("音频播放成功");
-    //                 })
-    //                 .catch((err) => {
-    //                     console.warn("播放失败：", err);
-    //                 });
-    //         }
-    //     }
-    //     // 更新播放状态
-    //     setIsMusicPlaying(!isMusicPlaying);
-    // };
-    //
-    // useEffect(() => {
-    //     // 如果其他音频或视频播放器引起了音频暂停，我们尝试恢复播放
-    //     const audio = audioRef.current;
-    //     if (!audio) return;
-    //
-    //     const forcePlay = () => {
-    //         setTimeout(() => {
-    //             if (audio.paused && isMusicPlaying) {
-    //                 const playPromise = audio.play();
-    //                 if (playPromise !== undefined) {
-    //                     playPromise
-    //                         .catch((err) => {
-    //                             console.warn("尝试恢复音频失败", err);
-    //                         })
-    //                         .then(() => {
-    //                             console.log("音频恢复播放");
-    //                         });
-    //                 }
-    //             }
-    //         }, 100); // 等待 100ms 后再恢复，避免系统冲突
-    //     };
-    //     audio.addEventListener("pause", forcePlay);
-    //     // 清理：移除事件监听器
-    //     return () => {
-    //         audio.removeEventListener("pause", forcePlay);
-    //     };
-    // }, [isMusicPlaying]);
 
 
 
@@ -367,19 +354,25 @@ const Home = ({isPortrait, openAssetTest}) => {
 
         let localSoftPityFailed = softPityFailed;
 
+        const restrictedRoles = selectedRoleFilters && selectedRoleFilters.length > 0
+            ? selectedRoleFilters
+            : (selectedRole !== '随机' ? [selectedRole] : []);
+        const hasRoleRestrictions = restrictedRoles.length > 0;
+        const onlySelectedRoleActive = hasRoleRestrictions && restrictedRoles.length === 1 && onlySelectedRoleCard;
+
         for (let i = 0; i < count; i++) {
             let result;
 
-            if (onlySelectedRoleCard && selectedRole !== '随机') {
+            if (onlySelectedRoleActive) {
               // 只抽当前角色卡，关闭大小保底
                 do {
                     result = getRandomCard(
                         currentPity,
                         currentFourStarCounter,
-                        false,
-                        selectedRole,
-                        onlySelectedRoleCard,
-                        includeThreeStar
+                        restrictedRoles,
+                        true,
+                        includeThreeStar,
+                        true
                     );
                   // result = getRandomCard(currentPity, currentFourStarCounter, false);
                 } while (!includeThreeStar && result.rarity === '3');
@@ -393,29 +386,24 @@ const Home = ({isPortrait, openAssetTest}) => {
                 }
             } else {
                 // 启用或关闭大小保底逻辑
-                const mustBeTarget = (
-                    (useSoftGuarantee && selectedRole !== '随机' && localSoftPityFailed)
-                    || (selectedRole !== '随机' && !useSoftGuarantee)
-                );
-
+                const forceTargetRole = useSoftGuarantee && hasRoleRestrictions && localSoftPityFailed;
                 do {
                     result = getRandomCard(
                         currentPity,
                         currentFourStarCounter,
-                        mustBeTarget,
-                        selectedRole,
-                        onlySelectedRoleCard,
-                        includeThreeStar
+                        restrictedRoles,
+                        onlySelectedRoleActive,
+                        includeThreeStar,
+                        forceTargetRole
                     );
-                    // result = getRandomCard(currentPity, currentFourStarCounter, mustBeTarget);
                 } while (!includeThreeStar && result.rarity === '3');
 
                 if (result.rarity === '5') {
                     currentPity = 0;
                     currentFourStarCounter = 0;
 
-                    if (useSoftGuarantee && selectedRole !== '随机') {
-                        if (result.card?.character === selectedRole) {
+                    if (useSoftGuarantee && hasRoleRestrictions) {
+                        if (result.card && restrictedRoles.includes(result.card.character)) {
                             localSoftPityFailed = false; // 命中选定角色
                         } else {
                             localSoftPityFailed = true;  // 小保底失败，开启大保底
@@ -454,10 +442,10 @@ const Home = ({isPortrait, openAssetTest}) => {
     const getRandomCard = (
         pity,
         fourStarCounter,
-        mustBeTargetFiveStar = false,
-        selectedRole = '随机',
+        restrictedRoles = [],
         onlySelectedRoleCard = false,
-        includeThreeStar = true
+        includeThreeStar = true,
+        forceTargetRole = false
     ) => {
         let rarity;
         let pool = [];
@@ -484,18 +472,31 @@ const Home = ({isPortrait, openAssetTest}) => {
         const targetStar = parseInt(rarity);
 
         // ⭐⭐⭐⭐ 筛选卡池 ⭐⭐⭐⭐
+        const activeRoles = Array.isArray(restrictedRoles) ? restrictedRoles.filter(Boolean) : [];
+        const limitToRoles = activeRoles.length > 0;
+        const filterBySelectedPools = (cards) => {
+            if (!selectedPools || selectedPools.length === 0) return cards;
+            const poolSet = new Set(selectedPools);
+            poolSet.add('常驻');
+            const filtered = cards.filter(card => {
+                const poolName = extractPoolName(card.get);
+                return poolName ? poolSet.has(poolName) : false;
+            });
+            return filtered.length > 0 ? filtered : cards;
+        };
+
         if (targetStar === 5) {
-            if (onlySelectedRoleCard && selectedRole !== '随机') {
-                pool = cardData.filter(card => card.character === selectedRole && parseInt(card.star) === 5);
-            } else if (mustBeTargetFiveStar && selectedRole !== '随机') {
-                pool = cardData.filter(card => card.character === selectedRole && parseInt(card.star) === 5);
-            } else {
-                pool = cardData.filter(card => parseInt(card.star) === 5);
+            pool = cardData.filter(card =>
+                parseInt(card.star) === 5
+            );
+            pool = filterBySelectedPools(pool);
+            if ((forceTargetRole && limitToRoles) || (onlySelectedRoleCard && limitToRoles)) {
+                pool = pool.filter(card => activeRoles.includes(card.character));
             }
         } else {
-            if (onlySelectedRoleCard && selectedRole !== '随机') {
+            if (onlySelectedRoleCard && limitToRoles) {
                 pool = cardData.filter(card =>
-                    card.character === selectedRole &&
+                    activeRoles.includes(card.character) &&
                     parseInt(card.star) === targetStar &&
                     (includeThreeStar || targetStar !== 3)
                 );
@@ -584,13 +585,6 @@ const Home = ({isPortrait, openAssetTest}) => {
             tabIndex={0}
         >
 
-            {/*/!*音频*!/*/}
-            {/*<audio*/}
-            {/*    ref={audioRef}*/}
-            {/*    loop*/}
-            {/*    src="audios/时空引力.mp3"*/}
-            {/*/>*/}
-
 
             <MusicPage
                 baseSize={baseSize}
@@ -629,29 +623,14 @@ const Home = ({isPortrait, openAssetTest}) => {
                 }}
                 style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center', zIndex: 0, pointerEvents: 'none' }}
             />
-            {/* <video
-                preload="auto"
-                autoPlay
-                loop
-                playsInline
-                muted
-                controls={false}
-                onEnded={() => {
-                    const validDrawId = drawSessionIdRef.current;
-                    if (!validDrawId) return;
-                    setisAnimatingDrawCards(false);
-                    drawSessionIdRef.current = 0; // 重置流程 ID，防止后续重复触发
-                }}
-                className="fixed top-0 left-0 w-full h-full object-cover z-0">
-                <source src="videos/开屏动画.mp4" type="video/mp4"/>
-            </video> */}
 
             {/* 控件层（中间层） */}
             <SettingsLayer
                 totalDrawCount={totalDrawCount}
                 totalFiveStarCount={totalFiveStarCount}
                 selectedRole={selectedRole}
-                setSelectedRole={setSelectedRole}
+                setSelectedRole={handleSelectedRoleChange}
+                selectedRoleFilters={selectedRoleFilters}
                 onlySelectedRoleCard={onlySelectedRoleCard}
                 setonlySelectedRoleCard={setOnlySelectedRoleCard}
                 roles={roles}
@@ -682,6 +661,7 @@ const Home = ({isPortrait, openAssetTest}) => {
                 setGlobalVolume={setGlobalVolume}
                 sfxGain={sfxGain}
                 setSfxGain={setSfxGain}
+                setShowCardPoolFilter={setShowCardPoolFilter}
             />
 
 
@@ -749,6 +729,22 @@ const Home = ({isPortrait, openAssetTest}) => {
                     getRandomCard={getRandomCard}
                     setShowProbability={setShowProbability}
                     fontsize={fontsize}
+                />
+            )}
+
+            {showCardPoolFilter && (
+                <CardPoolFilter
+                    fontsize={fontsize}
+                    showCardPoolFilter={showCardPoolFilter}
+                    setShowCardPoolFilter={setShowCardPoolFilter}
+                    selectedPools={selectedPools}
+                    setSelectedPools={setSelectedPools}
+                    poolsLoaded={true}
+                    selectedRoleFilters={selectedRoleFilters}
+                    setSelectedRoleFilters={setSelectedRoleFilters}
+                    updateSelectedRole={setSelectedRole}
+                    handleSelectedRoleChange={handleSelectedRoleChange}
+                    selectedRole={selectedRole}
                 />
             )}
 
