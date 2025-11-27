@@ -1,0 +1,366 @@
+{
+  "wishSeries": {
+    "name": "许愿系列",
+    "icon": "🌠",
+    "subcategories": {
+      "limited": {
+        "name": "限时卡池",
+        "pools": [
+          {
+            "name": "时与世的边缘",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "沉坠的冠冕",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "当海湮没于海",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "当宇宙陷落",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "龙影陨落处",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "山隐灵踪",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "银月流烁夜",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "潮声回唱之时",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "甜野极驰",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "直到心跳沸腾",
+            "poolType": "mixed",
+            "roleCount": 5,
+            "isPermanent": false
+          },
+          {
+            "name": "来自星轨间",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "热意揣度",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "以我寄黎明",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "盛夏与你与海风",
+            "poolType": "mixed",
+            "roleCount": 5,
+            "isPermanent": false
+          },
+          {
+            "name": "于深空见证的",
+            "poolType": "mixed",
+            "roleCount": 5,
+            "isPermanent": false
+          },
+          {
+            "name": "无可逃逸夜",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "寸寸热潮",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "春天对花所做的事",
+            "poolType": "mixed",
+            "roleCount": 5,
+            "isPermanent": false
+          },
+          {
+            "name": "至心栖之处",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "愿缘长",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "沉入无尽海",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "明日无处可逃",
+            "poolType": "mixed",
+            "roleCount": 5,
+            "isPermanent": false
+          },
+          {
+            "name": "触痛讯号",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "奔涌至昨夜尽头",
+            "poolType": "mixed",
+            "roleCount": 4,
+            "isPermanent": false
+          },
+          {
+            "name": "银瀑奏鸣",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "遵命，饲养官",
+            "poolType": "mixed",
+            "roleCount": 4,
+            "isPermanent": false
+          },
+          {
+            "name": "脉脉倾音",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "炽光淋漓",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "星辰有信",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "欲揽旖旎色",
+            "poolType": "mixed",
+            "roleCount": 4,
+            "isPermanent": false
+          },
+          {
+            "name": "长思入画",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "昔愿逢时",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "半透明侵占",
+            "poolType": "mixed",
+            "roleCount": 4,
+            "isPermanent": false
+          },
+          {
+            "name": "不设防禁区",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "双影交叠时",
+            "poolType": "mixed",
+            "roleCount": 3,
+            "isPermanent": false
+          },
+          {
+            "name": "日色初照",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "二次撞击",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "燎然升温",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "眸光映照处",
+            "poolType": "mixed",
+            "roleCount": 3,
+            "isPermanent": false
+          },
+          {
+            "name": "独家拥抱",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "晖色破晓前",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "无人知晓时",
+            "poolType": "mixed",
+            "roleCount": 3,
+            "isPermanent": false
+          },
+          {
+            "name": "晚空微澜",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
+            "name": "绵绵长梦",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          }
+        ]
+      },
+      "permanent": {
+        "name": "常驻卡池",
+        "pools": [
+          {
+            "name": "常驻",
+            "poolType": "mixed",
+            "roleCount": 1,
+            "isPermanent": true
+          },
+          {
+            "name": "许愿",
+            "poolType": "mixed",
+            "roleCount": 5,
+            "isPermanent": true
+          },
+          {
+            "name": "心动挚礼4期",
+            "poolType": "mixed",
+            "roleCount": 1,
+            "isPermanent": true
+          },
+          {
+            "name": "特令追查",
+            "poolType": "mixed",
+            "roleCount": 1,
+            "isPermanent": true
+          },
+          {
+            "name": "秘密搜查",
+            "poolType": "mixed",
+            "roleCount": 1,
+            "isPermanent": true
+          }
+        ]
+      }
+    }
+  },
+  "eventSeries": {
+    "name": "活动系列",
+    "icon": "🎉",
+    "pools": [
+      {
+        "name": "学院访闻",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      },
+      {
+        "name": "海屿寻秘",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      },
+      {
+        "name": "长瑕共旅",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      }
+    ]
+  },
+  "specialRewards": {
+    "name": "密约/挚礼系列",
+    "icon": "🎁",
+    "pools": [
+      {
+        "name": "心动挚礼5期",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      },
+      {
+        "name": "心动挚礼3期",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      },
+      {
+        "name": "心动挚礼",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      },
+      {
+        "name": "心动挚礼1期",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      }
+    ]
+  }
+}

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
+
 """
 恋与深空 WIKI 抽卡卡片爬虫
 ----------------------------------------------------------------
@@ -13,6 +15,7 @@ import time
 import random
 import re
 import html
+from copy import deepcopy
 import requests
 import mwclient
 from bs4 import BeautifulSoup
@@ -24,6 +27,7 @@ from urllib3.util.retry import Retry
 # 配置
 # -----------------------------
 CARDS_PATH = "src/assets/cards.json"
+POOL_CATEGORIES_PATH = "src/assets/poolCategories.json"
 WIKI_BASE = "https://wiki.biligame.com/lysk/"
 ENTRY_URL = WIKI_BASE + "%E6%80%9D%E5%BF%B5:%E7%AD%9B%E9%80%89"
 
@@ -33,6 +37,62 @@ LICENSE_URL = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
 
 UA = "GachaSimCrawler/1.0 (+mailto:chenczn3528@gmail.com)"  # 合规 UA
 HEADERS = {"User-Agent": UA}
+
+PERMANENT_POOL_NAMES = {
+    "常驻",
+    "许愿",
+    "许愿/许愿商店兑换",
+    "星间探测",
+    "星间探测/预抽卡",
+    "星间探测·预抽卡",
+}
+
+SPECIAL_POOL_KEYWORDS = (
+    "密约",
+    "挚礼",
+    "巡回礼",
+    "臻礼",
+    "特令",
+    "搜查",
+)
+
+EVENT_POOL_KEYWORDS = (
+    "活动",
+    "签到",
+    "共旅",
+    "十日与你",
+    "悠悠日长",
+    "学院访闻",
+    "海屿寻秘",
+)
+
+CATEGORY_PRIORITY = {
+    ("specialRewards", None): 3,
+    ("eventSeries", None): 2,
+    ("wishSeries", "permanent"): 1,
+    ("wishSeries", "limited"): 0,
+}
+
+DEFAULT_POOL_CATEGORIES = {
+    "wishSeries": {
+        "name": "许愿系列",
+        "icon": "🌠",
+        "subcategories": {
+            "limited": {"name": "限时卡池", "pools": []},
+            "permanent": {"name": "常驻卡池", "pools": []},
+        },
+    },
+    "eventSeries": {
+        "name": "活动系列",
+        "icon": "🎉",
+        "pools": [],
+    },
+    "specialRewards": {
+        "name": "密约/挚礼系列",
+        "icon": "🎁",
+        "pools": [],
+    },
+}
 
 # -----------------------------
 # 会话与礼貌访问
@@ -75,6 +135,10 @@ def parse_best_from_srcset(srcset: str) -> str:
 # —— 从原始 HTML 中直接抓 <iframe> 块；并兼容被转义的 HTML
 IFRAME_BLOCK_RE = re.compile(r'<iframe.*?</iframe>', re.IGNORECASE | re.DOTALL)
 IFRAME_SRC_RE   = re.compile(r'src=["\']([^"\']+)["\']', re.IGNORECASE)
+WIKI_LINK_RE = re.compile(r"\[\[([^\]]+)\]\]")
+FULL_WIDTH_BRACKET_RE = re.compile(r"【([^】]+)】")
+QUOTE_NAME_RE = re.compile(r"「([^」]+)」")
+EVENT_GAIN_RE = re.compile(r"^在?(.+?)活动中获取$")
 
 def extract_iframes(html_bytes_or_text) -> list[str]:
     """
@@ -98,6 +162,143 @@ def extract_iframes(html_bytes_or_text) -> list[str]:
             return blocks
 
     return []
+
+
+def normalize_event_pool_name(name: str) -> str:
+    match = EVENT_GAIN_RE.match(name)
+    if match:
+        return match.group(1).strip()
+    return name
+
+
+def clean_pool_name(text: str) -> str:
+    if not text:
+        return ""
+    cleaned = text.strip()
+    if "|" in cleaned:
+        cleaned = cleaned.split("|")[-1]
+    for ch in ("[", "]", "【", "】"):
+        cleaned = cleaned.replace(ch, "")
+    cleaned = cleaned.replace("「", "").replace("」", "")
+    cleaned = normalize_event_pool_name(cleaned.strip())
+    return cleaned
+
+
+def extract_pool_name(get_str: str) -> str:
+    if not get_str:
+        return ""
+    for pattern in (WIKI_LINK_RE, FULL_WIDTH_BRACKET_RE, QUOTE_NAME_RE):
+        match = pattern.search(get_str)
+        if match:
+            candidate = clean_pool_name(match.group(1))
+            if candidate:
+                return candidate
+    candidate = get_str.split("/")[0]
+    candidate = candidate.split("，")[0]
+    return clean_pool_name(candidate)
+
+
+def ensure_pool_category_structure() -> dict:
+    base = deepcopy(DEFAULT_POOL_CATEGORIES)
+    for cat in base.values():
+        if "subcategories" in cat:
+            for sub in cat["subcategories"].values():
+                sub["pools"] = []
+        else:
+            cat["pools"] = []
+    return base
+
+
+def get_category_priority(category_info: tuple[str, str | None]) -> int:
+    return CATEGORY_PRIORITY.get(category_info, -1)
+
+
+def classify_pool_category(pool_name: str, card: dict) -> tuple[str, str | None] | None:
+    normalized = (pool_name or "").strip()
+    if not normalized:
+        return None
+    raw_get = (card.get("get") or "").replace("<br>", " ")
+    permanent_flag = (card.get("permanent") or "").strip()
+    is_permanent = permanent_flag == "常驻" or normalized in PERMANENT_POOL_NAMES or ("常驻" in raw_get and "限时" not in raw_get)
+    if is_permanent:
+        return "wishSeries", "permanent"
+    if any(keyword in raw_get for keyword in SPECIAL_POOL_KEYWORDS):
+        return "specialRewards", None
+    if "限时许愿" in raw_get:
+        return "wishSeries", "limited"
+    if any(keyword in raw_get for keyword in EVENT_POOL_KEYWORDS) or any(keyword in normalized for keyword in EVENT_POOL_KEYWORDS):
+        return "eventSeries", None
+    return "wishSeries", "limited"
+
+
+def update_pool_categories_from_cards(cards: list[dict]) -> dict:
+    def is_five_star(card_obj: dict) -> bool:
+        star_value = (card_obj.get("star") or "").strip()
+        return star_value.startswith("5")
+
+    categories = ensure_pool_category_structure()
+    pool_assignments: dict[str, tuple[str, str | None, int]] = {}
+    pool_metadata: dict[str, dict] = {}
+
+    for card in cards:
+        if not is_five_star(card):
+            continue
+        pool_name = extract_pool_name(card.get("get", ""))
+        if not pool_name:
+            continue
+
+        meta = pool_metadata.setdefault(pool_name, {
+            "characters": set(),
+            "is_permanent": False,
+        })
+        character = (card.get("character") or "").strip()
+        if character:
+            meta["characters"].add(character)
+        if (card.get("permanent") or "").strip() == "常驻" or pool_name in PERMANENT_POOL_NAMES:
+            meta["is_permanent"] = True
+
+        category_info = classify_pool_category(pool_name, card)
+        if not category_info:
+            continue
+        priority = get_category_priority(category_info)
+        previous = pool_assignments.get(pool_name)
+        if previous and previous[2] >= priority:
+            continue
+        pool_assignments[pool_name] = (*category_info, priority)
+
+    def build_pool_entry(name: str, meta: dict) -> dict:
+        characters = meta.get("characters", set())
+        role_count = len(characters)
+        is_permanent_pool = meta.get("is_permanent", False)
+        if is_permanent_pool:
+            pool_type = "mixed"
+        else:
+            pool_type = "single" if role_count <= 1 else "mixed"
+        return {
+            "name": name,
+            "poolType": pool_type,
+            "roleCount": role_count,
+            "isPermanent": is_permanent_pool,
+        }
+
+    for pool_name, info in pool_assignments.items():
+        meta = pool_metadata.get(pool_name)
+        if not meta:
+            continue
+        entry = build_pool_entry(pool_name, meta)
+        cat_key, sub_key, _ = info
+        if sub_key:
+            categories[cat_key]["subcategories"].setdefault(sub_key, {"name": sub_key, "pools": []})
+            categories[cat_key]["subcategories"][sub_key]["pools"].append(entry)
+        else:
+            categories[cat_key].setdefault("pools", [])
+            categories[cat_key]["pools"].append(entry)
+
+    with open(POOL_CATEGORIES_PATH, "w", encoding="utf-8") as fh:
+        json.dump(categories, fh, ensure_ascii=False, indent=2)
+    print(f"🎯 已更新 {POOL_CATEGORIES_PATH}，共写入 {len(pool_assignments)} 个卡池。", flush=True)
+
+    return categories
 
 # -----------------------------
 # B 站分 P 支持
@@ -356,6 +557,9 @@ def main():
         info["video_url"] = video_url
 
         all_cards.append(info)
+
+    # 卡池分类
+    update_pool_categories_from_cards(all_cards)
 
     # 保存
     with open(CARDS_PATH, "w", encoding="utf-8") as f:

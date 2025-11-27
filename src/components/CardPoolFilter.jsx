@@ -1,67 +1,162 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import cardData from "../assets/cards.json";
+import poolCategories from "../assets/poolCategories.json";
+
+const characters = ["沈星回", "黎深", "祁煜", "秦彻", "夏以昼"];
 
 const cleanPoolName = (name) => {
     if (!name) return "";
     return name.replace(/^\[+/, "").trim();
 };
 
-// 提取池子名称的工具函数（处理get字段中的格式）
 const extractPoolName = (getStr) => {
     if (!getStr) return "";
-    // 处理格式：限时许愿[[「时与世的边缘」]] 或 限时许愿「当宇宙陷落」
     const bracketMatch = getStr.match(/[\[【]([^】\]]+)[\]】]/);
     if (bracketMatch) {
         return cleanPoolName(bracketMatch[1].replace(/「|」/g, ""));
     }
-    // 处理格式：限时许愿「当宇宙陷落」
     const quoteMatch = getStr.match(/「([^」]+)」/);
     if (quoteMatch) {
         return cleanPoolName(quoteMatch[1]);
     }
-    // 如果没有特殊格式，返回原字符串（如"常驻"）
     return cleanPoolName(getStr);
 };
 
-// 获取可用池子列表
-const isExcludedPool = (name) => name === "许愿";
-
-const getAvailablePools = (cardData) => {
-    const poolCountMap = {};
-
-    cardData.forEach((card) => {
-        if (parseInt(card.star) === 5) {
-            const pool = extractPoolName(card.get);
-            if (pool && pool !== "常驻" && !isExcludedPool(pool)) {
-                if (!poolCountMap[pool]) {
-                    poolCountMap[pool] = 0;
-                }
-                poolCountMap[pool]++;
-            }
+const buildPoolDataset = () => {
+    const poolOrderMap = {};
+    const parseTimeToTimestamp = (timeStr) => {
+        if (!timeStr) return Number.MAX_SAFE_INTEGER;
+        const normalized = timeStr
+            .replace(/年|月/g, "/")
+            .replace(/日|\./g, "/")
+            .replace(/\/+$/g, "")
+            .replace(/-+/g, "/");
+        const ts = Date.parse(normalized);
+        if (!Number.isNaN(ts)) return ts;
+        const parts = (timeStr.match(/\d+/g) || []).map(Number);
+        if (parts.length >= 3) {
+            const [y, m, d] = parts;
+            const fallback = new Date(y, (m || 1) - 1, d || 1).getTime();
+            if (!Number.isNaN(fallback)) return fallback;
         }
+        return Number.MAX_SAFE_INTEGER;
+    };
+
+    cardData.forEach((card, index) => {
+        if (parseInt(card.star, 10) !== 5) return;
+        const pool = extractPoolName(card.get);
+        if (!pool || poolOrderMap[pool]) return;
+        poolOrderMap[pool] = {
+            timestamp: parseTimeToTimestamp(card.time),
+            index,
+        };
     });
 
-    const allPools = Object.keys(poolCountMap).filter((pool) => poolCountMap[pool] > 0);
-    const permanentPools = ["常驻"];
-    const availablePools = allPools.filter((pool) => pool !== "常驻" && !isExcludedPool(pool));
+    const infoMap = {};
+    const limited = [];
+    const permanent = [];
+    const event = [];
+    const special = [];
 
-    return { availablePools, permanentPools };
+    const normalizeEntry = (entry, defaults = {}) => {
+        if (!entry) return null;
+        if (typeof entry === "string") {
+            return {
+                name: entry,
+                poolType: defaults.poolType || "mixed",
+                roleCount: defaults.roleCount ?? 0,
+                isPermanent: defaults.isPermanent ?? false,
+            };
+        }
+        return {
+            name: entry.name,
+            poolType: entry.poolType || defaults.poolType || "mixed",
+            roleCount: typeof entry.roleCount === "number" ? entry.roleCount : (defaults.roleCount ?? 0),
+            isPermanent: typeof entry.isPermanent === "boolean" ? entry.isPermanent : (defaults.isPermanent ?? false),
+        };
+    };
+
+    const appendUnique = (target, name) => {
+        if (!name) return;
+        if (!target.includes(name)) {
+            target.push(name);
+        }
+    };
+
+    const registerEntry = (entry, categoryKey, subKey = null) => {
+        const defaults = {
+            poolType: subKey === "limited" ? "single" : "mixed",
+            roleCount: 0,
+            isPermanent: subKey === "permanent",
+        };
+        const normalized = normalizeEntry(entry, defaults);
+        if (!normalized || !normalized.name) return;
+
+        const record = {
+            ...normalized,
+            categoryKey,
+            subCategoryKey: subKey,
+        };
+        infoMap[normalized.name] = record;
+
+        if (categoryKey === "wishSeries" && subKey === "limited") {
+            appendUnique(limited, normalized.name);
+        } else if (categoryKey === "wishSeries" && subKey === "permanent") {
+            appendUnique(permanent, normalized.name);
+        } else if (categoryKey === "eventSeries") {
+            appendUnique(event, normalized.name);
+        } else if (categoryKey === "specialRewards") {
+            appendUnique(special, normalized.name);
+        }
+    };
+
+    const limitedEntries = poolCategories?.wishSeries?.subcategories?.limited?.pools ?? [];
+    const permanentEntries = poolCategories?.wishSeries?.subcategories?.permanent?.pools ?? [];
+    const eventEntries = poolCategories?.eventSeries?.pools ?? [];
+    const specialEntries = poolCategories?.specialRewards?.pools ?? [];
+
+    limitedEntries.forEach((entry) => registerEntry(entry, "wishSeries", "limited"));
+    permanentEntries.forEach((entry) => registerEntry(entry, "wishSeries", "permanent"));
+    eventEntries.forEach((entry) => registerEntry(entry, "eventSeries"));
+    specialEntries.forEach((entry) => registerEntry(entry, "specialRewards"));
+
+    if (permanent.length === 0) {
+        [
+            { name: "常驻", poolType: "mixed", roleCount: 1, isPermanent: true },
+            { name: "许愿", poolType: "mixed", roleCount: 5, isPermanent: true },
+        ].forEach((entry) => registerEntry(entry, "wishSeries", "permanent"));
+    }
+
+    return {
+        poolInfoMap: infoMap,
+        poolOrderMap,
+        limitedPools: limited,
+        permanentPools: permanent,
+        eventPools: event,
+        specialPools: special,
+    };
 };
 
-// 获取角色对应的卡池
-const getRolePools = (role, cardData) => {
-    const roleCards = cardData.filter(
-        card => card.character === role && parseInt(card.star) === 5
-    );
+const getRolePools = (role, data) => {
+    const roleCards = data.filter((card) => card.character === role && parseInt(card.star, 10) === 5);
     const rolePools = new Set();
-    roleCards.forEach(card => {
+    roleCards.forEach((card) => {
         const pool = extractPoolName(card.get);
-        if (pool && pool !== "常驻") {
+        if (pool) {
             rolePools.add(pool);
         }
     });
     return Array.from(rolePools);
 };
+
+const arraysEqual = (a = [], b = []) => {
+    if (a.length !== b.length) return false;
+    const sortedA = [...a].sort();
+    const sortedB = [...b].sort();
+    return sortedA.every((value, index) => value === sortedB[index]);
+};
+
+const uniqueArray = (arr = []) => Array.from(new Set(arr));
 
 const CardPoolFilter = ({
     fontsize,
@@ -76,12 +171,28 @@ const CardPoolFilter = ({
     handleSelectedRoleChange,
     selectedRole,
 }) => {
+    const baseFontsize = Number.isFinite(Number(fontsize)) ? Number(fontsize) : 0;
+    const modalMargin = Math.max(baseFontsize * 1.6, 18);
+    const innerPadding = Math.max(baseFontsize * 0.8, 16);
+    const sectionGap = Math.max(baseFontsize * 0.6, 12);
+    const headerMarginTop = Math.max(baseFontsize * 0.4, 14);
+    const contentSidePadding = Math.max(baseFontsize * 0.6, 14);
+    const buttonGap = Math.max(baseFontsize * 0.3, 8);
 
-    const characters = ["沈星回", "黎深", "祁煜", "秦彻", "夏以昼"];
+    const { poolInfoMap, poolOrderMap, limitedPools, permanentPools } = useMemo(() => buildPoolDataset(), []);
 
-    const { availablePools, permanentPools } = useMemo(() => getAvailablePools(cardData), []);
+    const comparePoolsByRelease = (a, b) => {
+        const metaA = poolOrderMap[a] || { timestamp: Number.MAX_SAFE_INTEGER, index: Number.MAX_SAFE_INTEGER };
+        const metaB = poolOrderMap[b] || { timestamp: Number.MAX_SAFE_INTEGER, index: Number.MAX_SAFE_INTEGER };
+        if (metaA.timestamp !== metaB.timestamp) {
+            return metaA.timestamp - metaB.timestamp;
+        }
+        return metaA.index - metaB.index;
+    };
 
-    const [currentAvailablePools, setCurrentAvailablePools] = useState(availablePools);
+    const sortPoolsByRelease = (list) => list.slice().sort(comparePoolsByRelease);
+
+    const toggleablePools = useMemo(() => sortPoolsByRelease([...limitedPools]), [limitedPools]);
 
     const derivedSelectedRoles = useMemo(() => {
         if (Array.isArray(selectedRoleFilters) && selectedRoleFilters.length > 0) {
@@ -93,81 +204,72 @@ const CardPoolFilter = ({
         return [];
     }, [selectedRoleFilters, selectedRole]);
 
-    // 选中的角色列表
     const [selectedRoles, setSelectedRoles] = useState(derivedSelectedRoles);
-
     useEffect(() => {
         setSelectedRoles(derivedSelectedRoles);
     }, [derivedSelectedRoles]);
 
-    // 初始化时根据 selectedPools 过滤出 limited 池
+    const [currentAvailablePools, setCurrentAvailablePools] = useState(toggleablePools);
+
     const [selectedLimitedPools, setSelectedLimitedPools] = useState(() => {
-        if (!selectedPools || selectedPools.length === 0) return [];
-        return selectedPools.filter(p => availablePools.includes(p));
+        return sortPoolsByRelease((selectedPools || []).filter((pool) => toggleablePools.includes(pool)));
     });
 
-    const baseFontsize = Number.isFinite(Number(fontsize)) ? Number(fontsize) : 0;
-    const modalMargin = Math.max(baseFontsize * 2, 24);
-    const innerPadding = Math.max(baseFontsize, 20);
-    const sectionGap = Math.max(baseFontsize * 0.8, 16);
-    const headerMarginTop = Math.max(baseFontsize * 0.6, 18);
-    const contentSidePadding = Math.max(baseFontsize * 0.8, 18);
-    const buttonGap = Math.max(baseFontsize * 0.4, 10);
+    const hasSyncedOnOpenRef = useRef(false);
 
-    // 等 poolsLoaded 后再同步一次（只第一次）
     useEffect(() => {
         if (!poolsLoaded) return;
-        if (!selectedPools || selectedPools.length === 0) return;
-        setSelectedLimitedPools(
-            selectedPools.filter(p => currentAvailablePools.includes(p))
-        );
-    }, [poolsLoaded]);
+        if (!showCardPoolFilter) {
+            hasSyncedOnOpenRef.current = false;
+            return;
+        }
+        if (hasSyncedOnOpenRef.current) return;
+        const incoming = sortPoolsByRelease((selectedPools || []).filter((pool) => toggleablePools.includes(pool)));
+        setSelectedLimitedPools(incoming);
+        hasSyncedOnOpenRef.current = true;
+    }, [showCardPoolFilter, poolsLoaded, selectedPools, toggleablePools]);
 
-    // 根据选中的角色更新可用池子列表
     useEffect(() => {
         if (!poolsLoaded) return;
         if (!selectedRoles || selectedRoles.length === 0) {
-            setCurrentAvailablePools(availablePools);
+            setCurrentAvailablePools(toggleablePools);
             return;
         }
 
         const rolePools = new Set();
-        selectedRoles.forEach(role => {
-            getRolePools(role, cardData).forEach(pool => {
-                if (availablePools.includes(pool)) {
+        selectedRoles.forEach((role) => {
+            getRolePools(role, cardData).forEach((pool) => {
+                if (toggleablePools.includes(pool)) {
                     rolePools.add(pool);
                 }
             });
         });
 
-        setCurrentAvailablePools(rolePools.size > 0 ? Array.from(rolePools) : []);
-    }, [poolsLoaded, selectedRoles, availablePools]);
+        setCurrentAvailablePools(rolePools.size > 0 ? sortPoolsByRelease(Array.from(rolePools)) : []);
+    }, [poolsLoaded, selectedRoles, toggleablePools]);
 
     useEffect(() => {
-        setSelectedLimitedPools(prev =>
-            prev.filter(pool => currentAvailablePools.includes(pool))
-        );
+        setSelectedLimitedPools((prev) => prev.filter((pool) => currentAvailablePools.includes(pool)));
     }, [currentAvailablePools]);
 
-    // 点击角色时，切换角色选中状态并更新卡池
     const handleRoleClick = (role) => {
         const isSelected = selectedRoles.includes(role);
         let newSelectedRoles;
         let newSelectedPools;
 
+        const rolePools = getRolePools(role, cardData)
+            .filter((pool) => toggleablePools.includes(pool))
+            .filter((pool) => (poolInfoMap[pool]?.poolType || "single") === "single");
+
         if (isSelected) {
-            // 取消选中：移除该角色
-            newSelectedRoles = selectedRoles.filter(r => r !== role);
-            // 移除该角色的所有卡池
-            const rolePools = getRolePools(role, cardData);
-            newSelectedPools = selectedLimitedPools.filter(p => !rolePools.includes(p));
+            newSelectedRoles = selectedRoles.filter((r) => r !== role);
+            newSelectedPools = selectedLimitedPools.filter((p) => !rolePools.includes(p));
         } else {
-            // 选中：添加该角色
             newSelectedRoles = [...selectedRoles, role];
-            // 添加该角色的所有卡池
-            const rolePools = getRolePools(role, cardData);
-            newSelectedPools = [...new Set([...selectedLimitedPools, ...rolePools])];
+            newSelectedPools = [...selectedLimitedPools, ...rolePools];
         }
+
+        newSelectedPools = sortPoolsByRelease(uniqueArray(newSelectedPools).filter((pool) => toggleablePools.includes(pool)));
 
         setSelectedRoles(newSelectedRoles);
         setSelectedLimitedPools(newSelectedPools);
@@ -192,50 +294,89 @@ const CardPoolFilter = ({
         }
     };
 
-    // 是否全选
-    const isAllLimitedSelected = currentAvailablePools.length > 0 && currentAvailablePools.every((pool) =>
-        selectedLimitedPools.includes(pool)
-    );
+    const isAllLimitedSelected = currentAvailablePools.length > 0 && currentAvailablePools.every((pool) => selectedLimitedPools.includes(pool));
 
-    // 切换选中池
     const toggleLimitedPool = (pool) => {
-        setSelectedLimitedPools(prev => {
-            const newSelected = prev.includes(pool)
-                ? prev.filter(p => p !== pool)
-                : [...prev, pool];
-            return Array.from(new Set(newSelected));
+        setSelectedLimitedPools((prev) => {
+            const next = prev.includes(pool) ? prev.filter((p) => p !== pool) : [...prev, pool];
+            return sortPoolsByRelease(uniqueArray(next).filter((item) => toggleablePools.includes(item)));
         });
     };
 
-    // 全选/取消全选
-    const toggleAllPools = () => {
-        if (isAllLimitedSelected) {
-            setSelectedLimitedPools([]);
-        } else {
+    const toggleAllPools = (checked) => {
+        if (checked) {
             setSelectedLimitedPools([...currentAvailablePools]);
+        } else {
+            setSelectedLimitedPools([]);
         }
     };
 
-    // 将 selectedLimitedPools + permanentPools 合并写入父级 selectedPools
-    useEffect(() => {
+    const commitSelectionChanges = () => {
         if (!poolsLoaded) return;
-
-        const newSelectedPools = [...selectedLimitedPools, ...permanentPools];
-        if (JSON.stringify(newSelectedPools.sort()) !== JSON.stringify((selectedPools || []).sort())) {
-            setSelectedPools(newSelectedPools);
+        const merged = uniqueArray([...permanentPools, ...selectedLimitedPools]);
+        if (!arraysEqual(merged, selectedPools || [])) {
+            setSelectedPools(merged);
         }
-    }, [selectedLimitedPools, permanentPools, poolsLoaded]);
+    };
+
+    const displayGroups = useMemo(() => {
+        const groups = [];
+        const addGroup = (key, title, pools) => {
+            if (pools.length > 0) {
+                groups.push({ key, title, pools });
+            }
+        };
+
+        const singleLimited = currentAvailablePools.filter(
+            (pool) => limitedPools.includes(pool) && (poolInfoMap[pool]?.poolType || "single") === "single"
+        );
+        const mixedLimited = currentAvailablePools.filter(
+            (pool) => limitedPools.includes(pool) && (poolInfoMap[pool]?.poolType || "single") === "mixed"
+        );
+
+        addGroup("limited-single", "单人限定卡池", singleLimited);
+        addGroup("limited-mixed", "混池限定卡池", mixedLimited);
+
+        return groups;
+    }, [currentAvailablePools, limitedPools, poolInfoMap]);
+
+    const renderPoolButton = (pool) => {
+        const isSelected = selectedLimitedPools.includes(pool);
+        return (
+            <button
+                key={pool}
+                onClick={() => toggleLimitedPool(pool)}
+                style={{
+                    backgroundColor: isSelected ? "rgba(239,218,160,0.85)" : "rgba(255,255,255,0.08)",
+                    color: isSelected ? "#111" : "#eee",
+                    borderRadius: `${Math.max(baseFontsize * 0.25, 6)}px`,
+                    padding: `${Math.max(baseFontsize * 0.35, 6)}px ${Math.max(baseFontsize * 0.7, 12)}px`,
+                    fontSize: `${Math.max(baseFontsize * 1, 14)}px`,
+                    fontWeight: 600,
+                    boxShadow: isSelected ? "0 0 12px rgba(255,215,128,0.5)" : "none",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flex: "0 0 auto",
+                    whiteSpace: "nowrap",
+                }}
+            >
+                {pool}
+            </button>
+        );
+    };
+
+    const handleCloseFilter = () => {
+        commitSelectionChanges();
+        setShowCardPoolFilter(false);
+    };
 
     return (
         showCardPoolFilter && (
             <div
                 className="absolute w-full h-full z-50 flex items-center justify-center"
-                onClick={() => {
-                    setShowCardPoolFilter(false);
-                }}
-                style={{ 
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                }}
+                onClick={handleCloseFilter}
+                style={{ backgroundColor: "rgba(0, 0, 0, 0.55)" }}
             >
                 <div
                     className="flex flex-col"
@@ -244,29 +385,24 @@ const CardPoolFilter = ({
                     }}
                     style={{
                         width: `calc(100% - ${modalMargin * 2}px)`,
-                        maxWidth: `500px`,
+                        maxWidth: "640px",
                         height: `calc(100% - ${modalMargin * 2}px)`,
-                        maxHeight: `800px`,
+                        maxHeight: "760px",
                         margin: `${modalMargin}px`,
-                        backgroundColor: "#2a2d39",
-                        fontSize: `${fontsize * 1.2}px`,
+                        backgroundColor: "#1f2230",
                         color: "white",
-                        borderRadius: `${fontsize * 0.5}px`,
+                        borderRadius: `${Math.max(baseFontsize * 0.5, 16)}px`,
+                        boxShadow: "0 20px 80px rgba(0,0,0,0.45)",
                     }}
                 >
-                    <div
-                        className="relative flex flex-col h-full overflow-hidden"
-                        style={{
-                            padding: `${innerPadding}px`,
-                            rowGap: `${sectionGap}px`,
-                        }}
-                    >
+                    <div className="relative flex flex-col h-full overflow-hidden" style={{ padding: `${innerPadding}px` }}>
                         <label
                             className="flex justify-center items-center mb-4"
                             style={{
-                                fontSize: `${fontsize * 2}px`,
-                                fontWeight: "800",
+                                fontSize: `${Math.max(baseFontsize * 1.5, 18)}px`,
+                                fontWeight: 800,
                                 marginTop: `${headerMarginTop}px`,
+                                letterSpacing: "0.08em",
                             }}
                         >
                             筛选卡池
@@ -278,13 +414,13 @@ const CardPoolFilter = ({
                                 paddingLeft: `${contentSidePadding}px`,
                                 paddingRight: `${contentSidePadding}px`,
                                 paddingBottom: `${innerPadding}px`,
-                                overflowY: "auto",
                             }}
                         >
-                            {/* 角色选择 */}
-                            <div style={{ marginBottom: `${sectionGap * 1.2}px` }}>
-                                <label style={{ fontSize: `${fontsize * 1.2}px`, marginBottom: `${fontsize * 0.5}px`, display: 'block' }}>选择角色：</label>
-                                <div className="flex flex-row flex-wrap" style={{ gap: `${buttonGap}px` }}>
+                            <div style={{ marginBottom: `${sectionGap}px` }}>
+                                <label style={{ fontSize: `${Math.max(baseFontsize * 0.95, 14)}px`, marginBottom: 6, display: "block" }}>
+                                    选择角色：
+                                </label>
+                                <div className="flex flex-wrap" style={{ gap: `${buttonGap}px` }}>
                                     {characters.map((char) => {
                                         const isSelected = selectedRoles.includes(char);
                                         return (
@@ -292,12 +428,12 @@ const CardPoolFilter = ({
                                                 key={char}
                                                 onClick={() => handleRoleClick(char)}
                                                 style={{
-                                                    fontSize: `${fontsize * 1.2}px`,
-                                                    backgroundColor: isSelected ? "rgba(239,218,160,0.8)" : "transparent",
+                                                    fontSize: `${Math.max(baseFontsize, 14)}px`,
+                                                    backgroundColor: isSelected ? "rgba(239,218,160,0.85)" : "transparent",
                                                     color: isSelected ? "#111" : "#aaa",
-                                                    boxShadow: isSelected ? "0 0 10px gold, 0 0 20px gold" : "0 0 10px #111214, 0 0 20px #111214",
-                                                    padding: `${fontsize * 0.5}px ${fontsize * 1}px`,
-                                                    borderRadius: `${fontsize * 0.2}px`,
+                                                    boxShadow: isSelected ? "0 0 12px gold" : "0 0 8px rgba(0,0,0,0.4)",
+                                                    padding: `${Math.max(baseFontsize * 0.4, 8)}px ${Math.max(baseFontsize * 0.8, 14)}px`,
+                                                    borderRadius: `${Math.max(baseFontsize * 0.25, 8)}px`,
                                                 }}
                                             >
                                                 {char}
@@ -305,76 +441,40 @@ const CardPoolFilter = ({
                                         );
                                     })}
                                 </div>
-                                <label style={{ fontSize: `${fontsize * 0.9}px`, color: "#aaa", marginTop: `${fontsize * 0.5}px`, display: 'block' }}>
-                                    点击角色可选中/取消选中该角色的所有卡池
+                                <label style={{ fontSize: `${Math.max(baseFontsize * 0.65, 10)}px`, color: "#999", marginTop: 6, display: "block" }}>
+                                    点击角色可以快速选中 / 取消该角色相关的限定卡池。
                                 </label>
                             </div>
 
-                            {/* 全选按钮 */}
-                            <div className="flex flex-col" style={{ marginBottom: `${sectionGap}px` }}>
-                                <div className="flex flex-row gap-2 items-center">
-                                    <label style={{ fontSize: `${fontsize * 1.2}px` }}>选择全部限定卡池</label>
+                            <div style={{ marginBottom: `${sectionGap}px` }}>
+                                <div className="flex flex-row gap-3 items-center">
+                                    <label style={{ fontSize: `${Math.max(baseFontsize, 14)}px` }}>选择全部限定卡池</label>
                                     <input
                                         type="checkbox"
                                         checked={isAllLimitedSelected}
-                                        onChange={toggleAllPools}
+                                        onChange={(e) => toggleAllPools(e.target.checked)}
                                     />
                                 </div>
-                                <label style={{ fontSize: `${fontsize * 1}px`, color: "#aaa" }}>
-                                    （不勾选则仅有常驻世界卡）
+                                <label style={{ fontSize: `${Math.max(baseFontsize * 0.7, 10)}px`, color: "#9ca3af", marginTop: 4 }}>
+                                    不勾选则仅保留常驻卡池（系统会自动包含常驻池）。
                                 </label>
                             </div>
 
-                            {/* 卡池选择 */}
-                            <div className="flex flex-col" style={{ rowGap: `${sectionGap}px` }}>
-                                {currentAvailablePools.length > 0 ? (
-                                    <div className="flex flex-col" style={{ rowGap: `${sectionGap * 0.6}px` }}>
-                                        <label
-                                            style={{
-                                                fontSize: `${fontsize * 1.3}px`,
-                                                color: "#efd6a0",
-                                                fontWeight: 700,
-                                            }}
-                                        >
-                                            限定池
-                                        </label>
-                                        <div
-                                            className="flex flex-wrap"
-                                            style={{
-                                                gap: `${buttonGap}px`,
-                                                paddingLeft: `${buttonGap}px`,
-                                                paddingRight: `${buttonGap}px`,
-                                                paddingTop: `${buttonGap}px`,
-                                                paddingBottom: `${buttonGap}px`,
-                                            }}
-                                        >
-                                            {currentAvailablePools.map((pool) => {
-                                                const isSelected = selectedLimitedPools.includes(pool);
-                                                return (
-                                                    <button
-                                                        key={pool}
-                                                        onClick={() => toggleLimitedPool(pool)}
-                                                        style={{
-                                                            backgroundColor: isSelected ? "rgba(239,218,160,0.8)" : "transparent",
-                                                            color: isSelected ? "#111" : "#aaa",
-                                                            boxShadow: isSelected ? "0 0 5px gold, 0 0 10px gold" : "0 0 5px #111214, 0 0 10px #111214",
-                                                            fontSize: `${fontsize * 1.1}px`,
-                                                            padding: `${fontsize * 0.5}px ${fontsize * 1}px`,
-                                                            borderRadius: `${fontsize * 0.2}px`,
-                                                        }}
-                                                    >
-                                                        {pool}
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
+                            {displayGroups.map((group) => (
+                                <div key={group.key} style={{ marginBottom: `${sectionGap * 0.8}px` }}>
+                                    <div style={{ marginBottom: 6 }}>
+                                        <label style={{ fontSize: `${Math.max(baseFontsize * 1.05, 14)}px`, fontWeight: 700, color: "#f5dca8" }}>{group.title}</label>
+                                        {group.description && (
+                                            <div style={{ fontSize: `${Math.max(baseFontsize * 0.7, 10)}px`, color: "#9ca3af", marginTop: 4 }}>
+                                                {group.description}
+                                            </div>
+                                        )}
                                     </div>
-                                ) : (
-                                    <label style={{ fontSize: `${fontsize * 1}px`, color: "#aaa" }}>
-                                        当前没有可用的限定池
-                                    </label>
-                                )}
-                            </div>
+                                    <div className="flex flex-wrap" style={{ gap: `${buttonGap}px` }}>
+                                        {group.pools.map(renderPoolButton)}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>

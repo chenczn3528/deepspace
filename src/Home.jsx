@@ -403,8 +403,10 @@ const Home = ({isPortrait, openAssetTest}) => {
                     currentFourStarCounter = 0;
 
                     if (useSoftGuarantee && hasRoleRestrictions) {
-                        if (result.card && restrictedRoles.includes(result.card.character)) {
-                            localSoftPityFailed = false; // 命中选定角色
+                        const hitTargetRole = result.card && restrictedRoles.includes(result.card.character);
+                        const hitLimitedPool = result.card && (result.card.permanent || '') !== '常驻';
+                        if (hitTargetRole && hitLimitedPool) {
+                            localSoftPityFailed = false; // 命中限定角色
                         } else {
                             localSoftPityFailed = true;  // 小保底失败，开启大保底
                         }
@@ -491,7 +493,13 @@ const Home = ({isPortrait, openAssetTest}) => {
             );
             pool = filterBySelectedPools(pool);
             if ((forceTargetRole && limitToRoles) || (onlySelectedRoleCard && limitToRoles)) {
-                pool = pool.filter(card => activeRoles.includes(card.character));
+                pool = pool.filter(card => {
+                    if (!activeRoles.includes(card.character)) return false;
+                    if (forceTargetRole) {
+                        return (card.permanent || '') !== '常驻';
+                    }
+                    return true;
+                });
             }
         } else {
             if (onlySelectedRoleCard && limitToRoles) {

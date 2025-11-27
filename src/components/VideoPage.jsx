@@ -1,5 +1,23 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import LeftIcon from "../icons/LeftIcon.jsx";
+import InfoIcon from "../icons/InfoIcon.jsx";
+
+const buildExternalLink = (url) => {
+    try {
+        const parsed = new URL(url);
+        const bvid = parsed.searchParams.get("bvid");
+        const page = parsed.searchParams.get("p") || "1";
+        if (bvid) {
+            return `https://www.bilibili.com/video/${bvid}?p=${page}`;
+        }
+        if (parsed.hostname.includes("bilibili.com")) {
+            return parsed.href;
+        }
+    } catch (e) {
+        return url;
+    }
+    return url;
+};
 
 const VideoPage = ({
     fontsize,
@@ -8,6 +26,7 @@ const VideoPage = ({
     setShowPageZIndex,
     video_url,
 }) => {
+    const externalLink = buildExternalLink(video_url || "");
 
     return (
         <div
@@ -32,6 +51,23 @@ const VideoPage = ({
             >
                 <LeftIcon size={fontsize * 2.5} color="white"/>
             </button>
+
+            <a
+                href={externalLink}
+                target="_blank"
+                rel="noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="absolute z-110"
+                style={{
+                    left: `${fontsize * 4}px`,
+                    top: `${fontsize * 1.4}px`,
+                    background: 'transparent',
+                    padding: 0,
+                    display: 'inline-flex'
+                }}
+            >
+                <InfoIcon size={fontsize * 2} color="#fff" />
+            </a>
 
 
             <iframe
