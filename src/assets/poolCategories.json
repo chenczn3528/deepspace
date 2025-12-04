@@ -7,6 +7,12 @@
         "name": "限时卡池",
         "pools": [
           {
+            "name": "银翼安魂地",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
             "name": "时与世的边缘",
             "poolType": "single",
             "roleCount": 1,

@@ -1,5 +1,33 @@
 [
   {
+    "character": "秦彻",
+    "name": "猩红席卷",
+    "card_type_tag": "日冕",
+    "card_color_tag": "蓝弧",
+    "star": "5星",
+    "talent": "防御",
+    "get": "限时许愿[[「银翼安魂地」]]",
+    "permanent": "",
+    "time": "2025/12/2",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/f/f1/c72fduf27r9bwr273a2uc57u3sgrqzg.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%8C%A9%E7%BA%A2%E5%B8%AD%E5%8D%B7.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/f/f1/c72fduf27r9bwr273a2uc57u3sgrqzg.png/900px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%8C%A9%E7%BA%A2%E5%B8%AD%E5%8D%B7.png",
+    "video_url": "https://player.bilibili.com/player.html?bvid=BV16T421r7je&autoplay=0&preload=auto&quality=1080p&isOutside=true"
+  },
+  {
+    "character": "秦彻",
+    "name": "猩红弥散",
+    "card_type_tag": "日冕",
+    "card_color_tag": "蓝弧",
+    "star": "5星",
+    "talent": "防御",
+    "get": "限时许愿[[「银翼安魂地」]]",
+    "permanent": "",
+    "time": "2025/12/2",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/e/e1/osvbjqdqrpi6p0p5x9bnnhjwcnn7nhf.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%8C%A9%E7%BA%A2%E5%BC%A5%E6%95%A3.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/e/e1/osvbjqdqrpi6p0p5x9bnnhjwcnn7nhf.png/900px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%8C%A9%E7%BA%A2%E5%BC%A5%E6%95%A3.png",
+    "video_url": "https://player.bilibili.com/player.html?bvid=BV16T421r7je&autoplay=0&preload=auto&quality=1080p&isOutside=true"
+  },
+  {
     "character": "黎深",
     "name": "神谕圣咏",
     "card_type_tag": "日冕",
@@ -373,8 +401,8 @@
     "get": "限时许愿[[「甜野极驰」]]",
     "permanent": "",
     "time": "2025/11/21",
-    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/4/41/opqqsnindiq2an61lnjo5i2mj10m25m.jpg/600px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E7%94%9C%E9%87%8E%E6%9E%81%E9%A9%B0.jpg.png",
-    "image": "https://patchwiki.biligame.com/images/lysk/thumb/4/41/opqqsnindiq2an61lnjo5i2mj10m25m.jpg/1200px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E7%94%9C%E9%87%8E%E6%9E%81%E9%A9%B0.jpg.png",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/9/90/k14cz8se5lkeivv5mnxvghm0wv6ottx.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%94%9C%E9%87%8E%E6%9E%81%E9%A9%B0.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/9/90/k14cz8se5lkeivv5mnxvghm0wv6ottx.png/900px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%94%9C%E9%87%8E%E6%9E%81%E9%A9%B0.png",
     "video_url": "https://player.bilibili.com/player.html?bvid=BV1W6421Z7NZ&autoplay=0&preload=auto&quality=1080p&isOutside=true"
   },
   {
@@ -1720,6 +1748,34 @@
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/8/8f/cicuaz7iddg7puz12fn4rn97zdp9fu8.png/400px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%9C%B7%E7%9C%B7%E4%BD%99%E6%99%96.png",
     "image": "https://patchwiki.biligame.com/images/lysk/thumb/8/8f/cicuaz7iddg7puz12fn4rn97zdp9fu8.png/800px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%9C%B7%E7%9C%B7%E4%BD%99%E6%99%96.png",
     "video_url": "https://player.bilibili.com/player.html?bvid=BV1tH4y1w7y4&autoplay=0&p=3&preload=auto&quality=1080p&isOutside=true"
+  },
+  {
+    "character": "秦彻",
+    "name": "纯白虔愿",
+    "card_type_tag": "日冕",
+    "card_color_tag": "紫辉",
+    "star": "4星",
+    "talent": "防御",
+    "get": "「噬血猎宴」搭档预演",
+    "permanent": "",
+    "time": "2025/12/2",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/d/dc/boo61zinpm10j3f85knmtdbdzc4ilnl.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%BA%AF%E7%99%BD%E8%99%94%E6%84%BF.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/d/dc/boo61zinpm10j3f85knmtdbdzc4ilnl.png/900px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%BA%AF%E7%99%BD%E8%99%94%E6%84%BF.png",
+    "video_url": ""
+  },
+  {
+    "character": "秦彻",
+    "name": "纯白迷吮",
+    "card_type_tag": "日冕",
+    "card_color_tag": "紫辉",
+    "star": "4星",
+    "talent": "防御",
+    "get": "「噬血猎宴」涤雾寻踪",
+    "permanent": "",
+    "time": "2025/12/2",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/2/2d/483k7c69jkolcmspxnollwrq5v8buef.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%BA%AF%E7%99%BD%E8%BF%B7%E5%90%AE.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/2/2d/483k7c69jkolcmspxnollwrq5v8buef.png/900px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%BA%AF%E7%99%BD%E8%BF%B7%E5%90%AE.png",
+    "video_url": ""
   },
   {
     "character": "黎深",
@@ -4015,6 +4071,20 @@
     "time": "2024/1/18",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/7/74/dozl471pv1f3wyiyij9tlh46lz6fl1v.png/400px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%9F%A5%E6%88%BF.png",
     "image": "https://patchwiki.biligame.com/images/lysk/thumb/7/74/dozl471pv1f3wyiyij9tlh46lz6fl1v.png/800px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%9F%A5%E6%88%BF.png",
+    "video_url": ""
+  },
+  {
+    "character": "秦彻",
+    "name": "餍足",
+    "card_type_tag": "月晖",
+    "card_color_tag": "绿珥",
+    "star": "3星",
+    "talent": "防御",
+    "get": "[[「噬血猎宴」]]维缪沙龙兑换获得",
+    "permanent": "",
+    "time": "2025/12/2",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/b/b8/9zywbgcom3sq288jri5nt8f9gd4i1l8.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E9%A4%8D%E8%B6%B3.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/b/b8/9zywbgcom3sq288jri5nt8f9gd4i1l8.png/900px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E9%A4%8D%E8%B6%B3.png",
     "video_url": ""
   },
   {
