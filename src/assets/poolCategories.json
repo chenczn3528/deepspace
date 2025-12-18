@@ -61,6 +61,12 @@
             "isPermanent": false
           },
           {
+            "name": "慵懒共谋",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
             "name": "甜野极驰",
             "poolType": "single",
             "roleCount": 1,
@@ -343,6 +349,12 @@
     "name": "密约/挚礼系列",
     "icon": "🎁",
     "pools": [
+      {
+        "name": "心动挚礼6期",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      },
       {
         "name": "心动挚礼5期",
         "poolType": "single",

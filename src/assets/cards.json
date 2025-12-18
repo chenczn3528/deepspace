@@ -392,6 +392,34 @@
     "video_url": ""
   },
   {
+    "character": "夏以昼",
+    "name": "慵懒共谋",
+    "card_type_tag": "月晖",
+    "card_color_tag": "粉珀",
+    "star": "5星",
+    "talent": "攻击",
+    "get": "限时许愿[[「慵懒共谋」]]",
+    "permanent": "",
+    "time": "2025/12/18",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/1/19/og4lofop13qdc4uebyu73nvikauslki.jpg/600px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E6%85%B5%E6%87%92%E5%85%B1%E8%B0%8B.jpg",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/1/19/og4lofop13qdc4uebyu73nvikauslki.jpg/1200px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E6%85%B5%E6%87%92%E5%85%B1%E8%B0%8B.jpg",
+    "video_url": "https://player.bilibili.com/player.html?bvid=BV1emcgeyEsh&autoplay=0&preload=auto&quality=1080p&isOutside=true"
+  },
+  {
+    "character": "沈星回",
+    "name": "粲然须臾",
+    "card_type_tag": "月晖",
+    "card_color_tag": "粉珀",
+    "star": "5星",
+    "talent": "攻击",
+    "get": "[[「心动挚礼」6期]]",
+    "permanent": "",
+    "time": "2025/12/18",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/5/58/fdrtkmtixp4jlralna7oaklxxgm61i7.jpg/600px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E7%B2%B2%E7%84%B6%E9%A1%BB%E8%87%BE.jpg",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/5/58/fdrtkmtixp4jlralna7oaklxxgm61i7.jpg/1200px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E7%B2%B2%E7%84%B6%E9%A1%BB%E8%87%BE.jpg",
+    "video_url": "https://player.bilibili.com/player.html?bvid=BV19m42137BV&autoplay=0&preload=auto&quality=1080p&isOutside=true"
+  },
+  {
     "character": "祁煜",
     "name": "甜野极驰",
     "card_type_tag": "月晖",
