@@ -172,14 +172,24 @@ const CardPoolFilter = ({
     selectedRole,
 }) => {
     const baseFontsize = Number.isFinite(Number(fontsize)) ? Number(fontsize) : 0;
-    const modalMargin = Math.max(baseFontsize * 1.6, 18);
+    const modalMargin = Math.max(baseFontsize * 2.8, 18);
     const innerPadding = Math.max(baseFontsize * 0.8, 16);
     const sectionGap = Math.max(baseFontsize * 0.6, 12);
     const headerMarginTop = Math.max(baseFontsize * 0.4, 14);
     const contentSidePadding = Math.max(baseFontsize * 0.6, 14);
     const buttonGap = Math.max(baseFontsize * 0.3, 8);
 
-    const { poolInfoMap, poolOrderMap, limitedPools, permanentPools } = useMemo(() => buildPoolDataset(), []);
+    const { poolInfoMap, poolOrderMap, limitedPools, permanentPools, specialPools } = useMemo(() => buildPoolDataset(), []);
+
+    const permanentHeartPools = useMemo(
+        () => permanentPools.filter((pool) => pool.includes("心动挚礼")),
+        [permanentPools]
+    );
+
+    const heartPools = useMemo(
+        () => uniqueArray([...(specialPools || []), ...(permanentHeartPools || [])]),
+        [specialPools, permanentHeartPools]
+    );
 
     const comparePoolsByRelease = (a, b) => {
         const metaA = poolOrderMap[a] || { timestamp: Number.MAX_SAFE_INTEGER, index: Number.MAX_SAFE_INTEGER };
@@ -192,7 +202,25 @@ const CardPoolFilter = ({
 
     const sortPoolsByRelease = (list) => list.slice().sort(comparePoolsByRelease);
 
-    const toggleablePools = useMemo(() => sortPoolsByRelease([...limitedPools]), [limitedPools]);
+    const toggleablePools = useMemo(
+        () => sortPoolsByRelease([...limitedPools, ...heartPools]),
+        [limitedPools, heartPools]
+    );
+
+    const specialPoolDisplayNames = useMemo(() => {
+        if (!heartPools?.length) return {};
+        const map = {};
+        cardData.forEach((card) => {
+            const pool = extractPoolName(card.get);
+            if (pool && heartPools.includes(pool) && !map[pool]) {
+                map[pool] = card?.name || pool;
+            }
+        });
+        heartPools.forEach((pool) => {
+            if (!map[pool]) map[pool] = pool;
+        });
+        return map;
+    }, [heartPools]);
 
     const derivedSelectedRoles = useMemo(() => {
         if (Array.isArray(selectedRoleFilters) && selectedRoleFilters.length > 0) {
@@ -321,9 +349,16 @@ const CardPoolFilter = ({
 
     const displayGroups = useMemo(() => {
         const groups = [];
-        const addGroup = (key, title, pools) => {
+        const addGroup = (key, title, pools, options = {}) => {
             if (pools.length > 0) {
-                groups.push({ key, title, pools });
+                groups.push({
+                    key,
+                    title,
+                    pools: pools.map((pool) => ({
+                        pool,
+                        label: options.useSpecialLabels ? (specialPoolDisplayNames[pool] || pool) : pool,
+                    })),
+                });
             }
         };
 
@@ -333,14 +368,16 @@ const CardPoolFilter = ({
         const mixedLimited = currentAvailablePools.filter(
             (pool) => limitedPools.includes(pool) && (poolInfoMap[pool]?.poolType || "single") === "mixed"
         );
+        const specialRewardPools = currentAvailablePools.filter((pool) => heartPools.includes(pool));
 
         addGroup("limited-single", "单人限定卡池", singleLimited);
         addGroup("limited-mixed", "混池限定卡池", mixedLimited);
+        addGroup("special-rewards", "心动挚礼/特殊奖励", specialRewardPools, { useSpecialLabels: true });
 
         return groups;
-    }, [currentAvailablePools, limitedPools, poolInfoMap]);
+    }, [currentAvailablePools, limitedPools, poolInfoMap, heartPools, specialPoolDisplayNames]);
 
-    const renderPoolButton = (pool) => {
+    const renderPoolButton = ({ pool, label }) => {
         const isSelected = selectedLimitedPools.includes(pool);
         return (
             <button
@@ -361,7 +398,7 @@ const CardPoolFilter = ({
                     whiteSpace: "nowrap",
                 }}
             >
-                {pool}
+                {label}
             </button>
         );
     };

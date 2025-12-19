@@ -1,8 +1,9 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import LeftIcon from "../icons/LeftIcon.jsx";
 import RightIcon from "../icons/RightIcon.jsx";
 import LockIcon from "../icons/LockIcon.jsx";
 import ShortVideoIcon from "../icons/ShortVideoIcon.jsx";
+import InfoIcon from "../icons/InfoIcon.jsx";
 import { Asset } from './Asset.jsx';
 
 const FullImageViewer = ({
@@ -19,6 +20,7 @@ const FullImageViewer = ({
 
     const [showPicture, setShowPicture] = useState(false);
     const card = cards[currentIndex];
+    const [showCardDetails, setShowCardDetails] = useState(false);
 
     const handlePrev = (e) => {
         e.stopPropagation();
@@ -44,6 +46,37 @@ const FullImageViewer = ({
     };
     const currentCharacter = card.character;
     const shadowColor = characterShadowColors[currentCharacter] || characterShadowColors.default;
+    const formatCardInfoValue = (value) => {
+        if (value === undefined || value === null) return '';
+        const str = String(value);
+        return str
+            .replace(/\[\[「/g, '【')
+            .replace(/」([^[\]]+)\]\]/g, '$1】')
+            .replace(/」\]\]/g, '】');
+    };
+
+    const formatAcquireValue = (value) => {
+        const formatted = formatCardInfoValue(value);
+        if (!formatted) return '';
+        if (!formatted.includes('限时许愿')) return formatted;
+        const remaining = formatted.replace('限时许愿', '').trim();
+        return remaining ? `限时许愿\n${remaining}` : '限时许愿';
+    };
+
+    const cardInfoItems = useMemo(() => {
+        if (!card) return [];
+        return [
+            { label: '角色', value: formatCardInfoValue(card.character) },
+            { label: '卡名', value: formatCardInfoValue(card.name) },
+            { label: '稀有度', value: formatCardInfoValue(card.star) },
+            { label: '套装', value: formatCardInfoValue(card.card_type_tag) },
+            { label: '星谱', value: formatCardInfoValue(card.card_color_tag) },
+            { label: '天赋定位', value: formatCardInfoValue(card.talent) },
+            { label: '获取途径', value: formatAcquireValue(card.get) },
+            { label: '常驻', value: formatCardInfoValue(card.permanent) },
+            { label: '上线时间', value: formatCardInfoValue(card.time) },
+        ].filter((item) => item.value && String(item.value).trim() !== '');
+    }, [card]);
 
 
     useEffect(()=>{
@@ -65,6 +98,13 @@ const FullImageViewer = ({
         };
     }, [card?.image]);
 
+    useEffect(() => {
+        setShowCardDetails(false);
+    }, [card]);
+
+    useEffect(() => {
+        if (showPicture) setShowCardDetails(false);
+    }, [showPicture]);
 
     return (
         <div className="absolute w-full h-full z-30"
@@ -72,6 +112,65 @@ const FullImageViewer = ({
                  if (card.owned) setShowPicture(!showPicture)
              }}>
 
+            {showCardDetails && (
+                <div
+                    className="absolute w-full h-full flex items-center justify-center z-50"
+                    style={{backgroundColor: 'rgba(0,0,0,0.6)'}}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setShowCardDetails(false);
+                    }}
+                >
+                    <div
+                        style={{
+                            backgroundColor: 'rgba(0,0,0,0.75)',
+                            borderRadius: `${fontsize * 0.6}px`,
+                            padding: `${fontsize * 1.2}px`,
+                            color: 'white',
+                            textShadow: '0 0 2px black, 0 0 4px black',
+                            width: '60%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: `${fontsize * 0.6}px`,
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {cardInfoItems.map((item) => (
+                            <div
+                                key={item.label}
+                                style={{
+                                    display: 'flex',
+                                    gap: `${fontsize * 0.6}px`,
+                                    alignItems: 'baseline',
+                                    fontSize: `${fontsize * 1.2}px`,
+                                    borderBottom: '1px solid rgba(255,255,255,0.15)',
+                                    paddingBottom: `${fontsize * 0.3}px`,
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: 'rgba(255,255,255,0.7)',
+                                        fontSize: `${fontsize * 1.1}px`,
+                                        minWidth: `${fontsize * 5}px`,
+                                    }}
+                                >
+                                    {item.label}
+                                </span>
+                                <span
+                                    style={{
+                                        fontSize: `${fontsize * 1.3}px`,
+                                        fontWeight: 500,
+                                        wordBreak: 'break-word',
+                                        whiteSpace: 'pre-line',
+                                    }}
+                                >
+                                    {item.value}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
 
             {!showPicture && (
@@ -100,6 +199,24 @@ const FullImageViewer = ({
                     >
                         <LeftIcon size={fontsize * 2.5} color="white"/>
                     </button>
+                    {cardInfoItems.length > 0 && (
+                        <button
+                            className="absolute z-40 flex items-center justify-center"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowCardDetails((prev) => !prev);
+                            }}
+                            style={{
+                                background: 'transparent',
+                                border: 'none',
+                                padding: 0,
+                                left: `${fontsize * 4}px`,
+                                top: `${fontsize * 1.2}px`,
+                            }}
+                        >
+                            <InfoIcon size={fontsize * 2.2} color="white"/>
+                        </button>
+                    )}
 
                     {/*视频按钮*/}
                     {card.video_url && (
@@ -204,21 +321,6 @@ const FullImageViewer = ({
                 <div>
                     <div className="absolute flex items-center z-10"
                          style={{bottom: `${fontsize * 6}px`, left: `${fontsize * 2}px`}}>
-                        {/* <img
-                            src={`images/${card?.star}.png`}
-                            style={{marginRight: `${fontsize * 0.6}px`, height: `${fontsize * 2.5}px`}}
-                        />
-                        <img
-                            src={`images/${card?.card_color_tag}.png`}
-                            style={{marginRight: `${fontsize * 0.2}px`, height: `${fontsize * 1.8}px`}}
-                        />
-                        <img
-                            src={`images/${card?.card_type_tag}.png`}
-                            style={{
-                                height: `${card?.card_type_tag === "日冕" ?
-                                    fontsize * 2.5 : fontsize * 1.8}px`
-                            }}
-                        /> */}
                         <Asset
                             src={`${card?.star}.png`}
                             type="image"
