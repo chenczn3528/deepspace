@@ -57,6 +57,8 @@ const Home = ({isPortrait, openAssetTest}) => {
     const [selectedRoleFilters, setSelectedRoleFilters] = useLocalStorageState('ds_selectedRoleFilters', []);
     // 总出金数
     const [totalFiveStarCount, setTotalFiveStarCount] = useLocalStorageState('ds_totalFiveStarCount', 0);
+    const [offTargetFiveStarCount, setOffTargetFiveStarCount] = useLocalStorageState('ds_offTargetFiveStarCount', 0);
+    const [targetFiveStarCount, setTargetFiveStarCount] = useLocalStorageState('ds_targetFiveStarCount', 0);
     // 下次出金还需要多少
     const [pityCount, setPityCount] = useLocalStorageState('ds_pityCount', 0);
     // 是否开启大小保底机制
@@ -97,6 +99,8 @@ const Home = ({isPortrait, openAssetTest}) => {
             'ds_musicID',
             'ds_globalVolume',
             'ds_sfxGain', // 添加这一行
+            'ds_offTargetFiveStarCount',
+            'ds_targetFiveStarCount',
         ];
         keysToClear.forEach(key => localStorage.removeItem(key));
         clearHistory();
@@ -190,6 +194,11 @@ const Home = ({isPortrait, openAssetTest}) => {
     }, []);
 
     const [selectedPools, setSelectedPools] = useLocalStorageState('ds_selectedPools', allPools);
+
+    const hasPoolRestrictions = useMemo(() => {
+        if (!Array.isArray(selectedPools) || selectedPools.length === 0) return false;
+        return allPools.some((pool) => !selectedPools.includes(pool));
+    }, [selectedPools, allPools]);
 
     const ensureUnique = (array) => Array.from(new Set(array));
 
@@ -358,6 +367,7 @@ const Home = ({isPortrait, openAssetTest}) => {
             ? selectedRoleFilters
             : (selectedRole !== '随机' ? [selectedRole] : []);
         const hasRoleRestrictions = restrictedRoles.length > 0;
+        const hasSoftGuaranteeTarget = hasRoleRestrictions || hasPoolRestrictions;
         const onlySelectedRoleActive = hasRoleRestrictions && restrictedRoles.length === 1 && onlySelectedRoleCard;
 
         for (let i = 0; i < count; i++) {
@@ -372,7 +382,8 @@ const Home = ({isPortrait, openAssetTest}) => {
                         restrictedRoles,
                         true,
                         includeThreeStar,
-                        true
+                        true,
+                        false
                     );
                   // result = getRandomCard(currentPity, currentFourStarCounter, false);
                 } while (!includeThreeStar && result.rarity === '3');
@@ -380,13 +391,25 @@ const Home = ({isPortrait, openAssetTest}) => {
                 if (result.rarity === '5') {
                     currentPity = 0;
                     currentFourStarCounter = 0;
+
+                    const card = result.card;
+                    const isLimitedFiveStar = card ? ((card.permanent || '') !== '常驻') : false;
+                    const hitTargetRole = card ? restrictedRoles.includes(card.character) : false;
+                    const isOnTarget = isLimitedFiveStar && hitTargetRole;
+                    if (isOnTarget) {
+                        setTargetFiveStarCount((prev) => prev + 1);
+                    } else {
+                        setOffTargetFiveStarCount((prev) => prev + 1);
+                    }
                 } else {
                     currentPity++;
                     currentFourStarCounter = result.rarity === '4' ? 0 : currentFourStarCounter + 1;
                 }
             } else {
                 // 启用或关闭大小保底逻辑
-                const forceTargetRole = useSoftGuarantee && hasRoleRestrictions && localSoftPityFailed;
+                const shouldForceLimited = useSoftGuarantee && hasSoftGuaranteeTarget && localSoftPityFailed;
+                const forceTargetRole = shouldForceLimited && hasRoleRestrictions;
+                const forceLimitedOnly = shouldForceLimited && !hasRoleRestrictions && hasPoolRestrictions;
                 do {
                     result = getRandomCard(
                         currentPity,
@@ -394,7 +417,8 @@ const Home = ({isPortrait, openAssetTest}) => {
                         restrictedRoles,
                         onlySelectedRoleActive,
                         includeThreeStar,
-                        forceTargetRole
+                        forceTargetRole,
+                        forceLimitedOnly
                     );
                 } while (!includeThreeStar && result.rarity === '3');
 
@@ -402,13 +426,32 @@ const Home = ({isPortrait, openAssetTest}) => {
                     currentPity = 0;
                     currentFourStarCounter = 0;
 
-                    if (useSoftGuarantee && hasRoleRestrictions) {
+                    const card = result.card;
+                    const isLimitedFiveStar = card ? ((card.permanent || '') !== '常驻') : false;
+                    let isOnTarget = true;
+                    if (hasRoleRestrictions) {
+                        const hitTargetRole = card ? restrictedRoles.includes(card.character) : false;
+                        isOnTarget = isLimitedFiveStar && hitTargetRole;
+                    } else if (hasPoolRestrictions) {
+                        isOnTarget = isLimitedFiveStar;
+                    }
+                    if (isOnTarget) {
+                        setTargetFiveStarCount((prev) => prev + 1);
+                    } else {
+                        setOffTargetFiveStarCount((prev) => prev + 1);
+                    }
+
+                    if (useSoftGuarantee && hasSoftGuaranteeTarget) {
                         const hitTargetRole = result.card && restrictedRoles.includes(result.card.character);
                         const hitLimitedPool = result.card && (result.card.permanent || '') !== '常驻';
-                        if (hitTargetRole && hitLimitedPool) {
-                            localSoftPityFailed = false; // 命中限定角色
-                        } else {
-                            localSoftPityFailed = true;  // 小保底失败，开启大保底
+                        if (hasRoleRestrictions) {
+                            if (hitTargetRole && hitLimitedPool) {
+                                localSoftPityFailed = false; // 命中限定角色
+                            } else {
+                                localSoftPityFailed = true;  // 小保底失败，开启大保底
+                            }
+                        } else if (hasPoolRestrictions) {
+                            localSoftPityFailed = hitLimitedPool ? false : true;
                         }
                     }
                 } else {
@@ -447,7 +490,8 @@ const Home = ({isPortrait, openAssetTest}) => {
         restrictedRoles = [],
         onlySelectedRoleCard = false,
         includeThreeStar = true,
-        forceTargetRole = false
+        forceTargetRole = false,
+        forceLimitedOnly = false
     ) => {
         let rarity;
         let pool = [];
@@ -492,14 +536,25 @@ const Home = ({isPortrait, openAssetTest}) => {
                 parseInt(card.star) === 5
             );
             pool = filterBySelectedPools(pool);
-            if ((forceTargetRole && limitToRoles) || (onlySelectedRoleCard && limitToRoles)) {
-                pool = pool.filter(card => {
+            if (forceTargetRole && limitToRoles) {
+                const forcedPool = pool.filter(card => {
                     if (!activeRoles.includes(card.character)) return false;
-                    if (forceTargetRole) {
-                        return (card.permanent || '') !== '常驻';
-                    }
-                    return true;
+                    return (card.permanent || '') !== '常驻';
                 });
+                if (forcedPool.length > 0) {
+                    pool = forcedPool;
+                }
+            } else if (onlySelectedRoleCard && limitToRoles) {
+                const roleOnlyPool = pool.filter(card => activeRoles.includes(card.character));
+                if (roleOnlyPool.length > 0) {
+                    pool = roleOnlyPool;
+                }
+            }
+            if (forceLimitedOnly) {
+                const limitedPool = pool.filter(card => (card.permanent || '') !== '常驻');
+                if (limitedPool.length > 0) {
+                    pool = limitedPool;
+                }
             }
         } else {
             if (onlySelectedRoleCard && limitToRoles) {
@@ -636,6 +691,8 @@ const Home = ({isPortrait, openAssetTest}) => {
             <SettingsLayer
                 totalDrawCount={totalDrawCount}
                 totalFiveStarCount={totalFiveStarCount}
+                offTargetFiveStarCount={offTargetFiveStarCount}
+                targetFiveStarCount={targetFiveStarCount}
                 selectedRole={selectedRole}
                 setSelectedRole={handleSelectedRoleChange}
                 selectedRoleFilters={selectedRoleFilters}
@@ -646,6 +703,7 @@ const Home = ({isPortrait, openAssetTest}) => {
                 setIncludeThreeStar={setIncludeThreeStar}
                 useSoftGuarantee={useSoftGuarantee}
                 setUseSoftGuarantee={setUseSoftGuarantee}
+                hasPoolRestrictions={hasPoolRestrictions}
                 pityCount={pityCount}
                 softPityFailed={softPityFailed}
                 isDrawing={isDrawing}
@@ -737,6 +795,13 @@ const Home = ({isPortrait, openAssetTest}) => {
                     getRandomCard={getRandomCard}
                     setShowProbability={setShowProbability}
                     fontsize={fontsize}
+                    selectedRole={selectedRole}
+                    selectedRoleFilters={selectedRoleFilters}
+                    onlySelectedRoleCard={onlySelectedRoleCard}
+                    includeThreeStar={includeThreeStar}
+                    useSoftGuarantee={useSoftGuarantee}
+                    softPityFailed={softPityFailed}
+                    hasPoolRestrictions={hasPoolRestrictions}
                 />
             )}
 

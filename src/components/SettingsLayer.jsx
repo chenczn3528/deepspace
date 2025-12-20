@@ -8,6 +8,8 @@ import { useAssetLoader } from '../hooks/useAssetLoader';
 const SettingsLayer = ({
     totalDrawCount,
     totalFiveStarCount,
+    offTargetFiveStarCount,
+    targetFiveStarCount,
     selectedRole,
     selectedRoleFilters = [],
     setSelectedRole,
@@ -18,6 +20,7 @@ const SettingsLayer = ({
     setIncludeThreeStar,
     useSoftGuarantee,
     setUseSoftGuarantee,
+    hasPoolRestrictions,
     pityCount,
     softPityFailed,
     isDrawing,
@@ -57,6 +60,10 @@ const SettingsLayer = ({
     }, [selectedRoleFilters, selectedRole]);
     const hasTargetRoles = activeTargetRoles.length > 0;
     const singleTargetRole = activeTargetRoles.length === 1 ? activeTargetRoles[0] : null;
+    const canUseSoftGuarantee = hasTargetRoles || hasPoolRestrictions;
+    const trackedTargetCount = targetFiveStarCount > 0 ? targetFiveStarCount : Math.max(totalFiveStarCount - offTargetFiveStarCount, 0);
+    const averageFiveStar = totalFiveStarCount === 0 ? '0' : (totalDrawCount / totalFiveStarCount).toFixed(2);
+    const averageWithoutMiss = trackedTargetCount > 0 ? (totalDrawCount / trackedTargetCount).toFixed(2) : 'N/A';
 
     // 音效增益设置开关与数值
     const [showGainCtrl, setShowGainCtrl] = useState(false);
@@ -74,11 +81,25 @@ const SettingsLayer = ({
         }
     }, [activeTargetRoles, onlySelectedRoleCard, setonlySelectedRoleCard]);
 
+    const softGuaranteePreferenceRef = useRef(null);
+
     useEffect(() => {
-        if (!hasTargetRoles && useSoftGuarantee) {
-            setUseSoftGuarantee(false);
+        if (softGuaranteePreferenceRef.current === null) {
+            softGuaranteePreferenceRef.current = useSoftGuarantee;
         }
-    }, [hasTargetRoles, useSoftGuarantee, setUseSoftGuarantee]);
+    }, []);
+
+    useEffect(() => {
+        if (!canUseSoftGuarantee) {
+            setUseSoftGuarantee(false);
+            return;
+        }
+        if (softGuaranteePreferenceRef.current === null) {
+            setUseSoftGuarantee(true);
+        } else {
+            setUseSoftGuarantee(softGuaranteePreferenceRef.current);
+        }
+    }, [canUseSoftGuarantee, setUseSoftGuarantee]);
 
     useEffect(() => {
         try { localStorage.setItem('sfxGain', String(sfxGain)); } catch {}
@@ -317,9 +338,10 @@ const SettingsLayer = ({
                     <label>总抽卡数: {totalDrawCount}</label>
                     <label>总出金数: {totalFiveStarCount}</label>
                 </div>
-                <label>
-                    平均出金数: {totalFiveStarCount === 0 ? '0' : (totalDrawCount / totalFiveStarCount).toFixed(2)}
-                </label>
+                <label>歪卡数: {offTargetFiveStarCount}</label>
+                <label style={{fontSize: `${fontsize * 0.9}px`, color: '#f5dca8'}}>（计算仅供参考）</label>
+                <label style={{color: '#fff', textShadow: '0 0 8px #ffcc66, 0 0 12px #b8860b'}}>平均出金: {averageFiveStar}</label>
+                <label style={{color: '#fff', textShadow: '0 0 8px #ffcc66, 0 0 12px #b8860b'}}>平均出金（去除歪卡）: {averageWithoutMiss}</label>
 
                 {/* 角色选择 */}
                 <div className="flex flex-row" style={{gap: `${fontsize * 0.2}px`}} id="role-selector">
@@ -349,7 +371,7 @@ const SettingsLayer = ({
                     </div>
 
                     {/*是否开启大小保底*/}
-                    {hasTargetRoles && (
+                    {canUseSoftGuarantee && (
                         <div className="flex flex-row items-center" style={{gap: `${fontsize * 0.5}px`}}>
                             <label htmlFor="softGuarantee">开启大小保底机制</label>
                             <input
@@ -357,11 +379,7 @@ const SettingsLayer = ({
                                 style={{width: `${fontsize * 1.3}px`, height: `${fontsize * 1.3}px`}}
                                 type="checkbox"
                                 checked={useSoftGuarantee}
-                                onChange={(e) => {
-                                    const checked = e.target.checked;
-                                    setUseSoftGuarantee(checked);
-                                    if (checked) setonlySelectedRoleCard(false); // 互斥
-                                }}
+                                onChange={(e) => handleSoftGuaranteeToggle(e.target.checked)}
                             />
                         </div>
                     )}
@@ -418,7 +436,7 @@ const SettingsLayer = ({
                 <div className="flex flex-row items-center justify-between">
                     {/* 保底显示 */}
                     <label>
-                        {hasTargetRoles ? (
+                        {canUseSoftGuarantee ? (
                             useSoftGuarantee ? (
                                 softPityFailed ? (
                                     <>还剩 {Math.max(0, 70 - pityCount)} 抽大保底</>
@@ -440,3 +458,8 @@ const SettingsLayer = ({
 };
 
 export default SettingsLayer;
+    const handleSoftGuaranteeToggle = (checked) => {
+        softGuaranteePreferenceRef.current = checked;
+        setUseSoftGuarantee(checked);
+        if (checked) setonlySelectedRoleCard(false);
+    };

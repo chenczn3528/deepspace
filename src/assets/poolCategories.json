@@ -300,12 +300,6 @@
             "isPermanent": true
           },
           {
-            "name": "心动挚礼4期",
-            "poolType": "mixed",
-            "roleCount": 1,
-            "isPermanent": true
-          },
-          {
             "name": "特令追查",
             "poolType": "mixed",
             "roleCount": 1,
@@ -357,6 +351,12 @@
       },
       {
         "name": "心动挚礼5期",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      },
+      {
+        "name": "心动挚礼4期",
         "poolType": "single",
         "roleCount": 1,
         "isPermanent": false
