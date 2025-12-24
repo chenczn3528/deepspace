@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
+from pathlib import Path
 
 """
 恋与深空 WIKI 抽卡卡片爬虫
@@ -38,40 +39,15 @@ LICENSE_URL = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
 UA = "GachaSimCrawler/1.0 (+mailto:chenczn3528@gmail.com)"  # 合规 UA
 HEADERS = {"User-Agent": UA}
 
-PERMANENT_POOL_NAMES = {
-    "常驻",
-    "许愿",
-    "许愿/许愿商店兑换",
-    "星间探测",
-    "星间探测/预抽卡",
-    "星间探测·预抽卡",
-}
-
-SPECIAL_POOL_KEYWORDS = (
-    "密约",
-    "挚礼",
-    "巡回礼",
-    "臻礼",
-    "特令",
-    "搜查",
-)
-
-EVENT_POOL_KEYWORDS = (
-    "活动",
-    "签到",
-    "共旅",
-    "十日与你",
-    "悠悠日长",
-    "学院访闻",
-    "海屿寻秘",
-)
-
 CATEGORY_PRIORITY = {
-    ("specialRewards", None): 3,
-    ("eventSeries", None): 2,
-    ("wishSeries", "permanent"): 1,
-    ("wishSeries", "limited"): 0,
+    ("wishSeries", "limited"): 1,
+    ("wishSeries", "permanent"): 0,
 }
+
+CJK_RANGE = "\u4e00-\u9fff"
+RE_WISH_AFTER = re.compile(rf"(?<![{CJK_RANGE}])许愿/")
+RE_WISH_BEFORE = re.compile(rf"/许愿(?![{CJK_RANGE}])")
+QUOTE_NAME_RE = re.compile(r"「([^」]+)」")
 
 DEFAULT_POOL_CATEGORIES = {
     "wishSeries": {
@@ -81,11 +57,6 @@ DEFAULT_POOL_CATEGORIES = {
             "limited": {"name": "限时卡池", "pools": []},
             "permanent": {"name": "常驻卡池", "pools": []},
         },
-    },
-    "eventSeries": {
-        "name": "活动系列",
-        "icon": "🎉",
-        "pools": [],
     },
     "specialRewards": {
         "name": "密约/挚礼系列",
@@ -198,6 +169,42 @@ def extract_pool_name(get_str: str) -> str:
     return clean_pool_name(candidate)
 
 
+def extract_first_quote_name(get_str: str) -> str:
+    if not get_str:
+        return ""
+    match = QUOTE_NAME_RE.search(get_str)
+    if match:
+        return clean_pool_name(match.group(1))
+    return ""
+
+
+def get_raw_get_field(card: dict) -> str:
+    return (card.get("get") or "").replace("<br>", " ")
+
+
+def has_standalone_wish_segment(text: str) -> bool:
+    if not text:
+        return False
+    return bool(RE_WISH_AFTER.search(text) or RE_WISH_BEFORE.search(text))
+
+
+def is_permanent_wish_pool(card: dict) -> bool:
+    get_value = get_raw_get_field(card).strip()
+    if not get_value:
+        return False
+    if get_value in {"常驻", "许愿"}:
+        return True
+    return has_standalone_wish_segment(get_value)
+
+
+def is_limited_wish_pool(card: dict) -> bool:
+    permanent_flag = (card.get("permanent") or "").strip()
+    if permanent_flag:
+        return False
+    raw_get = get_raw_get_field(card)
+    return "限时许愿" in raw_get
+
+
 def ensure_pool_category_structure() -> dict:
     base = deepcopy(DEFAULT_POOL_CATEGORIES)
     for cat in base.values():
@@ -213,22 +220,12 @@ def get_category_priority(category_info: tuple[str, str | None]) -> int:
     return CATEGORY_PRIORITY.get(category_info, -1)
 
 
-def classify_pool_category(pool_name: str, card: dict) -> tuple[str, str | None] | None:
-    normalized = (pool_name or "").strip()
-    if not normalized:
-        return None
-    raw_get = (card.get("get") or "").replace("<br>", " ")
-    permanent_flag = (card.get("permanent") or "").strip()
-    is_permanent = permanent_flag == "常驻" or normalized in PERMANENT_POOL_NAMES or ("常驻" in raw_get and "限时" not in raw_get)
-    if is_permanent:
-        return "wishSeries", "permanent"
-    if any(keyword in raw_get for keyword in SPECIAL_POOL_KEYWORDS):
-        return "specialRewards", None
-    if "限时许愿" in raw_get:
+def classify_pool_category(card: dict) -> tuple[str, str | None]:
+    if is_limited_wish_pool(card):
         return "wishSeries", "limited"
-    if any(keyword in raw_get for keyword in EVENT_POOL_KEYWORDS) or any(keyword in normalized for keyword in EVENT_POOL_KEYWORDS):
-        return "eventSeries", None
-    return "wishSeries", "limited"
+    if is_permanent_wish_pool(card):
+        return "wishSeries", "permanent"
+    return "specialRewards", None
 
 
 def update_pool_categories_from_cards(cards: list[dict]) -> dict:
@@ -243,7 +240,16 @@ def update_pool_categories_from_cards(cards: list[dict]) -> dict:
     for card in cards:
         if not is_five_star(card):
             continue
-        pool_name = extract_pool_name(card.get("get", ""))
+        raw_get_value = card.get("get", "")
+        base_pool_name = extract_pool_name(raw_get_value)
+        category_info = classify_pool_category(card)
+        pool_name = base_pool_name
+        if category_info == ("wishSeries", "limited"):
+            quoted_name = extract_first_quote_name(raw_get_value)
+            if quoted_name:
+                pool_name = quoted_name
+        elif category_info[0] == "specialRewards":
+            pool_name = (card.get("name") or "").strip() or pool_name
         if not pool_name:
             continue
 
@@ -254,12 +260,9 @@ def update_pool_categories_from_cards(cards: list[dict]) -> dict:
         character = (card.get("character") or "").strip()
         if character:
             meta["characters"].add(character)
-        if (card.get("permanent") or "").strip() == "常驻" or pool_name in PERMANENT_POOL_NAMES:
+        if category_info == ("wishSeries", "permanent"):
             meta["is_permanent"] = True
 
-        category_info = classify_pool_category(pool_name, card)
-        if not category_info:
-            continue
         priority = get_category_priority(category_info)
         previous = pool_assignments.get(pool_name)
         if previous and previous[2] >= priority:
@@ -557,6 +560,10 @@ def main():
         info["video_url"] = video_url
 
         all_cards.append(info)
+
+
+    # with Path(CARDS_PATH).open("r", encoding="utf-8") as fh:
+    #     all_cards = json.load(fh)
 
     # 卡池分类
     update_pool_categories_from_cards(all_cards)

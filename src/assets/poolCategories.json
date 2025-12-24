@@ -315,66 +315,60 @@
       }
     }
   },
-  "eventSeries": {
-    "name": "活动系列",
-    "icon": "🎉",
-    "pools": [
-      {
-        "name": "学院访闻",
-        "poolType": "single",
-        "roleCount": 1,
-        "isPermanent": false
-      },
-      {
-        "name": "海屿寻秘",
-        "poolType": "single",
-        "roleCount": 1,
-        "isPermanent": false
-      },
-      {
-        "name": "长瑕共旅",
-        "poolType": "single",
-        "roleCount": 1,
-        "isPermanent": false
-      }
-    ]
-  },
   "specialRewards": {
     "name": "密约/挚礼系列",
     "icon": "🎁",
     "pools": [
       {
-        "name": "心动挚礼6期",
+        "name": "粲然须臾",
         "poolType": "single",
         "roleCount": 1,
         "isPermanent": false
       },
       {
-        "name": "心动挚礼5期",
+        "name": "槐序",
         "poolType": "single",
         "roleCount": 1,
         "isPermanent": false
       },
       {
-        "name": "心动挚礼4期",
+        "name": "造物宣示",
         "poolType": "single",
         "roleCount": 1,
         "isPermanent": false
       },
       {
-        "name": "心动挚礼3期",
+        "name": "抵此心上",
         "poolType": "single",
         "roleCount": 1,
         "isPermanent": false
       },
       {
-        "name": "心动挚礼",
+        "name": "离群远航",
         "poolType": "single",
         "roleCount": 1,
         "isPermanent": false
       },
       {
-        "name": "心动挚礼1期",
+        "name": "秘焰沸腾",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      },
+      {
+        "name": "月下黑棘",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      },
+      {
+        "name": "熠熠描摹",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      },
+      {
+        "name": "味蕾突袭",
         "poolType": "single",
         "roleCount": 1,
         "isPermanent": false

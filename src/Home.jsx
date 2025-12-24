@@ -217,6 +217,16 @@ const Home = ({isPortrait, openAssetTest}) => {
 
     const [galleryHistory, setGalleryHistory] = useState([]);  // 图鉴历史
 
+    const cardMapByName = useMemo(() => {
+        const map = new Map();
+        cardData.forEach((card) => {
+            if (card?.name) {
+                map.set(card.name, card);
+            }
+        });
+        return map;
+    }, []);
+
 
 
     // 根据 name 去重
@@ -236,7 +246,7 @@ const Home = ({isPortrait, openAssetTest}) => {
             // 合并精简记录和完整卡牌数据
             const enriched = history
                 .map((entry) => {
-                    const fullCard = cardData.find((card) => card.name === entry.name);
+                    const fullCard = cardMapByName.get(entry.name);
                     return fullCard ? { ...fullCard, timestamp: entry.timestamp } : null;
                 })
                 .filter(Boolean); // 移除找不到的
@@ -244,7 +254,7 @@ const Home = ({isPortrait, openAssetTest}) => {
             const uniqueHistory = removeDuplicates(enriched);
             setGalleryHistory(uniqueHistory);
         }
-    }, [loading, history]);
+    }, [loading, history, cardMapByName]);
 
 
 

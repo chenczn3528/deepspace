@@ -158,6 +158,7 @@ const GalleryPage = ({
             <Asset
                 src="结算背景.jpg"
                 type="image"
+                preferImmediateNetwork
                 className="absolute w-full h-full object-cover"
                 style={{ pointerEvents: 'none', zIndex: 0 }}
             />

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import cardData from "../assets/cards.json";
 import poolCategories from "../assets/poolCategories.json";
 
@@ -137,14 +137,23 @@ const buildPoolDataset = () => {
     };
 };
 
-const getRolePools = (role, data) => {
+const getRolePools = (role, data, poolInfoMap = {}) => {
     const roleCards = data.filter((card) => card.character === role && parseInt(card.star, 10) === 5);
     const rolePools = new Set();
     roleCards.forEach((card) => {
-        const pool = extractPoolName(card.get);
-        if (pool) {
-            rolePools.add(pool);
+        const poolCandidates = [];
+        const basePool = extractPoolName(card.get);
+        if (basePool) {
+            poolCandidates.push(basePool);
         }
+        if (card.name && poolInfoMap[card.name]?.categoryKey === "specialRewards") {
+            poolCandidates.push(card.name);
+        }
+        poolCandidates.forEach((pool) => {
+            if (pool) {
+                rolePools.add(pool);
+            }
+        });
     });
     return Array.from(rolePools);
 };
@@ -171,6 +180,10 @@ const CardPoolFilter = ({
     handleSelectedRoleChange,
     selectedRole,
 }) => {
+    const safeSelectedPools = useMemo(
+        () => (Array.isArray(selectedPools) ? selectedPools : []),
+        [selectedPools]
+    );
     const baseFontsize = Number.isFinite(Number(fontsize)) ? Number(fontsize) : 0;
     const modalMargin = Math.max(baseFontsize * 2.8, 18);
     const innerPadding = Math.max(baseFontsize * 0.8, 16);
@@ -240,7 +253,7 @@ const CardPoolFilter = ({
     const [currentAvailablePools, setCurrentAvailablePools] = useState(toggleablePools);
 
     const [selectedLimitedPools, setSelectedLimitedPools] = useState(() => {
-        return sortPoolsByRelease((selectedPools || []).filter((pool) => toggleablePools.includes(pool)));
+        return sortPoolsByRelease((safeSelectedPools || []).filter((pool) => toggleablePools.includes(pool)));
     });
 
     const hasSyncedOnOpenRef = useRef(false);
@@ -252,10 +265,10 @@ const CardPoolFilter = ({
             return;
         }
         if (hasSyncedOnOpenRef.current) return;
-        const incoming = sortPoolsByRelease((selectedPools || []).filter((pool) => toggleablePools.includes(pool)));
+        const incoming = sortPoolsByRelease((safeSelectedPools || []).filter((pool) => toggleablePools.includes(pool)));
         setSelectedLimitedPools(incoming);
         hasSyncedOnOpenRef.current = true;
-    }, [showCardPoolFilter, poolsLoaded, selectedPools, toggleablePools]);
+    }, [showCardPoolFilter, poolsLoaded, safeSelectedPools, toggleablePools]);
 
     useEffect(() => {
         if (!poolsLoaded) return;
@@ -266,7 +279,7 @@ const CardPoolFilter = ({
 
         const rolePools = new Set();
         selectedRoles.forEach((role) => {
-            getRolePools(role, cardData).forEach((pool) => {
+            getRolePools(role, cardData, poolInfoMap).forEach((pool) => {
                 if (toggleablePools.includes(pool)) {
                     rolePools.add(pool);
                 }
@@ -274,7 +287,7 @@ const CardPoolFilter = ({
         });
 
         setCurrentAvailablePools(rolePools.size > 0 ? sortPoolsByRelease(Array.from(rolePools)) : []);
-    }, [poolsLoaded, selectedRoles, toggleablePools]);
+    }, [poolsLoaded, selectedRoles, toggleablePools, poolInfoMap]);
 
     useEffect(() => {
         setSelectedLimitedPools((prev) => prev.filter((pool) => currentAvailablePools.includes(pool)));
@@ -285,7 +298,7 @@ const CardPoolFilter = ({
         let newSelectedRoles;
         let newSelectedPools;
 
-        const rolePools = getRolePools(role, cardData)
+        const rolePools = getRolePools(role, cardData, poolInfoMap)
             .filter((pool) => toggleablePools.includes(pool))
             .filter((pool) => (poolInfoMap[pool]?.poolType || "single") === "single");
 
@@ -342,24 +355,92 @@ const CardPoolFilter = ({
     const commitSelectionChanges = () => {
         if (!poolsLoaded) return;
         const merged = uniqueArray([...permanentPools, ...selectedLimitedPools]);
-        if (!arraysEqual(merged, selectedPools || [])) {
+        if (!arraysEqual(merged, safeSelectedPools || [])) {
             setSelectedPools(merged);
         }
     };
 
+    const collectSelectedCardNames = useCallback(
+        (poolList = []) => {
+            if (!poolList || poolList.length === 0) return {};
+            const poolSet = new Set(poolList);
+            const roleFilter = selectedRoles && selectedRoles.length > 0 ? selectedRoles : null;
+            const grouped = {};
+            cardData.forEach((card) => {
+                if (parseInt(card.star, 10) !== 5) return;
+                if ((card.permanent || "").trim() === "常驻") return;
+                if (roleFilter && !roleFilter.includes(card.character)) return;
+
+                const pools = [];
+                const basePool = extractPoolName(card.get);
+                if (basePool) pools.push(basePool);
+                if (card.name && poolInfoMap[card.name]?.categoryKey === "specialRewards") {
+                    pools.push(card.name);
+                }
+
+                if (pools.some((pool) => poolSet.has(pool))) {
+                    grouped[card.character] = grouped[card.character] || [];
+                    if (!grouped[card.character].includes(card.name)) {
+                        grouped[card.character].push(card.name);
+                    }
+                }
+            });
+            return grouped;
+        },
+        [selectedRoles, poolInfoMap]
+    );
+
+    const filterSelectedCardNames = useMemo(
+        () => collectSelectedCardNames(selectedLimitedPools),
+        [selectedLimitedPools, collectSelectedCardNames]
+    );
+
+    const characterColors = useMemo(
+        () => ({
+            沈星回: "#a78bfa",
+            黎深: "#60a5fa",
+            祁煜: "#f472b6",
+            秦彻: "#ef4444",
+            夏以昼: "#fb923c",
+        }),
+        []
+    );
+
+    const renderGroupedNames = useCallback(
+        (grouped = {}) => {
+            const orderedCharacters = ["沈星回", "黎深", "祁煜", "秦彻", "夏以昼"];
+            const entries = orderedCharacters
+                .filter((char) => grouped[char] && grouped[char].length > 0)
+                .map((char) => [char, grouped[char]]);
+            if (entries.length === 0) return null;
+            return (
+                <div style={{ marginTop: 6 }}>
+                    <div style={{ marginBottom: 4, color: "#f5dca8", fontWeight: 600 }}>当前筛选出的定向卡</div>
+                    {entries.map(([character, names]) => (
+                        <div key={character} style={{ marginTop: 2 }}>
+                            <span style={{ color: characterColors[character] || "#f9fafb", fontWeight: 600 }}>{character}：</span>
+                            <span style={{ color: "#e5e7eb" }}>{names.length > 0 ? names.join("、") : "无"}</span>
+                        </div>
+                    ))}
+                </div>
+            );
+        },
+        [characterColors]
+    );
+
     const displayGroups = useMemo(() => {
         const groups = [];
         const addGroup = (key, title, pools, options = {}) => {
-            if (pools.length > 0) {
-                groups.push({
-                    key,
-                    title,
-                    pools: pools.map((pool) => ({
-                        pool,
-                        label: options.useSpecialLabels ? (specialPoolDisplayNames[pool] || pool) : pool,
-                    })),
-                });
-            }
+            if (pools.length === 0 && !options.alwaysShow) return;
+            groups.push({
+                key,
+                title,
+                pools: pools.map((pool) => ({
+                    pool,
+                    label: options.useSpecialLabels ? (specialPoolDisplayNames[pool] || pool) : pool,
+                })),
+                extraContent: options.extraContent || null,
+            });
         };
 
         const singleLimited = currentAvailablePools.filter(
@@ -372,10 +453,22 @@ const CardPoolFilter = ({
 
         addGroup("limited-single", "单人限定卡池", singleLimited);
         addGroup("limited-mixed", "混池限定卡池", mixedLimited);
-        addGroup("special-rewards", "心动挚礼/特殊奖励", specialRewardPools, { useSpecialLabels: true });
+        addGroup("special-rewards", "心动挚礼/活动系列", specialRewardPools, {
+            useSpecialLabels: true,
+            alwaysShow: heartPools.length > 0,
+            extraContent: renderGroupedNames(filterSelectedCardNames),
+        });
 
         return groups;
-    }, [currentAvailablePools, limitedPools, poolInfoMap, heartPools, specialPoolDisplayNames]);
+    }, [
+        currentAvailablePools,
+        limitedPools,
+        poolInfoMap,
+        heartPools,
+        specialPoolDisplayNames,
+        renderGroupedNames,
+        filterSelectedCardNames,
+    ]);
 
     const renderPoolButton = ({ pool, label }) => {
         const isSelected = selectedLimitedPools.includes(pool);
@@ -510,6 +603,11 @@ const CardPoolFilter = ({
                                     <div className="flex flex-wrap" style={{ gap: `${buttonGap}px` }}>
                                         {group.pools.map(renderPoolButton)}
                                     </div>
+                                    {group.extraContent && (
+                                        <div style={{ fontSize: `${Math.max(baseFontsize * 0.8, 12)}px`, color: "#d1d5db", marginTop: 6, lineHeight: 1.5 }}>
+                                            {group.extraContent}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
