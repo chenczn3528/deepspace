@@ -61,6 +61,12 @@
             "isPermanent": false
           },
           {
+            "name": "爱，宇宙，诗王座",
+            "poolType": "mixed",
+            "roleCount": 5,
+            "isPermanent": false
+          },
+          {
             "name": "慵懒共谋",
             "poolType": "single",
             "roleCount": 1,
