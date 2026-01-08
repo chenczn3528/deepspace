@@ -1,4 +1,4 @@
-name: Update Cards JSON
+name: 卡片更新
 
 on:
   schedule:

@@ -1,127 +1,26 @@
 import json
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from bs4 import BeautifulSoup
 import time
+from typing import List, Tuple
+
+import requests
+
+
 
 songs_json_path = "src/assets/songs.json"
 songs_list_path = "src/assets/songs_list.json"
 
+SESSION = requests.Session()
+SESSION.headers.update({
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                  "AppleWebKit/537.36 (KHTML, like Gecko) "
+                  "Chrome/143.0.0.0 Safari/537.36",
+    "Referer": "https://music.163.com/",
+})
 
-
-
-import chromedriver_autoinstaller  # 顶部引入
-
-def create_driver():
-    chromedriver_autoinstaller.install()  # 自动下载并安装匹配的 chromedriver
-
-    chrome_options = Options()
-    chrome_options.binary_location = "/usr/bin/google-chrome"
-    chrome_options.add_argument("--headless=new")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-
-    return webdriver.Chrome(options=chrome_options)
-
-
-
-
-
-
-def get_albums(driver, artist_id):
-    artist_url = f"https://music.163.com/artist/album?id={artist_id}&limit=1000"
-
-    driver.set_page_load_timeout(30)  # 最多等 30 秒加载页面
-    try:
-        driver.get(artist_url)
-    except Exception as e:
-        print("页面加载失败:", e, flush=True)
-        return []
-
-    try:
-        WebDriverWait(driver, 20).until(EC.frame_to_be_available_and_switch_to_it((By.ID, "g_iframe")))
-    except Exception as e:
-        print("iframe 加载失败:", e, flush=True)
-        return []
-
-    # # 切换到 iframe
-    # driver.switch_to.frame("g_iframe")
-    # time.sleep(2)
-
-    soup = BeautifulSoup(driver.page_source, "html.parser")
-
-    albums = []
-
-    for li in soup.select("ul#m-song-module li"):
-        a_tag = li.select_one("a.msk")
-        if not a_tag:
-            continue
-        href = a_tag.get("href", "")
-        album_id = href.split("id=")[-1] if "id=" in href else None
-
-        title = li.select_one("p.dec a.tit")
-        if title:
-            album_title = title.text.strip()
-        else:
-            album_title = li.select_one("div.u-cover")["title"] if li.select_one("div.u-cover") else "未知专辑"
-
-        if album_id:
-            albums.append((album_id, album_title))
-
-    driver.switch_to.default_content()  # 记得切回默认内容，方便下次调用
-    return albums
-
-def get_songs(driver, album_id, album_title):
-    album_url = f"https://music.163.com/album?id={album_id}&limit=1000"
-
-    driver.set_page_load_timeout(30)  # 最多等 30 秒加载页面
-    try:
-        driver.get(album_url)
-    except Exception as e:
-        print("页面加载失败:", e, flush=True)
-        return []
-
-    try:
-        WebDriverWait(driver, 20).until(EC.frame_to_be_available_and_switch_to_it((By.ID, "g_iframe")))
-    except Exception as e:
-        print("iframe 加载失败:", e, flush=True)
-        return []
-
-    soup = BeautifulSoup(driver.page_source, "html.parser")
-
-    songs = []
-
-    table = soup.find('table', class_='m-table m-table-album')
-    trs = table.tbody.find_all('tr')
-
-    print(f"共找到{len(trs)}行歌曲数据，专辑：{album_title}")
-
-    for tr in trs:
-        song_id = tr.get('id')
-        title_tag = tr.find('b')
-        title = title_tag['title'] if title_tag and title_tag.has_attr('title') else None
-
-        duration_tag = tr.find('td', class_='s-fc3')
-        duration = duration_tag.find('span', class_='u-dur').text if duration_tag else None
-
-        last_td = tr.find_all('td')[-1]
-        singer_div = last_td.find('div', class_='text')
-        singers = singer_div['title'] if singer_div and singer_div.has_attr('title') else None
-
-        songs.append({
-            "id": song_id,
-            "title": title,
-            "duration": duration,
-            "singers": singers
-        })
-
-    driver.switch_to.default_content()
-    return songs
-
-
+def _get_json(url, params=None):
+    response = SESSION.get(url, params=params, timeout=15)
+    response.raise_for_status()
+    return response.json()
 
 def ensure_id_exists(data_list, target_id, default_obj):
     # 判断是否已有目标 id
@@ -129,82 +28,120 @@ def ensure_id_exists(data_list, target_id, default_obj):
         data_list.append(default_obj)
     return data_list
 
+def get_albums(artist_id: str) -> List[Tuple[int, str]]:
+    limit = 50
+    offset = 0
+    albums: List[Tuple[int, str]] = []
+    total = None
+
+    while total is None or offset < total:
+        url = f"https://music.163.com/api/artist/albums/{artist_id}"
+        params = {
+            "id": artist_id,
+            "offset": offset,
+            "total": "true" if offset == 0 else "false",
+            "limit": limit,
+        }
+        data = _get_json(url, params=params)
+        total = data.get("total") or total or 0
+        album_items = data.get("hotAlbums") or data.get("albums") or []
+        for album in album_items:
+            album_id = album.get("id")
+            album_title = album.get("name") or "未知专辑"
+            if album_id:
+                albums.append((album_id, album_title))
+        offset += limit
+        time.sleep(0.3)
+
+    return albums
+
+def _format_duration(ms):
+    if ms is None:
+        return None
+    seconds = int(ms) // 1000
+    return f"{seconds // 60:02d}:{seconds % 60:02d}"
+
+def get_song_detail(song_id: int):
+    url = "https://music.163.com/api/song/detail/"
+    params = {
+        "id": song_id,
+        "ids": f"[{song_id}]",
+    }
+    data = _get_json(url, params=params)
+    songs = data.get("songs") or []
+    return songs[0] if songs else None
+
+def get_songs(album_id, album_title):
+    url = f"https://music.163.com/api/album/{album_id}"
+    params = {
+        "ext": "true",
+        "id": album_id,
+        "offset": 0,
+        "total": "true",
+        "limit": 10,
+    }
+    data = _get_json(url, params=params)
+    song_items = data.get("songs") or data.get("album", {}).get("songs") or data.get("album", {}).get("tracks") or []
+    if not song_items and data.get("code") not in (None, 200):
+        print(f"专辑接口返回异常，album_id={album_id}, code={data.get('code')}")
+
+    print(f"共找到{len(song_items)}行歌曲数据，专辑：{album_title}")
+    songs = []
+
+    for song in song_items:
+        song_id = song.get("id")
+        if not song_id:
+            continue
+        detail = get_song_detail(song_id)
+        if detail:
+            title = detail.get("name")
+            duration = _format_duration(detail.get("duration"))
+            artists = detail.get("artists") or []
+        else:
+            title = song.get("name")
+            duration = _format_duration(song.get("duration"))
+            artists = song.get("artists") or []
+        singers = "/".join(artist.get("name") for artist in artists if artist.get("name"))
+
+        print(f"歌曲ID: {song_id}, 标题: {title}, 时长: {duration}, 歌手: {singers}")
+        songs.append({
+            "id": str(song_id),
+            "title": title,
+            "duration": duration,
+            "singers": singers
+        })
+        time.sleep(0.2)
+
+    return songs
 
 
-if __name__ == "__main__":
-    driver = create_driver()
-    try:
-        final_results = {}
-        albums = get_albums(driver, "59642824")
-        print(f"共找到 {len(albums)} 张专辑：", flush=True)
-        for album_id, album_title in albums:
-            print(f"\n{album_id} : {album_title}", flush=True)
-            songs = get_songs(driver, album_id, album_title)
-            final_results[album_id] = {
-                "name": album_title,
-                "songs": songs
-            }
 
-        with open(songs_json_path, "w", encoding="utf-8") as f:
-            json.dump(final_results, f, ensure_ascii=False, indent=4)
+final_results = {}
+albums = get_albums("59642824")
+print(f"共找到 {len(albums)} 张专辑：")
+for album_id, album_title in albums:
+    print(f"\n{album_id} : {album_title}")
+    songs = get_songs(album_id, album_title)
+    final_results[album_id] = {
+        "name": album_title,
+        "songs": songs
+    }
 
-        songs_list = []
-        for key, value in final_results.items():
-            for song in value["songs"]:
-                songs_list.append(song)
-
-        # ensure_id_exists(songs_list, "26996410931750205807385", {
-        #     "id": "26996410931750205807385",
-        #     "title": "春天对花所做的事",
-        #     "duration": "03:57",
-        #     "singers": ""
-        # })
-
-        print(len(songs_list))
-        for i in songs_list:
-            print(i)
-
-        with open(songs_list_path, "w", encoding="utf-8") as f:
-            json.dump(songs_list, f, ensure_ascii=False, indent=4)
-
-    finally:
-        driver.quit()
+with open(songs_json_path, "w", encoding="utf-8") as f:
+    json.dump(final_results, f, ensure_ascii=False, indent=4)
 
 
-# final_results = {}
-# albums = get_albums("59642824")
-# print(f"共找到 {len(albums)} 张专辑：")
-# for album_id, album_title in albums:
-#     print(f"\n{album_id} : {album_title}")
-#     songs = get_songs(album_id, album_title)
-#     final_results[album_id] = {
-#         "name": album_title,
-#         "songs": songs
-#     }
-#
-# with open("assets/songs.json", "w", encoding="utf-8") as f:
-#     json.dump(final_results, f, ensure_ascii=False, indent=4)
-#
-#
-# songs_list = []
-# with open("assets/songs.json", "r", encoding="utf-8") as f:
-#     final_results = json.load(f)
-#     for key, value in final_results.items():
-#         for song in value["songs"]:
-#             songs_list.append(song)
+songs_list = []
+with open(songs_json_path, "r", encoding="utf-8") as f:
+    final_results = json.load(f)
+    for key, value in final_results.items():
+        for song in value["songs"]:
+            songs_list.append(song)
 
 
+print(len(songs_list))
+for i in songs_list:
+    print(i)
 
-# ensure_id_exists(songs_list, "26996410931750205807385", {
-#     "id": "26996410931750205807385",
-#     "title": "春天对花所做的事",
-#     "duration": "03:57",
-#     "singers": ""
-# })
-#
-# print(len(songs_list))
-# for i in songs_list:
-#     print(i)
-#
-# with open("assets/songs_list.json", "w", encoding="utf-8") as f:
-#     json.dump(songs_list, f, ensure_ascii=False, indent=4)
+with open(songs_list_path, "w", encoding="utf-8") as f:
+    json.dump(songs_list, f, ensure_ascii=False, indent=4)

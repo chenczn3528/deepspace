@@ -3,6 +3,7 @@ import './App.css';
 import Home from './Home.jsx';
 import AssetManager from './components/AssetManager.jsx';
 import AssetTest from './components/AssetTest.jsx';
+import { DataProvider } from './contexts/DataContext.jsx';
 
 function App() {
   const wrapperRef = useRef();
@@ -71,19 +72,21 @@ function App() {
 
 
   return (
-    <div className="viewport">
-      <div className="wrapper" ref={wrapperRef}>
-        <div className="game relative" ref={gameRef}>
-          {showAssetTest ? (
-            <AssetTest onClose={() => setShowAssetTest(false)} />
-          ) : (
-            <Home isPortrait={isPortrait} openAssetTest={() => setShowAssetTest(true)} />
-          )}
-          {/* <AssetManager/> */}
+    <DataProvider>
+      <div className="viewport">
+        <div className="wrapper" ref={wrapperRef}>
+          <div className="game relative" ref={gameRef}>
+            {showAssetTest ? (
+              <AssetTest onClose={() => setShowAssetTest(false)} />
+            ) : (
+              <Home isPortrait={isPortrait} openAssetTest={() => setShowAssetTest(true)} />
+            )}
+            {/* <AssetManager/> */}
+          </div>
         </div>
       </div>
-    </div>
-    // <AssetTest />
+      {/* <AssetTest /> */}
+    </DataProvider>
   );
 }
 

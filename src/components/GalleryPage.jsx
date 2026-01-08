@@ -6,8 +6,8 @@ import FullScreenIcon from "../icons/FullScreenIcon.jsx";
 import SmallScreenIcon from "../icons/SmallScreenIcon.jsx";
 import LockIcon from "../icons/LockIcon.jsx";
 import BlurIcon from "../icons/BlurIcon.jsx";
-import cardData from '../assets/cards.json';
 import { Asset } from './Asset.jsx';
+import { useData } from '../contexts/DataContext.jsx';
 
 
 const GalleryPage = ({
@@ -19,6 +19,7 @@ const GalleryPage = ({
      showPageZIndex,
      setShowPageZIndex,
 }) => {
+    const { cardData } = useData();
 
     const [showAllCards, setShowAllCards] = useState(false);
     const [withLockCards, setWithLockCards] = useState([]);
@@ -29,8 +30,8 @@ const GalleryPage = ({
     });
 
     useEffect(() => {
-        setWithLockCards(cardData);
-    }, []);
+        setWithLockCards(cardData || []);
+    }, [cardData]);
 
     // 保存模糊状态到localStorage
     useEffect(() => {

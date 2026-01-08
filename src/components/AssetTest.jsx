@@ -3,6 +3,7 @@ import { Asset } from './Asset';
 import { useAssetStorage } from '../hooks/useAssetStorage';
 import LeftIcon from '../icons/LeftIcon';
 import useResponsiveFontSize from '../hooks/useResponsiveFontSize';
+import { getAssetsByType } from '../assets/assets_config.js';
 
 const AssetTest = ({ onClose }) => {
   const { storeAllAssets, getStorageStats, clearStorage, status, progress, currentAsset } = useAssetStorage();
@@ -16,39 +17,73 @@ const AssetTest = ({ onClose }) => {
   }));
   const [showLog, setShowLog] = useState(false);
 
-  const fontsize = useResponsiveFontSize({scale: 0.9});
+  // const fontsize = useResponsiveFontSize({scale: 0.9});
 
+  // ======================================= 获取容器尺寸（16:9下）
+  const [baseSize, setBaseSize] = useState(1);
+  const divRef = useRef(null); // 获取当前绑定的容器的尺寸
 
+  useEffect(() => {
+      const updateSize = () => {
+          if (divRef.current) {
+              const width = divRef.current.clientWidth;
+              const height = divRef.current.clientHeight;
+
+              if (height > 0) {
+                  const newBaseSize = (width / 375) * 0.85;
+                  setBaseSize(newBaseSize);
+                  return true;
+              }
+          }
+          return false;
+      };
+
+      // 初始化时轮询直到能获取有效高度
+      const tryInitSize = () => {
+          const success = updateSize();
+          if (!success) {
+              // 如果失败，延迟一帧继续尝试
+              requestAnimationFrame(tryInitSize);
+          }
+      };
+      tryInitSize(); // 启动初始化
+      window.addEventListener('resize', updateSize); // 响应窗口变化
+
+      return () => {window.removeEventListener('resize', updateSize);};
+  }, []);
 
   // 加载统计信息 - 使用 useCallback 避免无限循环
   const loadStats = useCallback(async () => {
     try {
-      const [storageStats, assetsConfigModule] = await Promise.all([
-        getStorageStats(),
-        import('../assets/assets_config.js'),
-      ]);
-
+      const assetsConfigModule = await import('../assets/assets_config.js');
       const config = assetsConfigModule.assetsConfig;
       setFileSizeInfo(config);
 
-      const expectedTotal = config?.totalFiles ?? ['video', 'audio', 'image', 'sign']
-        .reduce((sum, key) => sum + (config?.assets?.[key]?.length || 0), 0);
-
-      const expectedSize = config?.totalSize ?? ['video', 'audio', 'image', 'sign']
-        .reduce(
-          (sizeSum, key) =>
-            sizeSum + (config?.assets?.[key]?.reduce((acc, file) => acc + (file.size || 0), 0) || 0),
+      const storageStats = await getStorageStats();
+      const expectedTotalAssets =
+        config?.totalFiles ??
+        ((config?.assets?.video?.length || 0) +
+          (config?.assets?.audio?.length || 0) +
+          (config?.assets?.image?.length || 0) +
+          (config?.assets?.sign?.length || 0));
+      const expectedTotalSize =
+        config?.totalSize ??
+        Object.values(config?.assets || {}).reduce(
+          (total, files) =>
+            total + files.reduce((sum, file) => sum + (file.size || 0), 0),
           0
         );
 
-      const completedAssets = Math.min(storageStats?.completedAssets || 0, expectedTotal);
-      const incompleteAssets = Math.max(expectedTotal - completedAssets, 0);
+      const completedAssets = storageStats?.completedAssets || 0;
+      const totalAssets = expectedTotalAssets || storageStats?.totalAssets || 0;
+      const totalSize = expectedTotalSize || storageStats?.totalSize || 0;
+      const incompleteAssets = Math.max(totalAssets - completedAssets, 0);
 
       setStats({
-        totalAssets: expectedTotal,
+        totalAssets,
         completedAssets,
         incompleteAssets,
-        totalSize: expectedSize,
+        totalSize,
       });
     } catch (error) {
       console.error('Failed to load stats:', error);
@@ -70,11 +105,11 @@ const AssetTest = ({ onClose }) => {
   const handleClear = useCallback(async () => {
     try {
       await clearStorage();
-      await loadStats();
+      setStats(null);
     } catch (error) {
       console.error('Failed to clear storage:', error);
     }
-  }, [clearStorage, loadStats]);
+  }, [clearStorage]);
 
   // 监听状态变化，自动刷新统计信息
   useEffect(() => {
@@ -100,12 +135,12 @@ const AssetTest = ({ onClose }) => {
     const displayProgress = status === 'storing' ? progress : localProgress;
 
     return (
-      <div style={{ marginBottom: `${fontsize * 2}px` }}>
+      <div style={{ marginBottom: `${baseSize * 18}px` }}>
         <div style={{ 
           display: 'flex', 
           justifyContent: 'space-between', 
-          marginBottom: `${fontsize * 0.8}px`,
-          fontSize: `${fontsize * 1.3}px`,
+          marginBottom: `${baseSize * 10}px`,
+          fontSize: `${baseSize * 20}px`,
           fontWeight: '800',
         }}>
           <span>存储进度</span>
@@ -113,7 +148,7 @@ const AssetTest = ({ onClose }) => {
         </div>
         <div style={{ 
           width: '100%', 
-          height: `${fontsize * 1}px`, 
+          height: `${baseSize * 18}px`, 
           backgroundColor: '#374151', 
           borderRadius: '10px',
           overflow: 'hidden'
@@ -129,7 +164,7 @@ const AssetTest = ({ onClose }) => {
         {status === 'storing' && currentAsset && (
           <p style={{ 
             margin: '8px 0 0 0', 
-            fontSize: `${fontsize * 1.1}px`, 
+            fontSize: `${baseSize * 18}px`, 
             color: '#9ca3af' 
           }}>
             当前: {currentAsset.name} ({(currentAsset.size / 1024 / 1024).toFixed(2)} MB)
@@ -153,13 +188,13 @@ const AssetTest = ({ onClose }) => {
     
     return (
       <div style={{
-        padding: `${fontsize * 0.8}px`,
+        padding: `${baseSize * 10}px`,
         backgroundColor: '#1f2937', 
         borderRadius: '8px'
       }}>
         <label style={{ 
           display: 'block',
-          fontSize: `${fontsize * 1.3}px`, 
+          fontSize: `${baseSize * 20}px`, 
           fontWeight: '800', 
         }}>
           文件大小信息
@@ -167,8 +202,8 @@ const AssetTest = ({ onClose }) => {
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-          gap: `${fontsize * 0.8}px`,
-          fontSize: `${fontsize * 1.1}px`
+          gap: '16px',
+          fontSize: `${baseSize * 18}px`
         }}>
           <div>
             <p style={{ margin: '4px 0', color: '#9ca3af' }}>视频文件</p>
@@ -200,12 +235,12 @@ const AssetTest = ({ onClose }) => {
   };
 
   return (
-    <div 
-      className="scrollable"
-      style={{ 
-        padding: `${fontsize * 2}px`, 
-        marginTop: `${fontsize * 2.5}px`,
-        backgroundColor: '#111827', 
+    <div
+      ref={divRef}
+      style={{
+        padding: `${baseSize * 20}px`,
+        paddingTop: `${baseSize * 72}px`,
+        backgroundColor: '#111827',
         color: 'white',
         minHeight: '100vh',
         position: 'relative',
@@ -217,16 +252,17 @@ const AssetTest = ({ onClose }) => {
       <button
           className="absolute items-center z-20"
           onClick={onClose}
-          style={{background: 'transparent', border: 'none', padding: 0, marginTop: `${fontsize * 0.5}px`}}
+          style={{background: 'transparent', border: 'none', padding: 0, marginTop: `${baseSize * 12}px`}}
       >
-          <LeftIcon size={fontsize * 2} color="white"/>
+          <LeftIcon size={baseSize * 32} color="white"/>
       </button>
 
       <label style={{ 
         display: 'block',
-        fontSize: `${fontsize * 2}px`,
+        fontSize: `${baseSize * 24}px`,
         fontWeight: 'bold', 
-        marginBottom: `${fontsize * 2}px`,
+        marginTop: `${baseSize * 12}px`,
+        marginBottom: `${baseSize * 10}px`,
         textAlign: 'center'
       }}>
         动画素材缓存
@@ -238,15 +274,15 @@ const AssetTest = ({ onClose }) => {
           onClick={() => setShowLog(v => !v)}
           style={{
             position: 'absolute',
-            top: `${fontsize * 2.5}px`,
-            right: `${fontsize * 2}px`,
+            top: `${baseSize * 82}px`,
+            right: `${baseSize * 20}px`,
             zIndex: 6,
             backgroundColor: '#334155',
+            fontSize: `${baseSize * 14}px`,
             color: 'white',
             border: 'none',
             borderRadius: 6,
-            padding: `${fontsize * 0.5}px ${fontsize * 1}px`,
-            fontSize: `${fontsize * 1}px`,
+            padding: `${baseSize * 8}px ${baseSize * 12}px`,
             cursor: 'pointer'
           }}
         >{showLog ? '隐藏更新日志' : '更新日志'}</button>
@@ -254,18 +290,19 @@ const AssetTest = ({ onClose }) => {
 
       {/* 更新日志 */}
       {showLog && (gitInfo.dateIso || gitInfo.hash || gitInfo.message) && (
-        <div style={{
-          padding: `${fontsize * 1}px`,
+        <div style={{ 
+          margin: `${baseSize * 60}px`,
+          padding: `${baseSize * 18}px`,
           backgroundColor: '#1f2937',
           borderRadius: '8px',
           border: '1px solid #374151',
           position: 'absolute',
-          top: `${fontsize * 5}px`,
-          right: `${fontsize * 2}px`,
-          width: `${fontsize * 18}px`,
+          top: `${baseSize * 48}px`,
+          right: `${baseSize * 5}px`,
+          width: `${baseSize * 240}px`,
           zIndex: 5
         }}>
-          <div style={{ fontSize: `${fontsize * 1.1}px`, color: '#d1d5db', lineHeight: 1.6 }}>
+          <div style={{ fontSize: `${baseSize * 14}px`, color: '#d1d5db', lineHeight: 1.6 }}>
             {gitInfo.dateIso && (
               <div>• 更新时间：{new Date(gitInfo.dateIso).toLocaleString()}</div>
             )}
@@ -276,27 +313,30 @@ const AssetTest = ({ onClose }) => {
         </div>
       )}
 
-      <label style={{color: "gray", fontSize: `${fontsize * 1.2}px`, lineHeight: 1.4, display: 'block'}}>
-        解决各种视频音频播放很卡的问题，先点击“存储所有素材”按钮，存储完后点击“刷新网页”按钮，退出页面再开始抽卡
+      <label style={{color: "gray", fontSize: `${baseSize * 18}px`}}>
+        解决各种视频音频播放很卡的问题，先点击
+        <span style={{color: '#2563eb', fontWeight: '600'}}>"存储所有素材"</span>
+        按钮，存储完后点击
+        <span style={{color: '#059669', fontWeight: '600'}}>"刷新网页"</span>
+        按钮，退出页面再点击
+        <span style={{color: '#059669', fontWeight: '600'}}>"开始抽卡"</span>按钮
       </label>
       
       {/* 控制面板 */}
       <div style={{ 
-        marginTop: `${fontsize * 1.2}px`,
-        marginBottom: `${fontsize * 2}px`,
-        padding: `${fontsize * 2}px`,
+        marginTop: `${baseSize * 12}px`,
+        marginBottom: `${baseSize * 12}px`,
+        padding: `${baseSize * 12}px`,
         backgroundColor: '#1f2937', 
         borderRadius: '8px'
       }}>
         
-        <div style={{ display: 'flex', gap: `${fontsize * 0.5}px`, marginBottom: `${fontsize * 2}px`, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: `${baseSize * 12}px`, marginBottom: `${baseSize * 18}px`, flexWrap: 'wrap' }}>
           <button
             onClick={handleStoreAll}
             disabled={status === 'storing'}
             style={{
-              padding: `${fontsize * 0.5}px ${fontsize * 1}px`,
-              fontSize: `${fontsize * 1.3}px`,
-              lineHeight: 1.5,
+              padding: `${baseSize * 12}px ${baseSize * 18}px`,
               backgroundColor: status === 'storing' ? '#6b7280' : '#2563eb',
               color: 'white',
               border: 'none',
@@ -320,9 +360,7 @@ const AssetTest = ({ onClose }) => {
           <button
             onClick={() => window.location.reload()}
             style={{
-              padding: `${fontsize * 0.5}px ${fontsize * 1}px`,
-              fontSize: `${fontsize * 1.3}px`,
-              lineHeight: 1.5,
+              padding: `${baseSize * 12}px ${baseSize * 18}px`,
               backgroundColor: '#059669',
               color: 'white',
               border: 'none',
@@ -340,9 +378,7 @@ const AssetTest = ({ onClose }) => {
           <button
             onClick={handleClear}
             style={{
-              padding: `${fontsize * 0.5}px ${fontsize * 1}px`,
-              fontSize: `${fontsize * 1.3}px`,
-              lineHeight: 1.5,
+              padding: `${baseSize * 12}px ${baseSize * 18}px`,
               backgroundColor: '#dc2626',
               color: 'white',
               border: 'none',
@@ -358,9 +394,7 @@ const AssetTest = ({ onClose }) => {
           <button
             onClick={() => onClose()}
             style={{
-              padding: `${fontsize * 0.5}px ${fontsize * 1}px`,
-              fontSize: `${fontsize * 1.3}px`,
-              lineHeight: 1.5,
+              padding: `${baseSize * 12}px ${baseSize * 18}px`,
               backgroundColor: '#059669',
               color: 'white',
               border: 'none',
@@ -382,11 +416,11 @@ const AssetTest = ({ onClose }) => {
         {/* 统计信息 - 移到进度条下面 */}
         {stats && (
           <div style={{ 
-            padding: `${fontsize * 0.8}px`,
+            padding: `${baseSize * 18}px`,
             backgroundColor: '#374151', 
             borderRadius: '4px',
-            marginTop: `${fontsize * 1.2}px`,
-            marginBottom: `${fontsize * 1.2}px`,
+            marginTop: `${baseSize * 18}px`,
+            marginBottom: `${baseSize * 18}px`,
           }}>
             <p style={{ margin: '4px 0' }}>总素材数: {stats.totalAssets}</p>
             <p style={{ margin: '4px 0' }}>已完成: {stats.completedAssets}</p>
@@ -400,21 +434,21 @@ const AssetTest = ({ onClose }) => {
       </div>
 
       {/* 媒体测试：直接按顺序列出所有视频与音频 */}
-      <div style={{ marginBottom: `${fontsize * 0.8}px` }}>
+      <div style={{ marginBottom: '32px' }}>
         <label style={{ 
           display: 'block',
-          fontSize: `${fontsize * 1.3}px`,
+          fontSize: `${baseSize * 18}px`,
           fontWeight: '600', 
-          marginBottom: `${fontsize * 0.8}px`,
+          marginBottom: `${baseSize * 12}px`,
         }}>
           视频
         </label>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: `${fontsize * 0.8}px`, maxWidth: `${fontsize * 30}px`, margin: '0 auto' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: `${baseSize * 12}px`, maxWidth: `${baseSize * 600}px`, margin: '0 auto' }}>
           {(fileSizeInfo?.assets?.video || []).map(v => {
             const name = v.path.replace(/^.*\//, '');
             return (
-              <div key={v.path} style={{ backgroundColor: '#1f2937', padding: `${fontsize * 1.2}px`, borderRadius: 8 }}>
-                <div style={{ color: '#d1d5db', marginBottom: `${fontsize * 0.8}px`, fontSize: `${fontsize * 1.1}px` }}>{name}</div>
+              <div key={v.path} style={{ backgroundColor: '#1f2937', padding: `${baseSize * 12}px`, borderRadius: 8 }}>
+                <div style={{ color: '#d1d5db', marginBottom: `${baseSize * 8}px`, fontSize: `${baseSize * 14}px` }}>{name}</div>
                 <Asset type="video" src={name} controls style={{ width: '100%', height: 'auto' }} />
               </div>
             );
@@ -422,21 +456,21 @@ const AssetTest = ({ onClose }) => {
         </div>
       </div>
 
-      <div style={{ marginTop: `${fontsize * 2.8}px` }}>
+      <div style={{ marginBottom: '32px' }}>
         <label style={{ 
           display: 'block',
-          fontSize: `${fontsize * 1.3}px`,
+          fontSize: `${baseSize * 18}px`,
           fontWeight: '600', 
-          marginBottom: `${fontsize * 0.8}px`,
+          marginBottom: `${baseSize * 12}px`,
         }}>
           音频
         </label>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: `${fontsize * 0.8}px`, maxWidth: `${fontsize * 30}px`, margin: '0 auto' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: `${baseSize * 12}px`, maxWidth: `${baseSize * 500}px`, margin: '0 auto' }}>
           {(fileSizeInfo?.assets?.audio || []).map(a => {
             const name = a.path.replace(/^.*\//, '');
             return (
-              <div key={a.path} style={{ backgroundColor: '#1f2937', padding: `${fontsize * 1.2}px`, borderRadius: 8 }}>
-                <div style={{ color: '#d1d5db', marginBottom: `${fontsize * 0.8}px`, fontSize: `${fontsize * 1.1}px` }}>{name}</div>
+              <div key={a.path} style={{ backgroundColor: '#1f2937', padding: `${baseSize * 12}px`, borderRadius: 8 }}>
+                <div style={{ color: '#d1d5db', marginBottom: `${baseSize * 8}px`, fontSize: `${baseSize * 14}px` }}>{name}</div>
                 <Asset type="audio" src={name} controls style={{ width: '100%' }}  />
               </div>
             );
@@ -449,8 +483,7 @@ const AssetTest = ({ onClose }) => {
       {/* 调试信息 */}
       <div style={{ 
         backgroundColor: '#1f2937', 
-        marginTop: `${fontsize * 2.8}px`,
-        padding: `${fontsize * 1.2}px`, 
+        padding: '16px', 
         borderRadius: '8px',
         marginBottom: '32px'
       }}>
@@ -468,6 +501,7 @@ const AssetTest = ({ onClose }) => {
           <p style={{ margin: '4px 0' }}>统计信息: {JSON.stringify(stats, null, 2)}</p>
         </div>
       </div>
+
     </div>
   );
 };

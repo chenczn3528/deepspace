@@ -1,6 +1,4 @@
 import React, {useEffect, useState, useRef, useMemo} from 'react';
-import cardData from './assets/cards.json';
-import songsList from './assets/songs_list.json'
 import DrawAnimationCards from './components/DrawAnimationCards.jsx';
 import HistoryModal from './components/HistoryModal';
 import TestProbability from "./components/TestProbability.jsx";
@@ -16,22 +14,64 @@ import useResponsiveFontSize from "./hooks/useResponsiveFontSize.js";
 import MusicPage from "./components/MusicPage.jsx";
 import VideoPage from "./components/VideoPage.jsx";
 import { Asset } from './components/Asset.jsx';
+import { useData } from './contexts/DataContext.jsx';
+import { initCacheManager } from './utils/cacheManager.js';
 
 
 const Home = ({isPortrait, openAssetTest}) => {
+    const { cardData, songsList } = useData();
+
+    useEffect(() => {
+        initCacheManager();
+    }, []);
 
     // 加载serviceWorker
     if ('serviceWorker' in navigator) {
+        let swRefreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (swRefreshing) return;
+            swRefreshing = true;
+            window.location.reload();
+        });
+
         window.addEventListener('load', () => {
+            // 注册 Service Worker，添加时间戳确保获取最新版本
+            const swUrl = `service_worker.js?t=${Date.now()}`;
             navigator.serviceWorker
-                .register('service_worker.js')
+                .register(swUrl)
                 .then((reg) => {
                     console.log('✅ SW registered:', reg);
 
-                    // 可选：注销旧的 Service Worker（如果你在更新服务工作者时需要这样做）
+                    // 启动时主动检查更新
+                    reg.update();
+
+                    // 检查 Service Worker 更新
+                    reg.addEventListener('updatefound', () => {
+                        const newWorker = reg.installing;
+                        if (newWorker) {
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // 有新版本可用，提示用户刷新
+                                    console.log('🔄 发现新版本，建议刷新页面');
+                                    if (reg.waiting) {
+                                        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                                    } else {
+                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                    }
+                                }
+                            });
+                        }
+                    });
+
+                    // 定期检查更新（每小时检查一次）
+                    setInterval(() => {
+                        reg.update();
+                    }, 3600000); // 1小时
+
+                    // 注销不同域名的旧 Service Worker
                     navigator.serviceWorker.getRegistrations().then((registrations) => {
                         registrations.forEach((registration) => {
-                            const expectedScope = location.origin + '/'; // 或者 '/deepspace/'，取决于你的路径
+                            const expectedScope = location.origin + '/';
                             if (registration.scope !== expectedScope) {
                                 registration.unregister().then((success) => {
                                     console.log('🗑️ Unregistered old SW:', registration.scope, success);

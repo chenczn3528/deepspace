@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import cardData from "../assets/cards.json";
-import poolCategories from "../assets/poolCategories.json";
+import { useData } from "../contexts/DataContext.jsx";
 
 const characters = ["沈星回", "黎深", "祁煜", "秦彻", "夏以昼"];
 
@@ -22,7 +21,7 @@ const extractPoolName = (getStr) => {
     return cleanPoolName(getStr);
 };
 
-const buildPoolDataset = () => {
+const buildPoolDataset = (cardData, poolCategories) => {
     const poolOrderMap = {};
     const parseTimeToTimestamp = (timeStr) => {
         if (!timeStr) return Number.MAX_SAFE_INTEGER;
@@ -42,7 +41,7 @@ const buildPoolDataset = () => {
         return Number.MAX_SAFE_INTEGER;
     };
 
-    cardData.forEach((card, index) => {
+    (cardData || []).forEach((card, index) => {
         if (parseInt(card.star, 10) !== 5) return;
         const pool = extractPoolName(card.get);
         if (!pool || poolOrderMap[pool]) return;
@@ -180,6 +179,7 @@ const CardPoolFilter = ({
     handleSelectedRoleChange,
     selectedRole,
 }) => {
+    const { cardData, poolCategories } = useData();
     const safeSelectedPools = useMemo(
         () => (Array.isArray(selectedPools) ? selectedPools : []),
         [selectedPools]
@@ -192,7 +192,10 @@ const CardPoolFilter = ({
     const contentSidePadding = Math.max(baseFontsize * 0.6, 14);
     const buttonGap = Math.max(baseFontsize * 0.3, 8);
 
-    const { poolInfoMap, poolOrderMap, limitedPools, permanentPools, specialPools } = useMemo(() => buildPoolDataset(), []);
+    const { poolInfoMap, poolOrderMap, limitedPools, permanentPools, specialPools } = useMemo(
+        () => buildPoolDataset(cardData, poolCategories),
+        [cardData, poolCategories]
+    );
 
     const permanentHeartPools = useMemo(
         () => permanentPools.filter((pool) => pool.includes("心动挚礼")),

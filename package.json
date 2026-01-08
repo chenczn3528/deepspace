@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/copy-data-to-public.js",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
