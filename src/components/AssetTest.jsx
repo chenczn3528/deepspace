@@ -49,7 +49,18 @@ const AssetTest = ({ onClose, baseSize: initialBaseSize }) => {
       tryInitSize(); // 启动初始化
       window.addEventListener('resize', updateSize); // 响应窗口变化
 
-      return () => {window.removeEventListener('resize', updateSize);};
+      let resizeObserver;
+      if (divRef.current && typeof ResizeObserver !== 'undefined') {
+          resizeObserver = new ResizeObserver(() => {
+              requestAnimationFrame(updateSize);
+          });
+          resizeObserver.observe(divRef.current);
+      }
+
+      return () => {
+          window.removeEventListener('resize', updateSize);
+          if (resizeObserver) resizeObserver.disconnect();
+      };
   }, []);
 
   // 加载统计信息 - 使用 useCallback 避免无限循环

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './App.css';
 import Home from './Home.jsx';
 import AssetManager from './components/AssetManager.jsx';
@@ -52,7 +52,7 @@ function App() {
     setAssetBaseSize((gameW / 375) * 0.85);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     resize();
     window.addEventListener('resize', resize);
     return () => window.removeEventListener('resize', resize);
