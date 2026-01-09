@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react';
 import { Asset } from './Asset';
 import { useAssetStorage } from '../hooks/useAssetStorage';
 import LeftIcon from '../icons/LeftIcon';
 import useResponsiveFontSize from '../hooks/useResponsiveFontSize';
 import { getAssetsByType } from '../assets/assets_config.js';
 
-const AssetTest = ({ onClose }) => {
+const AssetTest = ({ onClose, baseSize: initialBaseSize }) => {
   const { storeAllAssets, getStorageStats, clearStorage, status, progress, currentAsset } = useAssetStorage();
   const [stats, setStats] = useState(null);
   // 自动刷新：移除开关，始终自动刷新
@@ -20,10 +20,10 @@ const AssetTest = ({ onClose }) => {
   // const fontsize = useResponsiveFontSize({scale: 0.9});
 
   // ======================================= 获取容器尺寸（16:9下）
-  const [baseSize, setBaseSize] = useState(1);
+  const [baseSize, setBaseSize] = useState(() => initialBaseSize ?? null);
   const divRef = useRef(null); // 获取当前绑定的容器的尺寸
 
-  useEffect(() => {
+  useLayoutEffect(() => {
       const updateSize = () => {
           if (divRef.current) {
               const width = divRef.current.clientWidth;
@@ -233,6 +233,18 @@ const AssetTest = ({ onClose }) => {
       </div>
     );
   };
+
+  if (baseSize === null) {
+    return (
+      <div
+        ref={divRef}
+        style={{
+          minHeight: '100vh',
+          backgroundColor: '#111827',
+        }}
+      />
+    );
+  }
 
   return (
     <div

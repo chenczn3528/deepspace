@@ -10,6 +10,13 @@ function App() {
   const gameRef = useRef();
   const [isPortrait, setIsPortrait] = useState(window.innerHeight >= window.innerWidth);
   const [showAssetTest, setShowAssetTest] = useState(true);
+  const [assetBaseSize, setAssetBaseSize] = useState(() => {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const portrait = h >= w;
+    const gameW = portrait ? w : h;
+    return (gameW / 375) * 0.85;
+  });
 
   const resize = () => {
     const w = window.innerWidth;
@@ -42,6 +49,7 @@ function App() {
 
     game.style.width = `${gameW}px`;
     game.style.height = `${gameH}px`;
+    setAssetBaseSize((gameW / 375) * 0.85);
   };
 
   useEffect(() => {
@@ -77,7 +85,10 @@ function App() {
         <div className="wrapper" ref={wrapperRef}>
           <div className="game relative" ref={gameRef}>
             {showAssetTest ? (
-              <AssetTest onClose={() => setShowAssetTest(false)} />
+              <AssetTest
+                baseSize={assetBaseSize}
+                onClose={() => setShowAssetTest(false)}
+              />
             ) : (
               <Home isPortrait={isPortrait} openAssetTest={() => setShowAssetTest(true)} />
             )}
