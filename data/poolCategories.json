@@ -61,6 +61,12 @@
             "isPermanent": false
           },
           {
+            "name": "窃窃私吻",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
             "name": "爱，宇宙，诗王座",
             "poolType": "mixed",
             "roleCount": 5,
