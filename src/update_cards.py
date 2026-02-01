@@ -5,10 +5,9 @@ from pathlib import Path
 """
 恋与深空 WIKI 抽卡卡片爬虫
 ----------------------------------------------------------------
-- 仅保存图片/视频链接，不下载文件
+- 仅保存图片链接与视频信息（Bvid / Pname），不下载文件
 - 礼貌 UA、限速、Session+Retry
-- 兼容 iframe 被转义成文本（&lt;iframe ...&gt;）
-- B 站播放器 URL 自动补参数并尝试匹配分 P
+- 解析脚本内的 B 站视频信息
 """
 
 import json
@@ -20,7 +19,7 @@ from copy import deepcopy
 import requests
 import mwclient
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin, urlparse, parse_qs, urlencode, urlunparse
+from urllib.parse import urljoin, urlencode
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
@@ -37,7 +36,17 @@ LICENSE_NAME = "CC BY-NC-SA 4.0"
 LICENSE_URL = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
 
 UA = "GachaSimCrawler/1.0 (+mailto:chenczn3528@gmail.com)"  # 合规 UA
-HEADERS = {"User-Agent": UA}
+UA_POOL = [
+    UA,
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+]
+HEADERS = {
+    "User-Agent": UA,
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+    "Referer": WIKI_BASE,
+}
 
 CATEGORY_PRIORITY = {
     ("wishSeries", "limited"): 1,
@@ -79,14 +88,33 @@ retries = Retry(
 session.mount("https://", HTTPAdapter(max_retries=retries))
 session.headers.update(HEADERS)
 
-def polite_get(url: str, timeout: int = 15) -> requests.Response:
-    """带随机延迟的 GET，避免给站点造成压力。"""
-    time.sleep(1.5 + random.random())  # 1.5~2.5s
-    resp = session.get(url, timeout=timeout)
-    resp.raise_for_status()
-    if not resp.encoding:
-        resp.encoding = resp.apparent_encoding or "utf-8"
-    return resp
+def polite_get(url: str, timeout: int = 15, max_retry: int = 3) -> requests.Response:
+    """带随机延迟的 GET，避免给站点造成压力。遇到拦截状态码会重试。"""
+    last_exc = None
+    for attempt in range(1, max_retry + 1):
+        time.sleep(1.5 + random.random())  # 1.5~2.5s
+        headers = dict(HEADERS)
+        headers["User-Agent"] = random.choice(UA_POOL)
+        try:
+            resp = session.get(url, timeout=timeout, headers=headers)
+            if resp.status_code in {403, 429, 567} and attempt < max_retry:
+                wait = 2 * attempt
+                print(f"⚠️ HTTP {resp.status_code}，{wait}s 后重试 ({attempt}/{max_retry})", flush=True)
+                time.sleep(wait)
+                continue
+            resp.raise_for_status()
+            if not resp.encoding:
+                resp.encoding = resp.apparent_encoding or "utf-8"
+            return resp
+        except Exception as exc:
+            last_exc = exc
+            if attempt < max_retry:
+                wait = 2 * attempt
+                print(f"⚠️ 请求失败 {attempt}/{max_retry}：{exc}，{wait}s 后重试", flush=True)
+                time.sleep(wait)
+                continue
+            raise
+    raise last_exc
 
 # -----------------------------
 # 工具函数
@@ -103,36 +131,38 @@ def parse_best_from_srcset(srcset: str) -> str:
             return part.rsplit(" ", 1)[0]
     return parts[-1].rsplit(" ", 1)[0] if " " in parts[-1] else parts[-1]
 
-# —— 从原始 HTML 中直接抓 <iframe> 块；并兼容被转义的 HTML
-IFRAME_BLOCK_RE = re.compile(r'<iframe.*?</iframe>', re.IGNORECASE | re.DOTALL)
-IFRAME_SRC_RE   = re.compile(r'src=["\']([^"\']+)["\']', re.IGNORECASE)
+# —— 从脚本里解析 B 站视频信息（Bvid / Pname）
+BILI_BVID_RE = re.compile(r"\b(?:Bvid|bv)\b\s*=\s*[`'\"](?P<bvid>BV[0-9A-Za-z]+)[`'\"]")
+BILI_PNAME_RE = re.compile(r"\b(?:Pname|pname)\b\s*=\s*[`'\"](?P<pname>[^`'\"]+)[`'\"]")
 WIKI_LINK_RE = re.compile(r"\[\[([^\]]+)\]\]")
 FULL_WIDTH_BRACKET_RE = re.compile(r"【([^】]+)】")
 QUOTE_NAME_RE = re.compile(r"「([^」]+)」")
 EVENT_GAIN_RE = re.compile(r"^在?(.+?)活动中获取$")
 
-def extract_iframes(html_bytes_or_text) -> list[str]:
+def extract_bili_script_info(html_bytes_or_text) -> tuple[str, str]:
     """
-    从原始 HTML（bytes 或 str）提取 <iframe> 块。
-    1) 直接正则
-    2) 若页面是转义文本（&lt;iframe ...&gt;），先 html.unescape 再正则
+    从原始 HTML（bytes 或 str）提取 Bvid 与 Pname（卡片分 P 名称）。
+    支持脚本内的 `const Bvid = ...; const Pname = ...;` 等写法。
     """
     if isinstance(html_bytes_or_text, bytes):
         raw = html_bytes_or_text.decode("utf-8", errors="ignore")
     else:
         raw = html_bytes_or_text or ""
 
-    blocks = IFRAME_BLOCK_RE.findall(raw)
-    if blocks:
-        return blocks
-
+    candidates = [raw]
     unescaped = html.unescape(raw)
     if unescaped != raw:
-        blocks = IFRAME_BLOCK_RE.findall(unescaped)
-        if blocks:
-            return blocks
+        candidates.append(unescaped)
 
-    return []
+    for text in candidates:
+        bvid_match = BILI_BVID_RE.search(text)
+        pname_match = BILI_PNAME_RE.search(text)
+        bvid = bvid_match.group("bvid") if bvid_match else ""
+        pname = pname_match.group("pname").strip() if pname_match else ""
+        if bvid or pname:
+            return bvid, pname
+
+    return "", ""
 
 
 def normalize_event_pool_name(name: str) -> str:
@@ -140,6 +170,43 @@ def normalize_event_pool_name(name: str) -> str:
     if match:
         return match.group(1).strip()
     return name
+
+
+def normalize_part_name(value: str) -> str:
+    if not value:
+        return ""
+    text = str(value).lower()
+    text = re.sub(r"\s+", "", text)
+    return re.sub(r"[【】「」\[\]（）()《》〈〉·•、，。？！!?:;\"'“”\-_.]", "", text)
+
+
+def fetch_bilibili_page(bvid: str, pname: str) -> int | None:
+    if not bvid:
+        return None
+    api = f"https://api.bilibili.com/x/web-interface/view?bvid={bvid}"
+    try:
+        resp = polite_get(api)
+        data = resp.json() or {}
+        pages = (data.get("data") or {}).get("pages") or []
+        if not pages:
+            return None
+        if not pname:
+            return int(pages[0].get("page") or 1)
+        target = pname.strip()
+        hit = next((p for p in pages if p.get("part") == target), None)
+        if not hit:
+            norm_target = normalize_part_name(target)
+            hit = next((p for p in pages if normalize_part_name(p.get("part")) == norm_target), None)
+        if not hit:
+            norm_target = normalize_part_name(target)
+            hit = next((p for p in pages if norm_target in normalize_part_name(p.get("part"))), None)
+        if not hit:
+            norm_target = normalize_part_name(target)
+            hit = next((p for p in pages if normalize_part_name(p.get("part")) in norm_target), None)
+        return int(hit.get("page") or 1) if hit else None
+    except Exception as e:
+        print(f"⚠️ Bilibili API 失败: {e}", flush=True)
+        return None
 
 
 def clean_pool_name(text: str) -> str:
@@ -304,79 +371,28 @@ def update_pool_categories_from_cards(cards: list[dict]) -> dict:
     return categories
 
 # -----------------------------
-# B 站分 P 支持
-# -----------------------------
-video_information_cache = {}
-
-def fetch_bilibili_video_info(bvid: str) -> dict:
-    if not bvid:
-        return {}
-    if bvid in video_information_cache:
-        return video_information_cache[bvid]
-    api = f"https://api.bilibili.com/x/web-interface/view?bvid={bvid}"
-    try:
-        resp = polite_get(api)
-        data = resp.json()
-        video_information_cache[bvid] = data
-        return data
-    except Exception as e:
-        print(f"⚠️ Bilibili API 失败: {e}", flush=True)
-        return {}
-
-def find_dict_by_value(obj, target_value):
-    if isinstance(obj, dict):
-        for k, v in obj.items():
-            if v == target_value:
-                return obj
-            got = find_dict_by_value(v, target_value)
-            if got:
-                return got
-    elif isinstance(obj, list):
-        for it in obj:
-            got = find_dict_by_value(it, target_value)
-            if got:
-                return got
-    return None
-
-def build_player_url(src_tail_or_url: str, page_num: int | None) -> str:
-    """
-    把抓到的 iframe src 统一转成可外链的 bilibili 播放器 URL，并补常用参数。
-    兼容传入是 '.html?后面的查询串'（形如 'bvid=...&p=...'）。
-    """
-    url = src_tail_or_url
-    if url.startswith(("aid=", "bvid=", "p=")):
-        url = "https://player.bilibili.com/player.html?" + url
-    if url.startswith("//"):
-        url = "https:" + url
-
-    p = urlparse(url)
-    qs = parse_qs(p.query)
-    if page_num is not None:
-        qs["p"] = [str(page_num)]
-    qs.setdefault("autoplay", ["auto"])
-    qs.setdefault("preload", ["auto"])
-    qs.setdefault("quality", ["1080p"])
-    qs["isOutside"] = ["true"]
-
-    new_q = urlencode({k: v[-1] for k, v in qs.items()})
-    return urlunparse(p._replace(query=new_q))
-
-# -----------------------------
 # MediaWiki 读取
 # -----------------------------
 _mw_site: mwclient.Site | None = None
+_mw_site_unavailable = False
 
 def _get_mw_site(max_tries: int = 3) -> mwclient.Site | None:
     """
     初始化 mwclient.Site，带有限次数重试，避免瞬时网络抖动导致脚本崩溃。
     """
-    global _mw_site
+    global _mw_site, _mw_site_unavailable
+    if _mw_site_unavailable:
+        return None
     if _mw_site is not None:
         return _mw_site
 
     for attempt in range(1, max_tries + 1):
         try:
-            site = mwclient.Site(host="wiki.biligame.com", path="/lysk/", clients_useragent=UA)
+            site = mwclient.Site(
+                host="wiki.biligame.com",
+                path="/lysk/",
+                clients_useragent=random.choice(UA_POOL),
+            )
             _mw_site = site
             return site
         except Exception as exc:
@@ -386,17 +402,49 @@ def _get_mw_site(max_tries: int = 3) -> mwclient.Site | None:
                 flush=True,
             )
             time.sleep(wait)
+    _mw_site_unavailable = True
     return None
+
+def fetch_wiki_text_via_api(card_name: str) -> str:
+    params = {
+        "action": "query",
+        "prop": "revisions",
+        "rvprop": "content",
+        "rvslots": "main",
+        "format": "json",
+        "titles": card_name,
+    }
+    api_url = f"{WIKI_BASE}api.php?{urlencode(params)}"
+    try:
+        resp = polite_get(api_url)
+        data = resp.json() or {}
+        pages = (data.get("query") or {}).get("pages") or {}
+        for _, page in pages.items():
+            revisions = page.get("revisions") or []
+            if not revisions:
+                continue
+            rev = revisions[0]
+            slots = rev.get("slots") or {}
+            main = slots.get("main") or {}
+            text = main.get("*") or rev.get("*")
+            if text:
+                return text
+    except Exception as exc:
+        print(f"⚠️ api.php 获取失败 {card_name}: {exc}", flush=True)
+    return ""
 
 def wiki_detailed_info(card_name: str) -> dict:
     """
     使用 mwclient 读取页面文本并解析字段。
     兼容模板行前导 '|'；失败返回 {}。
     """
-    global _mw_site
+    global _mw_site, _mw_site_unavailable
     site = _get_mw_site()
     if site is None:
-        return {}
+        text = fetch_wiki_text_via_api(card_name)
+        if not text:
+            return {}
+        return parse_wiki_text(text)
     field_map = {
         "思念角色": "character",
         "思念名称": "name",
@@ -413,26 +461,44 @@ def wiki_detailed_info(card_name: str) -> dict:
         try:
             page = site.pages[card_name]
             text = page.text() or ""
-            info = {}
-            for line in text.split("\n"):
-                if "=" not in line:
-                    continue
-                k, v = line.split("=", 1)
-                k = k.replace("|", "").strip()  # 关键：去掉管道符与空格
-                v = v.strip()
-                if k in field_map:
-                    if k == "思念星级" and v and not v.endswith("星"):
-                        v += "星"
-                    info[field_map[k]] = v
-            return info
+            return parse_wiki_text(text)
         except Exception as e:
             print(f"⚠️ mwclient 获取失败 {card_name} ({i}/{max_tries}): {e}", flush=True)
             time.sleep(2 * i)
             _mw_site = None  # 强制下一轮重新初始化连接
             site = _get_mw_site()
             if site is None:
-                break
+                _mw_site_unavailable = True
+                text = fetch_wiki_text_via_api(card_name)
+                if not text:
+                    break
+                return parse_wiki_text(text)
     return {}
+
+def parse_wiki_text(text: str) -> dict:
+    field_map = {
+        "思念角色": "character",
+        "思念名称": "name",
+        "思念位置": "card_type_tag",
+        "思念星谱": "card_color_tag",
+        "思念星级": "star",
+        "思念天赋": "talent",
+        "思念获取途径": "get",
+        "常驻": "permanent",
+        "思念上线时间": "time",
+    }
+    info = {}
+    for line in text.split("\n"):
+        if "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        k = k.replace("|", "").strip()
+        v = v.strip()
+        if k in field_map:
+            if k == "思念星级" and v and not v.endswith("星"):
+                v += "星"
+            info[field_map[k]] = v
+    return info
 
 def is_card_data_complete(card: dict) -> bool:
     required = ["character", "name", "star", "card_color_tag", "card_type_tag", "talent", "get", "time"]
@@ -443,13 +509,13 @@ def is_card_data_complete(card: dict) -> bool:
 # -----------------------------
 def fetch_detail_image(detail_url: str, card_name: str, max_retry: int = 3):
     """
-    返回：small_img, big_img, video_url
+    返回：small_img, big_img, video_bvid, video_page
     - 不下载文件
-    - 兼容 iframe 被转义成文本
-    - 尽量匹配分 P
+    - 解析脚本内的 Bvid / Pname
     - 支持自动重试（默认最多 3 次）
     """
-    small_img = big_img = video_url = ""
+    small_img = big_img = video_bvid = ""
+    video_page = None
 
     for attempt in range(1, max_retry + 1):
         try:
@@ -464,34 +530,13 @@ def fetch_detail_image(detail_url: str, card_name: str, max_retry: int = 3):
                 big_img = parse_best_from_srcset(srcset) or src
                 small_img = src
 
-            # 视频：用原始 bytes/转义文本兜底抓 <iframe>
-            blocks = extract_iframes(res.content)
-            if blocks:
-                m = IFRAME_SRC_RE.search(blocks[0])
-                raw_src = m.group(1) if m else ""
-                if raw_src:
-                    # 提取 bvid 并尽可能匹配分 P
-                    bvid = ""
-                    try:
-                        q = parse_qs(urlparse(raw_src).query)
-                        bvid = (q.get("bvid") or [""])[0]
-                    except Exception:
-                        pass
-
-                    page_num = None
-                    if bvid:
-                        data = fetch_bilibili_video_info(bvid)
-                        hit = find_dict_by_value(data, card_name)
-                        if hit:
-                            page_num = hit.get("page")
-
-                    # 兼容 '.html?xxx' 尾巴
-                    tail_or_url = raw_src.split(".html?")[-1] if ".html?" in raw_src else raw_src
-                    video_url = build_player_url(tail_or_url, page_num)
-                    print(video_url, flush=True)
+            # 视频：从脚本中解析 Bvid / Pname
+            video_bvid, video_pname = extract_bili_script_info(res.content)
+            if video_bvid:
+                video_page = fetch_bilibili_page(video_bvid, video_pname) or 1
 
             # 成功则直接返回
-            return small_img, big_img, video_url
+            return small_img, big_img, video_bvid, video_page
 
         except Exception as e:
             print(f"❌ 第 {attempt} 次获取详情页失败：{detail_url}，错误：{e}", flush=True)
@@ -502,7 +547,7 @@ def fetch_detail_image(detail_url: str, card_name: str, max_retry: int = 3):
                 print("🚫 已达到最大重试次数，放弃重试。", flush=True)
 
     # 全部失败则返回空结果
-    return small_img, big_img, video_url
+    return small_img, big_img, video_bvid, video_page
 
 # -----------------------------
 # 主流程
@@ -538,9 +583,10 @@ def main():
             list_small = parse_best_from_srcset(img_in_list.get("srcset", "") or "") or img_in_list.get("src", "") or ""
 
         # 详情页图片/视频
-        small_img = big_img = video_url = ""
+        small_img = big_img = video_bvid = ""
+        video_page = None
         if detail_url:
-            small_img, big_img, video_url = fetch_detail_image(detail_url, card_name)
+            small_img, big_img, video_bvid, video_page = fetch_detail_image(detail_url, card_name)
 
         # 字段完整性重试（最多 3 次）
         tries = 0
@@ -557,7 +603,8 @@ def main():
         # 汇总
         info["image_small"] = final_small
         info["image"] = final_big
-        info["video_url"] = video_url
+        info["video_bvid"] = video_bvid
+        info["video_page"] = video_page
 
         all_cards.append(info)
 

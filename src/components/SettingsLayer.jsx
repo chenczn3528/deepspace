@@ -168,6 +168,12 @@ const SettingsLayer = ({
 
 
 
+    const handleSoftGuaranteeToggle = (checked) => {
+        softGuaranteePreferenceRef.current = checked;
+        setUseSoftGuarantee(checked);
+        if (checked) setonlySelectedRoleCard(false);
+    };
+
     // 音乐用iframe，出金音效用滑动条，新写一个页面调试这个东西
 
     return (
@@ -458,8 +464,3 @@ const SettingsLayer = ({
 };
 
 export default SettingsLayer;
-    const handleSoftGuaranteeToggle = (checked) => {
-        softGuaranteePreferenceRef.current = checked;
-        setUseSoftGuarantee(checked);
-        if (checked) setonlySelectedRoleCard(false);
-    };

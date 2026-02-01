@@ -1,22 +1,11 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import LeftIcon from "../icons/LeftIcon.jsx";
 import InfoIcon from "../icons/InfoIcon.jsx";
 
-const buildExternalLink = (url) => {
-    try {
-        const parsed = new URL(url);
-        const bvid = parsed.searchParams.get("bvid");
-        const page = parsed.searchParams.get("p") || "1";
-        if (bvid) {
-            return `https://www.bilibili.com/video/${bvid}?p=${page}`;
-        }
-        if (parsed.hostname.includes("bilibili.com")) {
-            return parsed.href;
-        }
-    } catch (e) {
-        return url;
-    }
-    return url;
+const buildPlayerUrl = (bvid, page) => {
+    if (!bvid) return "";
+    const p = page || 1;
+    return `https://player.bilibili.com/player.html?bvid=${encodeURIComponent(bvid)}&p=${encodeURIComponent(p)}&autoplay=auto&preload=auto&quality=1080p&isOutside=true`;
 };
 
 const VideoPage = ({
@@ -24,9 +13,24 @@ const VideoPage = ({
     isPortrait,
     showPageZIndex,
     setShowPageZIndex,
-    video_url,
+    videoInfo,
 }) => {
-    const externalLink = buildExternalLink(video_url || "");
+    const [playerUrl, setPlayerUrl] = useState("");
+    const [externalLink, setExternalLink] = useState("");
+
+    useEffect(() => {
+        const bvid = (videoInfo?.bvid || "").trim();
+        if (!bvid) {
+            setPlayerUrl("");
+            setExternalLink("");
+            return;
+        }
+
+        const page = Number(videoInfo?.page) || 1;
+        const url = buildPlayerUrl(bvid, page);
+        setPlayerUrl(url);
+        setExternalLink(`https://www.bilibili.com/video/${bvid}?p=${page}`);
+    }, [videoInfo?.bvid, videoInfo?.page]);
 
     return (
         <div
@@ -52,29 +56,31 @@ const VideoPage = ({
                 <LeftIcon size={fontsize * 2.5} color="white"/>
             </button>
 
-            <a
-                href={externalLink}
-                target="_blank"
-                rel="noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="absolute z-110"
-                style={{
-                    left: `${fontsize * 4}px`,
-                    top: `${fontsize * 1.4}px`,
-                    background: 'transparent',
-                    padding: 0,
-                    display: 'inline-flex'
-                }}
-            >
-                <InfoIcon size={fontsize * 2} color="#fff" />
-            </a>
+            {externalLink && (
+                <a
+                    href={externalLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="absolute z-110"
+                    style={{
+                        left: `${fontsize * 4}px`,
+                        top: `${fontsize * 1.4}px`,
+                        background: 'transparent',
+                        padding: 0,
+                        display: 'inline-flex'
+                    }}
+                >
+                    <InfoIcon size={fontsize * 2} color="#fff" />
+                </a>
+            )}
 
 
             <iframe
-                src={video_url}
+                src={playerUrl || "about:blank"}
                 width={isPortrait ? window.innerWidth : window.innerHeight}
                 height={isPortrait ? window.innerHeight : window.innerWidth}
-                scrolling="no" border="0" frameBorder="no" framespacing="0" allowFullScreen="true"></iframe>
+                scrolling="no" border="0" frameBorder="no" framespacing="0" allowFullScreen></iframe>
         </div>
     );
 }

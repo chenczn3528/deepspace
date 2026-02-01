@@ -14,8 +14,7 @@ const GalleryPage = ({
      allCards,
      onClose,
      fontsize,
-     videoUrl,
-     setVideoUrl,
+     setVideoInfo,
      showPageZIndex,
      setShowPageZIndex,
 }) => {
@@ -460,8 +459,7 @@ const GalleryPage = ({
                     onClose={() => setShowFullImage(false)}
                     setCurrentIndex={setCurrentIndex}
                     fontsize={fontsize}
-                    videoUrl={videoUrl}
-                    setVideoUrl={setVideoUrl}
+                    setVideoInfo={setVideoInfo}
                     showPageZIndex={showPageZIndex}
                     setShowPageZIndex={setShowPageZIndex}
                 />

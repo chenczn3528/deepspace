@@ -7,8 +7,7 @@ import InfoIcon from "../icons/InfoIcon.jsx";
 import { Asset } from './Asset.jsx';
 
 const FullImageViewer = ({
-     videoUrl,
-     setVideoUrl,
+     setVideoInfo,
      showPageZIndex,
      setShowPageZIndex,
      cards,
@@ -79,10 +78,13 @@ const FullImageViewer = ({
     }, [card]);
 
 
-    useEffect(()=>{
-        if(!card.owned) setShowPicture(false);
-        setVideoUrl(card?.video_url);
-    },[card])
+    useEffect(() => {
+        if (!card.owned) setShowPicture(false);
+        setVideoInfo({
+            bvid: card?.video_bvid || "",
+            page: card?.video_page || 1,
+        });
+    }, [card, setVideoInfo]);
 
 
     // 预加载小图，等大图加载完以后跳出来
@@ -219,7 +221,7 @@ const FullImageViewer = ({
                     )}
 
                     {/*视频按钮*/}
-                    {card.video_url && (
+                    {card.video_bvid && (
                         <button
                             className="absolute"
                             onClick={(e) => {

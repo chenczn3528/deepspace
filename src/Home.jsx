@@ -687,7 +687,7 @@ const Home = ({isPortrait, openAssetTest}) => {
 
     const [showMusicPageZIndex, setShowMusicPageZIndex] = useState(-1);
     const [showVideoPageZIndex, setShowVideoPageZIndex] = useState(-1);
-    const [videoUrl, setVideoUrl] = useState('');
+    const [videoInfo, setVideoInfo] = useState({ bvid: '', page: 1 });
 
     // ========================================================
     // 返回数据时显示的页面
@@ -713,7 +713,7 @@ const Home = ({isPortrait, openAssetTest}) => {
                     fontsize={fontsize}
                     showPageZIndex={showVideoPageZIndex}
                     setShowPageZIndex={setShowVideoPageZIndex}
-                    video_url={videoUrl}
+                    videoInfo={videoInfo}
                     isPortrait={isPortrait}
                 />
             )}
@@ -833,8 +833,7 @@ const Home = ({isPortrait, openAssetTest}) => {
                     allCards={galleryHistory}
                     onClose={() => setShowGallery(false)}
                     fontsize={fontsize}
-                    videoUrl={videoUrl}
-                    setVideoUrl={setVideoUrl}
+                    setVideoInfo={setVideoInfo}
                     showPageZIndex={showVideoPageZIndex}
                     setShowPageZIndex={setShowVideoPageZIndex}
                 />
