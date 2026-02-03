@@ -2640,6 +2640,21 @@
     "video_page": null
   },
   {
+    "character": "祁煜",
+    "name": "驭夜灯阑",
+    "card_type_tag": "月晖",
+    "card_color_tag": "红漪",
+    "star": "4星",
+    "talent": "攻击",
+    "get": "[[「十日与你」15期]]活动中获取",
+    "permanent": "",
+    "time": "2026/2/2",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/c/c2/3g5zsszfoh6pf2xrue442n9ku0rrfrr.jpg/1067px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E9%A9%AD%E5%A4%9C%E7%81%AF%E9%98%91.jpg",
+    "image": "https://patchwiki.biligame.com/images/lysk/c/c2/3g5zsszfoh6pf2xrue442n9ku0rrfrr.jpg",
+    "video_bvid": "",
+    "video_page": null
+  },
+  {
     "character": "夏以昼",
     "name": "潮湿盛野",
     "card_type_tag": "月晖",
@@ -2664,8 +2679,8 @@
     "get": "特别密约<br>活动-[[「升级密约」13期]]",
     "permanent": "",
     "time": "2025/12/31",
-    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026020110&v=76",
-    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026020110&v=76",
+    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026020322&v=76",
+    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026020322&v=76",
     "video_bvid": "",
     "video_page": null
   },
@@ -2694,8 +2709,8 @@
     "get": "特别密约<br>活动-[[「升级密约」13期]]",
     "permanent": "",
     "time": "2025/12/31",
-    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026013116&v=76",
-    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026013116&v=76",
+    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026020404&v=76",
+    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026020404&v=76",
     "video_bvid": "",
     "video_page": null
   },
