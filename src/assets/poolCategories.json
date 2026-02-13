@@ -61,6 +61,12 @@
             "isPermanent": false
           },
           {
+            "name": "人间缱绻意",
+            "poolType": "mixed",
+            "roleCount": 5,
+            "isPermanent": false
+          },
+          {
             "name": "窃窃私吻",
             "poolType": "single",
             "roleCount": 1,
