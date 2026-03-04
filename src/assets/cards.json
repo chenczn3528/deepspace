@@ -420,6 +420,21 @@
     "video_page": null
   },
   {
+    "character": "祁煜",
+    "name": "步步向晚晴",
+    "card_type_tag": "月晖",
+    "card_color_tag": "蓝弧",
+    "star": "5星",
+    "talent": "生命",
+    "get": "限时许愿[[「步步向晚晴」]]",
+    "permanent": "",
+    "time": "2026/3/1",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/8/89/qw6s092iu3jw8pi8d2xwwr7a1uoddq6.jpg/600px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E6%AD%A5%E6%AD%A5%E5%90%91%E6%99%9A%E6%99%B4.jpg.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/8/89/qw6s092iu3jw8pi8d2xwwr7a1uoddq6.jpg/1200px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E6%AD%A5%E6%AD%A5%E5%90%91%E6%99%9A%E6%99%B4.jpg.png",
+    "video_bvid": "BV1W6421Z7NZ",
+    "video_page": 1
+  },
+  {
     "character": "夏以昼",
     "name": "晴昼当归",
     "card_type_tag": "月晖",
@@ -2715,6 +2730,36 @@
     "video_page": null
   },
   {
+    "character": "秦彻",
+    "name": "洇染瑰色",
+    "card_type_tag": "月晖",
+    "card_color_tag": "紫辉",
+    "star": "4星",
+    "talent": "防御",
+    "get": "特别密约<br>活动-[[「升级密约」14期]]",
+    "permanent": "",
+    "time": "2026/3/1",
+    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026030503&v=76",
+    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026030503&v=76",
+    "video_bvid": "",
+    "video_page": null
+  },
+  {
+    "character": "黎深",
+    "name": "恣情逐影",
+    "card_type_tag": "月晖",
+    "card_color_tag": "黄璃",
+    "star": "4星",
+    "talent": "攻击",
+    "get": "特别密约<br>活动-[[「升级密约」14期]]",
+    "permanent": "",
+    "time": "2026/3/1",
+    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026030422&v=76",
+    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026030422&v=76",
+    "video_bvid": "",
+    "video_page": null
+  },
+  {
     "character": "祁煜",
     "name": "驭夜灯阑",
     "card_type_tag": "月晖",
@@ -2754,8 +2799,8 @@
     "get": "特别密约<br>活动-[[「升级密约」13期]]",
     "permanent": "",
     "time": "2025/12/31",
-    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026022402&v=76",
-    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026022402&v=76",
+    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026030418&v=76",
+    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026030418&v=76",
     "video_bvid": "",
     "video_page": null
   },
@@ -2784,8 +2829,8 @@
     "get": "特别密约<br>活动-[[「升级密约」13期]]",
     "permanent": "",
     "time": "2025/12/31",
-    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026022322&v=76",
-    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026022322&v=76",
+    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026030503&v=76",
+    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026030503&v=76",
     "video_bvid": "",
     "video_page": null
   },
@@ -4676,6 +4721,21 @@
     "time": "2024/1/18",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/7/74/dozl471pv1f3wyiyij9tlh46lz6fl1v.png/400px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%9F%A5%E6%88%BF.png",
     "image": "https://patchwiki.biligame.com/images/lysk/thumb/7/74/dozl471pv1f3wyiyij9tlh46lz6fl1v.png/800px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%9F%A5%E6%88%BF.png",
+    "video_bvid": "",
+    "video_page": null
+  },
+  {
+    "character": "祁煜",
+    "name": "执花以望",
+    "card_type_tag": "月晖",
+    "card_color_tag": "蓝弧",
+    "star": "3星",
+    "talent": "防御",
+    "get": "[[「步步倾你」]]漫晴小铺兑换获得",
+    "permanent": "",
+    "time": "2026/3/1",
+    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026030504&v=76",
+    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026030504&v=76",
     "video_bvid": "",
     "video_page": null
   },
