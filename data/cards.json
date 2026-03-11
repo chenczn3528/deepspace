@@ -420,6 +420,21 @@
     "video_page": null
   },
   {
+    "character": "沈星回",
+    "name": "烟火来处",
+    "card_type_tag": "月晖",
+    "card_color_tag": "红漪",
+    "star": "5星",
+    "talent": "攻击",
+    "get": "限时许愿[[「烟火来处」]]",
+    "permanent": "",
+    "time": "2026/3/9",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/2/2d/o5szk0a2124a3a6e9vgoxotcuq1zgml.jpg/600px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E7%83%9F%E7%81%AB%E6%9D%A5%E5%A4%84.jpg.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/2/2d/o5szk0a2124a3a6e9vgoxotcuq1zgml.jpg/1200px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E7%83%9F%E7%81%AB%E6%9D%A5%E5%A4%84.jpg.png",
+    "video_bvid": "BV19m42137BV",
+    "video_page": 1
+  },
+  {
     "character": "祁煜",
     "name": "步步向晚晴",
     "card_type_tag": "月晖",
@@ -2799,8 +2814,8 @@
     "get": "特别密约<br>活动-[[「升级密约」13期]]",
     "permanent": "",
     "time": "2025/12/31",
-    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026030913&v=76",
-    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026030913&v=76",
+    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026031201&v=76",
+    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026031201&v=76",
     "video_bvid": "",
     "video_page": null
   },
@@ -2829,8 +2844,8 @@
     "get": "特别密约<br>活动-[[「升级密约」13期]]",
     "permanent": "",
     "time": "2025/12/31",
-    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026030913&v=76",
-    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026030913&v=76",
+    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026031121&v=76",
+    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026031121&v=76",
     "video_bvid": "",
     "video_page": null
   },
@@ -4734,8 +4749,8 @@
     "get": "[[「步步倾你」]]漫晴小铺兑换获得",
     "permanent": "",
     "time": "2026/3/1",
-    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026030903&v=76",
-    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026030903&v=76",
+    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026031202&v=76",
+    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026031202&v=76",
     "video_bvid": "",
     "video_page": null
   },
