@@ -61,6 +61,12 @@
             "isPermanent": false
           },
           {
+            "name": "烟火来处",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
             "name": "步步向晚晴",
             "poolType": "single",
             "roleCount": 1,
