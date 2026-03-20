@@ -350,6 +350,12 @@
     "icon": "🎁",
     "pools": [
       {
+        "name": "共潮生",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      },
+      {
         "name": "粲然须臾",
         "poolType": "single",
         "roleCount": 1,
