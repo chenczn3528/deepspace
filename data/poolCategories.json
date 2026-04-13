@@ -7,6 +7,12 @@
         "name": "限时卡池",
         "pools": [
           {
+            "name": "万鬼行绝",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
             "name": "银翼安魂地",
             "poolType": "single",
             "roleCount": 1,
