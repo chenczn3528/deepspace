@@ -450,6 +450,21 @@
     "video_page": null
   },
   {
+    "character": "秦彻",
+    "name": "肆雨照夜",
+    "card_type_tag": "月晖",
+    "card_color_tag": "绿珥",
+    "star": "5星",
+    "talent": "防御",
+    "get": "限时许愿[[「肆雨照夜」]]",
+    "permanent": "",
+    "time": "2026/4/13",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/9/9a/6p79ffhe91saloesq7tzsdqcgk77c6d.jpg/600px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E8%82%86%E9%9B%A8%E7%85%A7%E5%A4%9C.jpg.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/9/9a/6p79ffhe91saloesq7tzsdqcgk77c6d.jpg/1200px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E8%82%86%E9%9B%A8%E7%85%A7%E5%A4%9C.jpg.png",
+    "video_bvid": "BV16T421r7je",
+    "video_page": 1
+  },
+  {
     "character": "祁煜",
     "name": "共潮生",
     "card_type_tag": "月晖",
@@ -2889,8 +2904,8 @@
     "get": "特别密约<br>活动-[[「升级密约」13期]]",
     "permanent": "",
     "time": "2025/12/31",
-    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026041302&v=76",
-    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026041302&v=76",
+    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026041921&v=76",
+    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026041921&v=76",
     "video_bvid": "",
     "video_page": null
   },
@@ -2919,8 +2934,8 @@
     "get": "特别密约<br>活动-[[「升级密约」13期]]",
     "permanent": "",
     "time": "2025/12/31",
-    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026041304&v=76",
-    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026041304&v=76",
+    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026042003&v=76",
+    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026042003&v=76",
     "video_bvid": "",
     "video_page": null
   },
@@ -4811,6 +4826,21 @@
     "time": "2024/1/18",
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/7/74/dozl471pv1f3wyiyij9tlh46lz6fl1v.png/400px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%9F%A5%E6%88%BF.png",
     "image": "https://patchwiki.biligame.com/images/lysk/thumb/7/74/dozl471pv1f3wyiyij9tlh46lz6fl1v.png/800px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%9F%A5%E6%88%BF.png",
+    "video_bvid": "",
+    "video_page": null
+  },
+  {
+    "character": "秦彻",
+    "name": "待风而驰",
+    "card_type_tag": "月晖",
+    "card_color_tag": "蓝弧",
+    "star": "3星",
+    "talent": "攻击",
+    "get": "[[「夜雨流明」]]虹夜商店兑换获得",
+    "permanent": "",
+    "time": "2026/4/13",
+    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026041913&v=76",
+    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026041913&v=76",
     "video_bvid": "",
     "video_page": null
   },

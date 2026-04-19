@@ -67,6 +67,12 @@
             "isPermanent": false
           },
           {
+            "name": "肆雨照夜",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
             "name": "烟火来处",
             "poolType": "single",
             "roleCount": 1,
