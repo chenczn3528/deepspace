@@ -67,6 +67,12 @@
             "isPermanent": false
           },
           {
+            "name": "渴慕与浮沉",
+            "poolType": "mixed",
+            "roleCount": 5,
+            "isPermanent": false
+          },
+          {
             "name": "肆雨照夜",
             "poolType": "single",
             "roleCount": 1,
