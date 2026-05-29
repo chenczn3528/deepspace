@@ -67,6 +67,12 @@
             "isPermanent": false
           },
           {
+            "name": "爱猫及喵",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
             "name": "渴慕与浮沉",
             "poolType": "mixed",
             "roleCount": 5,
