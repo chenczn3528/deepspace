@@ -2925,6 +2925,21 @@
     "video_page": null
   },
   {
+    "character": "沈星回",
+    "name": "细琢辰光",
+    "card_type_tag": "月晖",
+    "card_color_tag": "蓝弧",
+    "star": "4星",
+    "talent": "攻击",
+    "get": "[[「十日与你」17期]]活动中获取",
+    "permanent": "",
+    "time": "2026/5/31",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/1/1e/7flewulofu5xpvoy1f6dsqisdo4e7oe.jpg/1067px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E7%BB%86%E7%90%A2%E8%BE%B0%E5%85%89.jpg.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/1/1e/7flewulofu5xpvoy1f6dsqisdo4e7oe.jpg",
+    "video_bvid": "",
+    "video_page": null
+  },
+  {
     "character": "黎深",
     "name": "花问逢时",
     "card_type_tag": "月晖",
@@ -3039,8 +3054,8 @@
     "get": "特别密约<br>活动-[[「升级密约」13期]]",
     "permanent": "",
     "time": "2025/12/31",
-    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026053005&v=76",
-    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026053005&v=76",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/a/ad/k81zlbei7ggni99k0rdcjatz5r92x6i.png/1067px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%89%B5%E5%A4%9C%E7%81%BC%E7%81%BC.png.jpeg",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/a/ad/k81zlbei7ggni99k0rdcjatz5r92x6i.png/1920px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%89%B5%E5%A4%9C%E7%81%BC%E7%81%BC.png.jpeg",
     "video_bvid": "",
     "video_page": null
   },
@@ -3069,8 +3084,8 @@
     "get": "特别密约<br>活动-[[「升级密约」13期]]",
     "permanent": "",
     "time": "2025/12/31",
-    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026053000&v=76",
-    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026053000&v=76",
+    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026060804&v=76",
+    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026060804&v=76",
     "video_bvid": "",
     "video_page": null
   },
