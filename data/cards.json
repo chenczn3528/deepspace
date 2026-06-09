@@ -450,6 +450,21 @@
     "video_page": null
   },
   {
+    "character": "夏以昼",
+    "name": "万里皆予你",
+    "card_type_tag": "月晖",
+    "card_color_tag": "蓝弧",
+    "star": "5星",
+    "talent": "生命",
+    "get": "限时许愿[[「万里皆予你」]]",
+    "permanent": "",
+    "time": "2026/6/8",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/d/da/h1tt27q6g4ij5yczhtmg6vyzxhvia0a.jpg/600px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E4%B8%87%E9%87%8C%E7%9A%86%E4%BA%88%E4%BD%A0.jpg",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/d/da/h1tt27q6g4ij5yczhtmg6vyzxhvia0a.jpg/1200px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E4%B8%87%E9%87%8C%E7%9A%86%E4%BA%88%E4%BD%A0.jpg",
+    "video_bvid": "BV1emcgeyEsh",
+    "video_page": 1
+  },
+  {
     "character": "秦彻",
     "name": "爱猫及喵",
     "card_type_tag": "月晖",
@@ -3084,8 +3099,8 @@
     "get": "特别密约<br>活动-[[「升级密约」13期]]",
     "permanent": "",
     "time": "2025/12/31",
-    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026060804&v=76",
-    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026060804&v=76",
+    "image_small": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026061005&v=76",
+    "image": "https://patchwiki.biligame.com/resources/assets/images/logo/logo_lysk.png?t=2026061005&v=76",
     "video_bvid": "",
     "video_page": null
   },
