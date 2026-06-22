@@ -67,6 +67,12 @@
             "isPermanent": false
           },
           {
+            "name": "一幕一生",
+            "poolType": "mixed",
+            "roleCount": 5,
+            "isPermanent": false
+          },
+          {
             "name": "万里皆予你",
             "poolType": "single",
             "roleCount": 1,
