@@ -67,6 +67,12 @@
             "isPermanent": false
           },
           {
+            "name": "夏意涌向",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
             "name": "一幕一生",
             "poolType": "mixed",
             "roleCount": 5,
@@ -385,6 +391,12 @@
     "name": "密约/挚礼系列",
     "icon": "🎁",
     "pools": [
+      {
+        "name": "夕晖凝刻",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      },
       {
         "name": "共潮生",
         "poolType": "single",
