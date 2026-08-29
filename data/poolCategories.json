@@ -392,6 +392,18 @@
     "icon": "🎁",
     "pools": [
       {
+        "name": "玄面无相",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      },
+      {
+        "name": "玄面昭昭",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      },
+      {
         "name": "夕晖凝刻",
         "poolType": "single",
         "roleCount": 1,
