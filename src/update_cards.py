@@ -48,6 +48,9 @@ HEADERS = {
     "Referer": WIKI_BASE,
 }
 
+BILI_ORIGIN = "https://www.bilibili.com"
+BILI_VIDEO_PREFIX = "https://www.bilibili.com/video/"
+
 CATEGORY_PRIORITY = {
     ("wishSeries", "limited"): 1,
     ("wishSeries", "permanent"): 0,
@@ -88,16 +91,25 @@ retries = Retry(
 session.mount("https://", HTTPAdapter(max_retries=retries))
 session.headers.update(HEADERS)
 
-def polite_get(url: str, timeout: int = 15, max_retry: int = 3) -> requests.Response:
+def polite_get(
+    url: str,
+    timeout: int = 15,
+    max_retry: int = 3,
+    headers: dict[str, str] | None = None,
+    retry_statuses: set[int] | None = None,
+) -> requests.Response:
     """带随机延迟的 GET，避免给站点造成压力。遇到拦截状态码会重试。"""
     last_exc = None
+    retry_statuses = retry_statuses or {403, 429, 567}
     for attempt in range(1, max_retry + 1):
         time.sleep(1.5 + random.random())  # 1.5~2.5s
-        headers = dict(HEADERS)
-        headers["User-Agent"] = random.choice(UA_POOL)
+        request_headers = dict(HEADERS)
+        request_headers["User-Agent"] = random.choice(UA_POOL)
+        if headers:
+            request_headers.update(headers)
         try:
-            resp = session.get(url, timeout=timeout, headers=headers)
-            if resp.status_code in {403, 429, 567} and attempt < max_retry:
+            resp = session.get(url, timeout=timeout, headers=request_headers)
+            if resp.status_code in retry_statuses and attempt < max_retry:
                 wait = 2 * attempt
                 print(f"⚠️ HTTP {resp.status_code}，{wait}s 后重试 ({attempt}/{max_retry})", flush=True)
                 time.sleep(wait)
@@ -115,6 +127,19 @@ def polite_get(url: str, timeout: int = 15, max_retry: int = 3) -> requests.Resp
                 continue
             raise
     raise last_exc
+
+
+def build_bili_headers(bvid: str) -> dict[str, str]:
+    return {
+        "Accept": "application/json, text/plain, */*",
+        "Origin": BILI_ORIGIN,
+        "Referer": f"{BILI_VIDEO_PREFIX}{bvid}",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-site",
+    }
 
 # -----------------------------
 # 工具函数
@@ -185,7 +210,7 @@ def fetch_bilibili_page(bvid: str, pname: str) -> int | None:
         return None
     api = f"https://api.bilibili.com/x/web-interface/view?bvid={bvid}"
     try:
-        resp = polite_get(api)
+        resp = polite_get(api, headers=build_bili_headers(bvid), retry_statuses={403, 412, 429, 567})
         data = resp.json() or {}
         pages = (data.get("data") or {}).get("pages") or []
         if not pages:
