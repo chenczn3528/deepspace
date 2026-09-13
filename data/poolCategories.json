@@ -67,6 +67,12 @@
             "isPermanent": false
           },
           {
+            "name": "尘嚣起时",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
             "name": "夏意涌向",
             "poolType": "single",
             "roleCount": 1,

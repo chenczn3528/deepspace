@@ -480,6 +480,21 @@
     "video_page": null
   },
   {
+    "character": "黎深",
+    "name": "尘嚣起时",
+    "card_type_tag": "月晖",
+    "card_color_tag": "红漪",
+    "star": "5星",
+    "talent": "攻击",
+    "get": "限时许愿[[「尘嚣起时」]]",
+    "permanent": "",
+    "time": "2026/8/31",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/4/49/8qmu9ughng0osa9tm82kor8u9v15je2.png/277px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E5%B0%98%E5%9A%A3%E8%B5%B7%E6%97%B6.png.jpeg",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/4/49/8qmu9ughng0osa9tm82kor8u9v15je2.png/554px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E5%B0%98%E5%9A%A3%E8%B5%B7%E6%97%B6.png.jpeg",
+    "video_bvid": "BV1tH4y1w7y4",
+    "video_page": 1
+  },
+  {
     "character": "夏以昼",
     "name": "夏意涌向",
     "card_type_tag": "月晖",
