@@ -410,6 +410,12 @@
         "isPermanent": false
       },
       {
+        "name": "偏航线",
+        "poolType": "single",
+        "roleCount": 1,
+        "isPermanent": false
+      },
+      {
         "name": "夕晖凝刻",
         "poolType": "single",
         "roleCount": 1,
