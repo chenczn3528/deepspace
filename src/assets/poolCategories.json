@@ -163,6 +163,12 @@
             "isPermanent": false
           },
           {
+            "name": "如若午夜无眠",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
             "name": "热意揣度",
             "poolType": "single",
             "roleCount": 1,
