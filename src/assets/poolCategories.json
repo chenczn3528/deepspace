@@ -67,6 +67,12 @@
             "isPermanent": false
           },
           {
+            "name": "如若午夜无眠",
+            "poolType": "mixed",
+            "roleCount": 3,
+            "isPermanent": false
+          },
+          {
             "name": "尘嚣起时",
             "poolType": "single",
             "roleCount": 1,
@@ -158,12 +164,6 @@
           },
           {
             "name": "来自星轨间",
-            "poolType": "single",
-            "roleCount": 1,
-            "isPermanent": false
-          },
-          {
-            "name": "如若午夜无眠",
             "poolType": "single",
             "roleCount": 1,
             "isPermanent": false
