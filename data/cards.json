@@ -480,6 +480,21 @@
     "video_page": null
   },
   {
+    "character": "夏以昼",
+    "name": "偏航线",
+    "card_type_tag": "月晖",
+    "card_color_tag": "红漪",
+    "star": "5星",
+    "talent": "防御",
+    "get": "在[[「巡弋新程」]]活动中获取",
+    "permanent": "常驻",
+    "time": "2026/9/17",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/2/26/3aqknx86jd57ohswwabgwb8gl9gyzlo.jpg/600px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E5%81%8F%E8%88%AA%E7%BA%BF.jpg.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/2/26/3aqknx86jd57ohswwabgwb8gl9gyzlo.jpg/1200px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E5%81%8F%E8%88%AA%E7%BA%BF.jpg.png",
+    "video_bvid": "BV1emcgeyEsh",
+    "video_page": 1
+  },
+  {
     "character": "黎深",
     "name": "尘嚣起时",
     "card_type_tag": "月晖",
@@ -1062,6 +1077,21 @@
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/6/6c/jdmdya0m6o0elrg2o8gfmjb7e45vif9.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%9D%A5%E8%87%AA%E6%98%9F%E8%BD%A8%E9%97%B4.png",
     "image": "https://patchwiki.biligame.com/images/lysk/thumb/6/6c/jdmdya0m6o0elrg2o8gfmjb7e45vif9.png/900px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%9D%A5%E8%87%AA%E6%98%9F%E8%BD%A8%E9%97%B4.png",
     "video_bvid": "BV19m42137BV",
+    "video_page": 1
+  },
+  {
+    "character": "夏以昼",
+    "name": "盛宵尽夺",
+    "card_type_tag": "月晖",
+    "card_color_tag": "紫辉",
+    "star": "5星",
+    "talent": "生命",
+    "get": "限时许愿[[「如若午夜无眠」]]",
+    "permanent": "",
+    "time": "2025/9/22",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/1/1b/92m3cnqzoly0pzyq4olbtwjg9qpv1ui.jpg/458px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E7%9B%9B%E5%AE%B5%E5%B0%BD%E5%A4%BA.jpg",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/1/1b/92m3cnqzoly0pzyq4olbtwjg9qpv1ui.jpg/917px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E7%9B%9B%E5%AE%B5%E5%B0%BD%E5%A4%BA.jpg",
+    "video_bvid": "BV1emcgeyEsh",
     "video_page": 1
   },
   {
