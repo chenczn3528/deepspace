@@ -495,6 +495,21 @@
     "video_page": 1
   },
   {
+    "character": "夏以昼",
+    "name": "盛宵尽夺",
+    "card_type_tag": "月晖",
+    "card_color_tag": "紫辉",
+    "star": "5星",
+    "talent": "生命",
+    "get": "限时许愿[[「如若午夜无眠」]]",
+    "permanent": "",
+    "time": "2026/9/22",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/4/41/p2qihmx6d5ipplhrasbrpnkff5a4mxo.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%9B%9B%E5%AE%B5%E5%B0%BD%E5%A4%BA.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/4/41/p2qihmx6d5ipplhrasbrpnkff5a4mxo.png/900px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%9B%9B%E5%AE%B5%E5%B0%BD%E5%A4%BA.png",
+    "video_bvid": "BV1emcgeyEsh",
+    "video_page": 1
+  },
+  {
     "character": "沈星回",
     "name": "如栖璨空",
     "card_type_tag": "月晖",
@@ -519,8 +534,8 @@
     "get": "限时许愿[[「如若午夜无眠」]]",
     "permanent": "",
     "time": "2026/9/22",
-    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/1/1f/nzzi91kd35lv4btjwpkg2eem95y15ac.jpg/600px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E8%B5%B4%E4%BA%88%E9%86%BA%E8%89%B2.jpg.png",
-    "image": "https://patchwiki.biligame.com/images/lysk/thumb/1/1f/nzzi91kd35lv4btjwpkg2eem95y15ac.jpg/1200px-%E6%80%9D%E5%BF%B5%E5%AE%A3%E4%BC%A0%E5%9B%BE-%E8%B5%B4%E4%BA%88%E9%86%BA%E8%89%B2.jpg.png",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/2/21/mj1s3p5hke5nfc7eac8is8eh1n7w9de.png/400px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E8%B5%B4%E4%BA%88%E9%86%BA%E8%89%B2.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/2/21/mj1s3p5hke5nfc7eac8is8eh1n7w9de.png/800px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E8%B5%B4%E4%BA%88%E9%86%BA%E8%89%B2.png",
     "video_bvid": "BV1W6421Z7NZ",
     "video_page": 1
   },
@@ -1152,21 +1167,6 @@
     "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/6/6c/jdmdya0m6o0elrg2o8gfmjb7e45vif9.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%9D%A5%E8%87%AA%E6%98%9F%E8%BD%A8%E9%97%B4.png",
     "image": "https://patchwiki.biligame.com/images/lysk/thumb/6/6c/jdmdya0m6o0elrg2o8gfmjb7e45vif9.png/900px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%9D%A5%E8%87%AA%E6%98%9F%E8%BD%A8%E9%97%B4.png",
     "video_bvid": "BV19m42137BV",
-    "video_page": 1
-  },
-  {
-    "character": "夏以昼",
-    "name": "盛宵尽夺",
-    "card_type_tag": "月晖",
-    "card_color_tag": "紫辉",
-    "star": "5星",
-    "talent": "生命",
-    "get": "限时许愿[[「如若午夜无眠」]]",
-    "permanent": "",
-    "time": "2025/9/22",
-    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/4/41/p2qihmx6d5ipplhrasbrpnkff5a4mxo.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%9B%9B%E5%AE%B5%E5%B0%BD%E5%A4%BA.png",
-    "image": "https://patchwiki.biligame.com/images/lysk/thumb/4/41/p2qihmx6d5ipplhrasbrpnkff5a4mxo.png/900px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%9B%9B%E5%AE%B5%E5%B0%BD%E5%A4%BA.png",
-    "video_bvid": "BV1emcgeyEsh",
     "video_page": 1
   },
   {
@@ -2559,8 +2559,8 @@
     "get": "「引魂照幽」永夜冥行",
     "permanent": "",
     "time": "2026/3/28",
-    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/a/a6/a9edxndra3uecah1602bkmheacy49rz.png/1066px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%AE%8B%E5%AE%B5%E7%BB%AF%E6%A2%A6.png",
-    "image": "https://patchwiki.biligame.com/images/lysk/a/a6/a9edxndra3uecah1602bkmheacy49rz.png",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/a/a6/dh3muew71h0v64ssmuvhjn4z4ym9sip.png/375px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%AE%8B%E5%AE%B5%E7%BB%AF%E6%A2%A6.png.jpeg",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/a/a6/dh3muew71h0v64ssmuvhjn4z4ym9sip.png/750px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%AE%8B%E5%AE%B5%E7%BB%AF%E6%A2%A6.png.jpeg",
     "video_bvid": "",
     "video_page": null
   },
@@ -3225,6 +3225,36 @@
     "video_page": null
   },
   {
+    "character": "夏以昼",
+    "name": "漓漓愫意",
+    "card_type_tag": "月晖",
+    "card_color_tag": "紫辉",
+    "star": "4星",
+    "talent": "攻击",
+    "get": "特别密约<br>活动-[[「升级密约」18期]]",
+    "permanent": "",
+    "time": "2026/10/21",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/3/3b/qqr8312cw40rhmvv32jrra0j4qy9t26.png/375px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%BC%93%E6%BC%93%E6%84%AB%E6%84%8F.png.jpeg",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/3/3b/qqr8312cw40rhmvv32jrra0j4qy9t26.png/750px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%BC%93%E6%BC%93%E6%84%AB%E6%84%8F.png.jpeg",
+    "video_bvid": "",
+    "video_page": null
+  },
+  {
+    "character": "沈星回",
+    "name": "逾界私心",
+    "card_type_tag": "月晖",
+    "card_color_tag": "绿珥",
+    "star": "4星",
+    "talent": "攻击",
+    "get": "特别密约<br>[[「升级密约」18期]]",
+    "permanent": "常驻",
+    "time": "2026/10/21",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/1/1b/3skhm2poqrapfd2gcos3voj7pgv4zy6.png/450px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E9%80%BE%E7%95%8C%E7%A7%81%E5%BF%83.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/1/1b/3skhm2poqrapfd2gcos3voj7pgv4zy6.png/900px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E9%80%BE%E7%95%8C%E7%A7%81%E5%BF%83.png",
+    "video_bvid": "",
+    "video_page": null
+  },
+  {
     "character": "秦彻",
     "name": "秋绘映眸",
     "card_type_tag": "月晖",
@@ -3444,8 +3474,8 @@
     "get": "特别密约<br>活动-[[「升级密约」13期]]",
     "permanent": "",
     "time": "2025/12/31",
-    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/a/ad/k81zlbei7ggni99k0rdcjatz5r92x6i.png/1067px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%89%B5%E5%A4%9C%E7%81%BC%E7%81%BC.png.jpeg",
-    "image": "https://patchwiki.biligame.com/images/lysk/thumb/a/ad/k81zlbei7ggni99k0rdcjatz5r92x6i.png/1920px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%89%B5%E5%A4%9C%E7%81%BC%E7%81%BC.png.jpeg",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/a/ad/4eay4we4ezr457o1j4iryk93kage4am.png/375px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%89%B5%E5%A4%9C%E7%81%BC%E7%81%BC.png.jpeg",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/a/ad/4eay4we4ezr457o1j4iryk93kage4am.png/750px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E7%89%B5%E5%A4%9C%E7%81%BC%E7%81%BC.png.jpeg",
     "video_bvid": "",
     "video_page": null
   },
