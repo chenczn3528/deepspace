@@ -11,12 +11,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.13'
 
       - name: Install dependencies
         run: |
@@ -30,20 +30,10 @@ jobs:
       - name: Check for changes
         id: check
         run: |
-          if git diff --quiet src/assets/cards.json; then
+          if git diff --quiet -- src/assets/cards.json src/assets/poolCategories.json; then
             echo "changes_detected=false" >> "$GITHUB_OUTPUT"
           else
-            ADDED=$(git diff --numstat src/assets/cards.json | awk '{print $1}')
-            REMOVED=$(git diff --numstat src/assets/cards.json | awk '{print $2}')
-            echo "ADDED=$ADDED, REMOVED=$REMOVED"
-
-            if [ "$ADDED" -gt "$REMOVED" ]; then
-              echo "Meaningful change detected: +$ADDED > -$REMOVED"
-              echo "changes_detected=true" >> "$GITHUB_OUTPUT"
-            else
-              echo "Change rejected: +$ADDED <= -$REMOVED"
-              echo "changes_detected=false" >> "$GITHUB_OUTPUT"
-            fi
+            echo "changes_detected=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Extract and highlight diff of cards.json
@@ -73,6 +63,10 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add src/assets/cards.json src/assets/poolCategories.json
+          if git diff --cached --quiet; then
+            echo "没有需要提交的变更。"
+            exit 0
+          fi
           DATE=$(date +'%Y-%m-%d')
           git commit -m "chore: update cards data on $DATE"
           git pull --rebase

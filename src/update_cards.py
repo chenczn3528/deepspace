@@ -205,32 +205,25 @@ def normalize_part_name(value: str) -> str:
     return re.sub(r"[【】「」\[\]（）()《》〈〉·•、，。？！!?:;\"'“”\-_.]", "", text)
 
 
-def fetch_bilibili_page(bvid: str, pname: str) -> int | None:
-    if not bvid:
+def fetch_bilibili_page(bvid: str, card_name: str) -> int | None:
+    """读取 B 站分P列表，以真实标题包含卡名为准，不信任 Wiki 的 Pname。"""
+    target = normalize_part_name(card_name)
+    if not bvid or not target:
         return None
     api = f"https://api.bilibili.com/x/web-interface/view?bvid={bvid}"
     try:
         resp = polite_get(api, headers=build_bili_headers(bvid), retry_statuses={403, 412, 429, 567})
         data = resp.json() or {}
         pages = (data.get("data") or {}).get("pages") or []
-        if not pages:
+        hits = [page for page in pages
+                if target in normalize_part_name(page.get("part") or "")]
+        if len(hits) != 1:
+            print(f"⚠️ 分P标题未唯一匹配卡名：{bvid} / {card_name}；视频留空。", flush=True)
             return None
-        if not pname:
-            return int(pages[0].get("page") or 1)
-        target = pname.strip()
-        hit = next((p for p in pages if p.get("part") == target), None)
-        if not hit:
-            norm_target = normalize_part_name(target)
-            hit = next((p for p in pages if normalize_part_name(p.get("part")) == norm_target), None)
-        if not hit:
-            norm_target = normalize_part_name(target)
-            hit = next((p for p in pages if norm_target in normalize_part_name(p.get("part"))), None)
-        if not hit:
-            norm_target = normalize_part_name(target)
-            hit = next((p for p in pages if normalize_part_name(p.get("part")) in norm_target), None)
-        return int(hit.get("page") or 1) if hit else None
+        page = hits[0].get("page")
+        return page if type(page) is int and page > 0 else None
     except Exception as e:
-        print(f"⚠️ Bilibili API 失败: {e}", flush=True)
+        print(f"⚠️ Bilibili API 失败: {e}；视频留空。", flush=True)
         return None
 
 
@@ -389,8 +382,7 @@ def update_pool_categories_from_cards(cards: list[dict]) -> dict:
             categories[cat_key].setdefault("pools", [])
             categories[cat_key]["pools"].append(entry)
 
-    with open(POOL_CATEGORIES_PATH, "w", encoding="utf-8") as fh:
-        json.dump(categories, fh, ensure_ascii=False, indent=2)
+    save_json_if_changed(POOL_CATEGORIES_PATH, categories)
     print(f"🎯 已更新 {POOL_CATEGORIES_PATH}，共写入 {len(pool_assignments)} 个卡池。", flush=True)
 
     return categories
@@ -527,12 +519,109 @@ def parse_wiki_text(text: str) -> dict:
 
 def is_card_data_complete(card: dict) -> bool:
     required = ["character", "name", "star", "card_color_tag", "card_type_tag", "talent", "get", "time"]
-    return all(card.get(f) for f in required)
+    return all(isinstance(card.get(f), str) and card[f].strip() for f in required)
+
+
+def card_missing_fields(card: dict) -> list[str]:
+    """卡片基础资料和图片必填；视频可以留空并独立重试。"""
+    required = ["character", "name", "star", "card_color_tag", "card_type_tag",
+                "talent", "get", "time"]
+    missing = [key for key in required
+               if not isinstance(card.get(key), str) or not card[key].strip()]
+    if card.get("star") not in {"3星", "4星", "5星"}:
+        missing.append("不支持的星级")
+    for key in ("image_small", "image"):
+        url = card.get(key)
+        if not isinstance(url, str) or not re.match(r"^https?://[^/\s]+/\S+$", url):
+            missing.append(key)
+    return missing
+
+
+def load_existing_cards() -> list[dict]:
+    """仅缺失文件时从零开始；损坏文件报错，避免覆盖旧数据。"""
+    try:
+        with open(CARDS_PATH, encoding="utf-8") as fh:
+            cards = json.load(fh)
+    except FileNotFoundError:
+        return []
+    if not isinstance(cards, list) or any(
+        not isinstance(card, dict) or not isinstance(card.get("name"), str)
+        or not card["name"].strip() for card in cards
+    ):
+        raise ValueError("cards.json 格式错误，请先检查文件，不会覆盖原数据。")
+    names = [card["name"] for card in cards]
+    if len(names) != len(set(names)):
+        raise ValueError("cards.json 包含重复卡名，请先检查文件。")
+    return cards
+
+
+def save_json_if_changed(path: str, data) -> None:
+    """相同内容不重写；临时文件替换，避免中断留下半份 JSON。"""
+    target = Path(path)
+    if target.exists():
+        with target.open(encoding="utf-8") as fh:
+            if json.load(fh) == data:
+                return
+    temporary = target.with_suffix(target.suffix + ".tmp")
+    temporary.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    temporary.replace(target)
+
+
+def video_key(card: dict) -> tuple[str, int] | None:
+    bvid, page = card.get("video_bvid"), card.get("video_page")
+    if isinstance(bvid, str) and bvid and type(page) is int and page > 0:
+        return bvid, page
+    return None
+
+
+def clear_conflicting_videos(cards_by_name: dict[str, dict]) -> set[str]:
+    """冲突视频留空，保留卡片的基础资料，下次重新匹配。"""
+    names = duplicate_video_names(cards_by_name)
+    for name in sorted(names):
+        print(f"⚠️ {name} 的视频分P与其他卡片重复，清空视频等待重试。", flush=True)
+        cards_by_name[name] = dict(cards_by_name[name], video_bvid="", video_page=None)
+    return names
+
+
+def duplicate_video_names(cards: dict[str, dict]) -> set[str]:
+    owners: dict[tuple[str, int], list[str]] = {}
+    for name, card in cards.items():
+        key = video_key(card)
+        if key:
+            owners.setdefault(key, []).append(name)
+    return {
+        name
+        for names in owners.values() if len(names) > 1
+        for name in names
+    }
+
+def has_valid_video(card: dict) -> bool:
+    bvid, page = card.get("video_bvid"), card.get("video_page")
+    return (isinstance(bvid, str) and re.fullmatch(r"BV[0-9A-Za-z]{10}", bvid) is not None
+            and type(page) is int and page > 0)
+
+
+def resolve_video(html_content, card_name: str) -> tuple[str, int | None]:
+    bvid, _pname = extract_bili_script_info(html_content)
+    if not bvid:
+        return "", None
+    page = fetch_bilibili_page(bvid, card_name)
+    return (bvid, page) if page is not None else ("", None)
+
+
+def fetch_video_only(detail_url: str, card_name: str) -> tuple[str, int | None]:
+    """视频缺失时仅请求详情 HTML 与 B 站 API，不重抓基础属性。"""
+    try:
+        response = polite_get(detail_url)
+        return resolve_video(response.content, card_name)
+    except Exception as exc:
+        print(f"⚠️ 视频补抓失败：{card_name} -> {exc}；下次重试。", flush=True)
+        return "", None
 
 # -----------------------------
 # 详情页解析
 # -----------------------------
-def fetch_detail_image(detail_url: str, card_name: str, max_retry: int = 3):
+def fetch_detail_image(detail_url: str, card_name: str, max_retry: int = 3, *, fetch_video: bool = True):
     """
     返回：small_img, big_img, video_bvid, video_page
     - 不下载文件
@@ -548,17 +637,16 @@ def fetch_detail_image(detail_url: str, card_name: str, max_retry: int = 3):
             soup = BeautifulSoup(res.content, "html.parser")
 
             # 图片：只引用链接，不拼直链
-            img = soup.select_one(".center img") or soup.select_one("img")
+            img = soup.select_one(".center img")
             if img:
                 src = img.get("src", "") or ""
                 srcset = img.get("srcset", "") or ""
                 big_img = parse_best_from_srcset(srcset) or src
                 small_img = src
 
-            # 视频：从脚本中解析 Bvid / Pname
-            video_bvid, video_pname = extract_bili_script_info(res.content)
-            if video_bvid:
-                video_page = fetch_bilibili_page(video_bvid, video_pname) or 1
+            # 仅五星卡解析视频；三星、四星不请求 B 站 API。
+            if fetch_video:
+                video_bvid, video_page = resolve_video(res.content, card_name)
 
             # 成功则直接返回
             return small_img, big_img, video_bvid, video_page
@@ -579,7 +667,9 @@ def fetch_detail_image(detail_url: str, card_name: str, max_retry: int = 3):
 # -----------------------------
 def main():
     print("🚀 开始爬取：", ENTRY_URL, flush=True)
-    all_cards = []
+    existing_cards = load_existing_cards()
+    cards_by_name = {card["name"]: card for card in existing_cards}
+    updated_names = set()
 
     # 入口页
     entry = polite_get(ENTRY_URL)
@@ -587,19 +677,56 @@ def main():
     boxes = soup.select("div.divsort") or []
     print(f"共发现卡片：{len(boxes)}", flush=True)
 
-    for idx, box in enumerate(boxes, 1):
+    candidates = {}
+    for box in boxes:
         name_el = box.select_one(".card-name")
-        if not name_el:
-            continue
-        card_name = name_el.text.strip()
-        print(f"{idx}. {card_name}", flush=True)
+        if name_el and name_el.get_text(strip=True):
+            candidates.setdefault(name_el.get_text(strip=True), box)
+    if not candidates:
+        raise RuntimeError("列表页未解析到卡片，停止更新并保留本地文件。")
+    new_names = set(candidates) - cards_by_name.keys()
+    incomplete_names = {
+        name for name in candidates.keys() & cards_by_name.keys()
+        if card_missing_fields(cards_by_name[name])
+    }
+    # 先移除历史冲突的视频字段，卡片本身保留；清理结果即使补抓失败也保存。
+    duplicate_names = clear_conflicting_videos(cards_by_name)
+    updated_names.update(duplicate_names)
+    video_retry_names = {
+        name for name, card in cards_by_name.items()
+        if card.get("star") == "5星" and not has_valid_video(card)
+    } & candidates.keys()
+    pending_names = new_names | incomplete_names | video_retry_names
+    print(f"本地 {len(existing_cards)} 张；列表 {len(candidates)} 张；"
+          f"新增 {len(new_names)} 张；基础资料待补全 {len(incomplete_names)} 张；"
+          f"视频待补全 {len(video_retry_names)} 张。", flush=True)
+    if not pending_names:
+        print("没有新增或不完整卡片，跳过详情抓取。", flush=True)
 
-        # 基础信息（mwclient）
-        info = wiki_detailed_info(card_name)
+    for idx, (card_name, box) in enumerate(candidates.items(), 1):
+        if card_name not in pending_names:
+            continue
+        print(f"{idx}. {card_name}", flush=True)
 
         # 详情链接
         detail_a = box.select_one(".card-img a")
         detail_url = urljoin(WIKI_BASE, detail_a.get("href")) if (detail_a and detail_a.get("href")) else ""
+
+        if not detail_url:
+            print(f"[跳过] {card_name}：缺少详情链接，下次重试。", flush=True)
+            continue
+
+        if card_name in video_retry_names and card_name not in incomplete_names:
+            bvid, page = fetch_video_only(detail_url, card_name)
+            old_card = cards_by_name[card_name]
+            repaired = dict(old_card, video_bvid=bvid, video_page=page)
+            if repaired != old_card:
+                cards_by_name[card_name] = repaired
+                updated_names.add(card_name)
+            continue
+
+        # 只有新增卡或基础资料不完整才需要 Wiki API。
+        info = wiki_detailed_info(card_name)
 
         # 列表中的小图（兜底）
         list_small = ""
@@ -611,7 +738,9 @@ def main():
         small_img = big_img = video_bvid = ""
         video_page = None
         if detail_url:
-            small_img, big_img, video_bvid, video_page = fetch_detail_image(detail_url, card_name)
+            small_img, big_img, video_bvid, video_page = fetch_detail_image(
+                detail_url, card_name, fetch_video=info.get("star") == "5星"
+            )
 
         # 字段完整性重试（最多 3 次）
         tries = 0
@@ -623,7 +752,8 @@ def main():
 
         # 最终图链接
         final_small = small_img or list_small or ""
-        final_big = big_img or final_small
+        # 列表缩略图不能冒充已获取到的详情大图。
+        final_big = big_img
 
         # 汇总
         info["image_small"] = final_small
@@ -631,18 +761,31 @@ def main():
         info["video_bvid"] = video_bvid
         info["video_page"] = video_page
 
-        all_cards.append(info)
+        missing = card_missing_fields(info)
+        if info.get("name") != card_name:
+            missing.append("详情卡名与列表不一致")
+        if missing:
+            print(f"[跳过] {card_name} 缺少：{', '.join(missing)}；下次运行重试。", flush=True)
+            continue
+        cards_by_name[card_name] = info
+        updated_names.add(card_name)
 
+    # 即便 B 站分P标题含有多个卡名，也不能把同一分P绑定给不同卡片。
+    updated_names.update(clear_conflicting_videos(cards_by_name))
 
-    # with Path(CARDS_PATH).open("r", encoding="utf-8") as fh:
-    #     all_cards = json.load(fh)
+    # 完整旧卡保持原位；补全失败的旧卡不删除。新卡按列表顺序放在前面。
+    all_cards = [cards_by_name[name] for name in candidates
+                 if name in updated_names and name not in {c["name"] for c in existing_cards}]
+    all_cards.extend(cards_by_name[card["name"]] for card in existing_cards)
+    if not updated_names and existing_cards:
+        print("没有通过完整性校验的新数据，保留本地文件。", flush=True)
+        return
+    if not all_cards:
+        print("没有完整卡片，暂不生成数据文件。", flush=True)
+        return
 
-    # 卡池分类
     update_pool_categories_from_cards(all_cards)
-
-    # 保存
-    with open(CARDS_PATH, "w", encoding="utf-8") as f:
-        json.dump(all_cards, f, ensure_ascii=False, indent=2)
+    save_json_if_changed(CARDS_PATH, all_cards)
 
     print(f"✅ 完成，共保存 {len(all_cards)} 条，输出：{CARDS_PATH}", flush=True)
 

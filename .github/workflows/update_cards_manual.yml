@@ -14,7 +14,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.13'
 
       - name: Install dependencies
         run: |
@@ -38,6 +38,10 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add src/assets/cards.json src/assets/poolCategories.json
+          if git diff --cached --quiet; then
+            echo "没有需要提交的变更。"
+            exit 0
+          fi
           DATE=$(date +'%Y-%m-%d')
           git commit -m "chore: update cards data on $DATE"
           git pull --rebase
