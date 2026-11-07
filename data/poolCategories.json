@@ -8,6 +8,12 @@
         "pools": [
           {
             "name": "待异梦重启",
+            "poolType": "mixed",
+            "roleCount": 3,
+            "isPermanent": false
+          },
+          {
+            "name": "馥夜轻漾",
             "poolType": "single",
             "roleCount": 1,
             "isPermanent": false
