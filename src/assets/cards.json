@@ -1,5 +1,20 @@
 [
   {
+    "character": "夏以昼",
+    "name": "构梦协议",
+    "card_type_tag": "月晖",
+    "card_color_tag": "粉珀",
+    "star": "5星",
+    "talent": "生命",
+    "get": "限时许愿[[「待异梦重启」]]",
+    "permanent": "",
+    "time": "2026/11/6",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/thumb/4/40/0ft9dze6uzvew7dku40j3a19tzbtw93.png/375px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%9E%84%E6%A2%A6%E5%8D%8F%E8%AE%AE.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/thumb/4/40/0ft9dze6uzvew7dku40j3a19tzbtw93.png/750px-%E6%80%9D%E5%BF%B5%E9%95%BF%E5%9B%BE-%E6%9E%84%E6%A2%A6%E5%8D%8F%E8%AE%AE.png",
+    "video_bvid": "",
+    "video_page": null
+  },
+  {
     "character": "祁煜",
     "name": "玄面无相",
     "card_type_tag": "日冕",

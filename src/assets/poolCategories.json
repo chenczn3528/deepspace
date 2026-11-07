@@ -7,6 +7,12 @@
         "name": "限时卡池",
         "pools": [
           {
+            "name": "待异梦重启",
+            "poolType": "single",
+            "roleCount": 1,
+            "isPermanent": false
+          },
+          {
             "name": "万鬼行绝",
             "poolType": "single",
             "roleCount": 1,
