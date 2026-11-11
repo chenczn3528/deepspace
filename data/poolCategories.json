@@ -9,7 +9,7 @@
           {
             "name": "待异梦重启",
             "poolType": "mixed",
-            "roleCount": 3,
+            "roleCount": 5,
             "isPermanent": false
           },
           {
