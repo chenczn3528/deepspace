@@ -1,5 +1,35 @@
 [
   {
+    "character": "秦彻",
+    "name": "悖序牵引",
+    "card_type_tag": "月晖",
+    "card_color_tag": "黄璃",
+    "star": "5星",
+    "talent": "生命",
+    "get": "限时许愿[[「待异梦重启」]]",
+    "permanent": "",
+    "time": "2026/11/06",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/4/4e/by88qba0o7l9bm2yw7r9mt4dqempxda.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/4/4e/by88qba0o7l9bm2yw7r9mt4dqempxda.png",
+    "video_bvid": "",
+    "video_page": null
+  },
+  {
+    "character": "黎深",
+    "name": "旧我之墟",
+    "card_type_tag": "月晖",
+    "card_color_tag": "绿珥",
+    "star": "5星",
+    "talent": "攻击",
+    "get": "限时许愿[[「待异梦重启」]]",
+    "permanent": "",
+    "time": "2026/11/06",
+    "image_small": "https://patchwiki.biligame.com/images/lysk/5/50/fqc05ir2nmpyr0h2l5iwwhkbd0o7bo7.png",
+    "image": "https://patchwiki.biligame.com/images/lysk/5/50/fqc05ir2nmpyr0h2l5iwwhkbd0o7bo7.png",
+    "video_bvid": "",
+    "video_page": null
+  },
+  {
     "character": "祁煜",
     "name": "溺途共缚",
     "card_type_tag": "月晖",
